@@ -1,14 +1,14 @@
-# README
+# fabiang/xmpp [![Build Status](https://api.travis-ci.org/fabiang/xmpp.png)](https://travis-ci.org/fabiang/xmpp)
 
 Library for XMPP protocol connections (Jabber) for PHP.
 
-# SYSTEM REQUIREMENTS
+## SYSTEM REQUIREMENTS
 
 - PHP 5.3
 - clue/socket-raw - a wrapper class for PHPs socket functions
 - psr/log - for PSR-3 logging
 
-# INSTALLATION
+## INSTALLATION
 
 Add this to your composer file:
 

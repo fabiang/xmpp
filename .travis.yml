@@ -6,4 +6,5 @@ php:
 before_script:
   - composer install --dev --dev --prefer-source --no-interaction
 script:
+  - cd tests
   - phpunit
