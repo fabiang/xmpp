@@ -1,6 +1,6 @@
 # README
 
-fabiang/xmpp a XMPP (Jabber) client library for PHP 5.3
+Library for XMPP protocol connections (Jabber) for PHP.
 
 # SYSTEM REQUIREMENTS
 
