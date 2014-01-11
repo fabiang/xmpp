@@ -1,0 +1,15 @@
+imports:
+    - php
+before_commands:
+    - "composer install --dev --prefer-source --no-interaction"
+filter:
+    excluded_paths: [vendor/*, tests/*]
+tools:
+    php_code_coverage: true
+    php_code_sniffer:
+        config:
+            standard: PSR2
+    php_cpd: true
+    php_hhvm: true
+    php_mess_detector: true
+    php_pdepend: true
