@@ -39,6 +39,7 @@ namespace Fabiang\Xmpp\Stream;
 use Fabiang\Xmpp\Event\EventManagerAwareInterface;
 use Fabiang\Xmpp\Event\EventManagerInterface;
 use Fabiang\Xmpp\Event\EventManager;
+use Fabiang\Xmpp\Event\XMLEvent;
 
 /**
  * Xml stream class.
@@ -106,9 +107,16 @@ class XMLStream implements EventManagerAwareInterface
     protected $parser;
 
     /**
+     * Event object.
+     *
+     * @var XMLEvent
+     */
+    protected $eventObject;
+
+    /**
      * Constructor.
      */
-    public function __construct($encoding = 'UTF-8')
+    public function __construct($encoding = 'UTF-8', XMLEvent $eventObject = null)
     {
         $parser = xml_parser_create($encoding);
         xml_set_object($parser, $this);
@@ -122,6 +130,12 @@ class XMLStream implements EventManagerAwareInterface
         $this->encoding = $encoding;
 
         $this->reset();
+
+        if (null === $eventObject) {
+            $eventObject = new XMLEvent();
+        }
+
+        $this->setEventObject($eventObject);
     }
 
     /**
@@ -214,16 +228,17 @@ class XMLStream implements EventManagerAwareInterface
             $element->setAttributeNode($attributeNode);
         }
 
+        if (null === $namespaceURI) {
+            $namespaceURI = $this->namespaces[$this->depth - 1];
+        }
+
         $this->namespaces[$this->depth] = $namespaceURI;
         $this->elements[$this->depth]   = $element;
         $this->depth++;
-        
-        if (null === $namespaceURI) {
-            $namespaceURI = $this->resolveNamespace();
-        }
-        $event = '{' . $namespaceURI . '}' . $elementName;
 
-        $this->getEventManager()->trigger($event, $this, array($element, true));
+        $event = '{' . $namespaceURI . '}' . $elementName;
+        $this->getEventManager()->getEventObject()->setStartTag(true);
+        $this->getEventManager()->trigger($event, $this, array($element));
     }
 
     /**
@@ -276,26 +291,12 @@ class XMLStream implements EventManagerAwareInterface
 
         // Second: loop over namespaces till namespace is not null
         if (null === $namespaceURI) {
-            $namespaceURI = $this->resolveNamespace();
+            $namespaceURI = $this->namespaces[$this->depth];
         }
 
         $event = '{' . $namespaceURI . '}' . $localName;
-        $this->getEventManager()->trigger($event, $this, array($element, false));
-    }
-    
-    /**
-     * Resolve namespace.
-     * 
-     * @return string
-     */
-    protected function resolveNamespace()
-    {
-        $namespace = null;
-        $i = $this->depth;
-        while (isset($this->namespaces[--$i]) && null === $namespace) {
-            $namespace = $this->namespaces[$i];
-        }
-        return $namespace;
+        $this->getEventManager()->getEventObject()->setStartTag(false);
+        $this->getEventManager()->trigger($event, $this, array($element));
     }
 
     /**
@@ -332,6 +333,9 @@ class XMLStream implements EventManagerAwareInterface
         if (null === $this->events) {
             $this->setEventManager(new EventManager());
         }
+
+        $this->events->setEventObject($this->getEventObject());
+
         return $this->events;
     }
 
@@ -341,6 +345,28 @@ class XMLStream implements EventManagerAwareInterface
     public function setEventManager(EventManagerInterface $events)
     {
         $this->events = $events;
+        return $this;
+    }
+
+    /**
+     * Get event object.
+     *
+     * @return XMLEvent
+     */
+    public function getEventObject()
+    {
+        return $this->eventObject;
+    }
+
+    /**
+     * Set event object.
+     *
+     * @param \Fabiang\Xmpp\Event\XMLEvent $eventObject
+     * @return self
+     */
+    public function setEventObject(XMLEvent $eventObject)
+    {
+        $this->eventObject = $eventObject;
         return $this;
     }
 
