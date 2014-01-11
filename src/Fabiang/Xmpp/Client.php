@@ -116,13 +116,16 @@ class Client implements EventManagerAwareInterface, LoggerAwareInterface
     /**
      * Constructor.
      *
-     * @param \Fabiang\Xmpp\Connection\ConnectionInterface $connection Connection
-     * @param \Psr\Log\LoggerInterface                     $logger     Logger instance (optional)
+     * @param ConnectionInterface $connection Connection
+     * @param LoggerInterface     $logger     Logger instance (optional)
      */
     public function __construct(ConnectionInterface $connection, LoggerInterface $logger = null)
     {
         $this->connection = $connection;
-        $this->setLogger($logger);
+        
+        if (null !== $logger) {
+            $this->setLogger($logger);
+        }
 
         $this->outputEventManager = new Event\EventManager;
         $this->outputStream       = new Stream\XMLStream();

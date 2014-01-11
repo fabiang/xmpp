@@ -46,7 +46,7 @@ use Socket\Raw\Socket as StreamSocket;
 interface SocketConnectionInterface
 {
 
-    public function __construct(StreamSocket $socket = null, $address);
+    public function __construct(StreamSocket $socket, $address);
 
     /**
      * Set socket instance.

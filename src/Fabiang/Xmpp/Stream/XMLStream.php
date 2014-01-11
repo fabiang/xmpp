@@ -272,7 +272,7 @@ class XMLStream implements EventManagerAwareInterface
      * @param string   $name   Element name
      * @return void
      */
-    protected function endXml($parser, $name)
+    protected function endXml()
     {
         $this->depth--;
         $element = $this->elements[$this->depth];

@@ -102,7 +102,7 @@ class Socket implements SocketConnectionInterface, ConnectionInterface
     public static function factory($address)
     {
         $socketFactory = new Factory;
-        $scheme = null;
+        $scheme        = null;
         return new static($socketFactory->createFromString($address, $scheme), $address);
     }
 

@@ -45,25 +45,26 @@ use Fabiang\Xmpp\Exception\InvalidArgumentException;
  */
 class EventManager implements EventManagerInterface
 {
+
     const WILDCARD = '*';
-    
+
     /**
      * Attached events.
-     * 
+     *
      * @var array
      */
     protected $events = array(self::WILDCARD => array());
 
     /**
      * Event object.
-     * 
+     *
      * @var EventInterface
      */
     protected $eventObject;
 
     /**
      * Constructor sets default event object.
-     * 
+     *
      * @param EventInterface $eventObject Event object
      */
     public function __construct(EventInterface $eventObject = null)
@@ -71,7 +72,7 @@ class EventManager implements EventManagerInterface
         if (null === $eventObject) {
             $eventObject = new Event;
         }
-        
+
         $this->setEventObject($eventObject);
     }
 
@@ -82,7 +83,7 @@ class EventManager implements EventManagerInterface
     {
         if (!is_callable($callback, true)) {
             throw new InvalidArgumentException(
-            "Second argument of '" . __CLASS__ . "'::attach must be a valid callback"
+                "Second argument of '" . __CLASS__ . "'::attach must be a valid callback"
             );
         }
 
@@ -99,11 +100,11 @@ class EventManager implements EventManagerInterface
      * {@inheritDoc}
      */
     public function trigger($event, $caller, array $parameters)
-    {        
+    {
         if (empty($this->events[$event]) && empty($this->events[self::WILDCARD])) {
             return;
         }
-        
+
         $events = array();
         if (!empty($this->events[$event])) {
             $events = $this->events[$event];
@@ -147,7 +148,7 @@ class EventManager implements EventManagerInterface
 
     /**
      * Return list of events.
-     * 
+     *
      * @return array
      */
     public function getEventList()
