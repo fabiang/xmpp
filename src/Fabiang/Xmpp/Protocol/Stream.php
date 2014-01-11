@@ -48,11 +48,12 @@ class Stream implements ProtocolImplementationInterface
     const STREAM_END   = '</stream:stream>';
 
     /**
+     * To, usally the server name.
      *
-     * @var
+     * @var string
      */
     protected $to = '';
-    
+
     /**
      * {@inheritDoc}
      */
@@ -61,14 +62,25 @@ class Stream implements ProtocolImplementationInterface
         return sprintf(static::STREAM_START, $this->getTo());
     }
 
+    /**
+     * Set to.
+     *
+     * @return string
+     */
     public function getTo()
     {
         return $this->to;
     }
 
+    /**
+     * Get to.
+     *
+     * @param string $to To
+     * @return \Fabiang\Xmpp\Protocol\Stream
+     */
     public function setTo($to)
     {
-        $this->to = $to;
+        $this->to = (string) $to;
         return $this;
     }
 

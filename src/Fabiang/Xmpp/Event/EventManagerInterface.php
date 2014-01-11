@@ -36,6 +36,8 @@
 
 namespace Fabiang\Xmpp\Event;
 
+use Fabiang\Xmpp\Event\EventInterface;
+
 /**
  * Event manager.
  *
@@ -61,4 +63,19 @@ interface EventManagerInterface
      * @return void
      */
     public function attach($event, /*callback*/ $callback);
+    
+    /**
+     * Return event object.
+     * 
+     * @return EventInterface
+     */
+    public function getEventObject();
+    
+    /**
+     * Set event object.
+     * 
+     * @param EventInterface $eventObject
+     * @return self
+     */
+    public function setEventObject(EventInterface $eventObject);
 }

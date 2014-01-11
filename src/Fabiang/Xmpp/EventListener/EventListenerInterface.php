@@ -38,13 +38,14 @@ namespace Fabiang\Xmpp\EventListener;
 
 use Fabiang\Xmpp\Event\EventManagerInterface;
 use Fabiang\Xmpp\Connection\ConnectionInterface;
+use Fabiang\Xmpp\Event\EventManagerAwareInterface;
 
 /**
  * Interface for event listeners.
  *
  * @package Xmpp\EventListener
  */
-interface EventListenerInterface
+interface EventListenerInterface extends EventManagerAwareInterface
 {
     /**
      * Register events.

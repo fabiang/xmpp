@@ -36,7 +36,9 @@
 
 namespace Fabiang\Xmpp\EventListener;
 
-use Fabiang\Xmpp\Event\Event;
+use Fabiang\Xmpp\Event\XMLEvent;
+use Fabiang\Xmpp\Exception\RuntimeException;
+use Fabiang\Xmpp\EventListener\Authentication\AuthenticationInterface;
 
 /**
  * Listener
@@ -47,31 +49,125 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
 {
     /**
      * Listener is blocking.
-     * 
+     *
      * @var boolean
      */
     protected $blocking = false;
-    
+
+    /**
+     * Collected mechanisms.
+     *
+     * @var array
+     */
+    protected $mechanisms = array();
+
+    /**
+     * Authentication methods.
+     *
+     * @var array
+     */
+    protected $authenticationClasses = array(
+        'digest-md5' => '\\Fabiang\\Xmpp\\EventListener\\Authentication\\DigestMd5',
+        'plain'      => '\\Fabiang\\Xmpp\\EventListener\\Authentication\\Plain'
+    );
+
+    /**
+     * {@inheritDoc}
+     */
     public function attachEvents()
     {
-        $this->getInputEventManager()->attach(
-            '{urn:ietf:params:xml:ns:xmpp-sasl}mechanism', array($this, 'authenticate')
-        );
+        $input = $this->getInputEventManager();
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}mechanisms', array($this, 'authenticate'));
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}mechanism', array($this, 'collectMechanisms'));
     }
-    
-    public function authenticate(Event $event)
+
+    /**
+     * Collect authentication machanisms.
+     *
+     * @param \Fabiang\Xmpp\Event\XMLEvent $event
+     * @return void
+     */
+    public function collectMechanisms(XMLEvent $event)
     {
-        list($element, $start) = $event->getParameters();
+        /* @var $element \DOMElement */
+        list($element) = $event->getParameters();
         $this->blocking = true;
-        if (false === $start) {
-            $mechanism = $element->nodeValue;
-            var_dump($mechanism);
+        if (false === $event->isStartTag()) {
+            $this->mechanisms[] = strtolower($element->nodeValue);
         }
     }
 
+    /**
+     * Authenticate after collecting machanisms.
+     *
+     * @param \Fabiang\Xmpp\Event\XMLEvent $event
+     * @return void
+     */
+    public function authenticate(XMLEvent $event)
+    {
+        if (false === $event->isStartTag()) {
+            $this->blocking = false;
+
+            $authenticationClass = null;
+
+            foreach ($this->mechanisms as $machanism) {
+                if (array_key_exists($machanism, $this->authenticationClasses)) {
+                    $authenticationClass = $this->authenticationClasses[$machanism];
+                    break;
+                }
+            }
+
+            if (null === $authenticationClass) {
+                throw new RuntimeException('No supportet authentication method found.');
+            }
+
+            $authentication = new $authenticationClass;
+
+            if (!($authentication instanceof AuthenticationInterface)) {
+                throw new RuntimeException(
+                    'Authentication class "' . get_class($authentication) . '" is no AuthenticationInterface'
+                );
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function isBlocking()
     {
         return $this->blocking;
+    }
+    
+    /**
+     * Get collected mechanisms.
+     * 
+     * @return array
+     */
+    public function getMechanisms()
+    {
+        return $this->mechanisms;
+    }
+
+    /**
+     * Get authentication classes.
+     *
+     * @return array
+     */
+    public function getAuthenticationClasses()
+    {
+        return $this->authenticationClasses;
+    }
+
+    /**
+     *
+     * @param array $authenticationClasses Authentication classes
+     * @return \Fabiang\Xmpp\EventListener\Authentication
+     */
+    public function setAuthenticationClasses(array $authenticationClasses)
+    {
+        $this->authenticationClasses = $authenticationClasses;
+        return $this;
     }
 
 }

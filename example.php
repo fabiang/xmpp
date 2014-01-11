@@ -10,11 +10,11 @@ use Monolog\Handler\StreamHandler;
 $logger = new Logger('xmpp');
 $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
 
-$hostname       = 'localhost'; //getenv('XMPP_HOSTNAME');
-$port           = 5222; //getenv('XMPP_PORT');
-$username       = 'xmpp'; //getenv('XMPP_USERNAME');
-$password       = 'test'; //getenv('XMPP_PASSWORD');
-$connectionType = 'tcp'; //getenv('XMPP_CONNECTION') ? : 'tcp';
+$hostname       = 'localhost';
+$port           = 5222;
+$username       = 'xmpp';
+$password       = 'test';
+$connectionType = 'tcp';
 $address        = "$connectionType://$hostname:$port";
 $scheme         = 'tcp';
 

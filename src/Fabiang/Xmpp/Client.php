@@ -40,14 +40,24 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Fabiang\Xmpp\Connection\ConnectionInterface;
 use Fabiang\Xmpp\Channel\Channel;
+use Fabiang\Xmpp\Event\EventManagerAwareInterface;
+use Fabiang\Xmpp\Event\EventManagerInterface;
+use Fabiang\Xmpp\Event\EventManager;
 
 /**
  * Xmpp connection client.
  *
  * @package Xmpp
  */
-class Client implements LoggerAwareInterface
+class Client implements EventManagerAwareInterface, LoggerAwareInterface
 {
+    /**
+     * Eventmanager.
+     *
+     * @var EventManagerInterface
+     */
+    protected $events;
+    
 
     /**
      * Connection.
@@ -147,6 +157,7 @@ class Client implements LoggerAwareInterface
 
     public function registerListner(EventListener\EventListenerInterface $listener)
     {
+        $listener->setEventManager($this->getEventManager());
         $listener->setInputEventListener($this->inputEventManager);
         $listener->setOutputEventListener($this->outputEventManager);
         $listener->setConnection($this->connection);
@@ -192,6 +203,27 @@ class Client implements LoggerAwareInterface
         if ($this->logger) {
             $this->logger->log($level, $message, $context);
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function getEventManager()
+    {
+        if (null === $this->events) {
+            $this->setEventManager(new EventManager());
+        }
+
+        return $this->events;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setEventManager(EventManagerInterface $events)
+    {
+        $this->events = $events;
+        return $this;
     }
 
 }

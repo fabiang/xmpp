@@ -46,7 +46,13 @@ use Fabiang\Xmpp\Event\EventManagerInterface;
  */
 abstract class AbstractEventListener implements EventListenerInterface
 {
-
+    /**
+     * Eventmanager.
+     *
+     * @var EventManagerInterface
+     */
+    protected $events;
+    
     /**
      * Event manager instance.
      *
@@ -110,6 +116,27 @@ abstract class AbstractEventListener implements EventListenerInterface
     public function setConnection(ConnectionInterface $connection)
     {
         $this->connection = $connection;
+        return $this;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function getEventManager()
+    {
+        if (null === $this->events) {
+            $this->setEventManager(new EventManager());
+        }
+
+        return $this->events;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setEventManager(EventManagerInterface $events)
+    {
+        $this->events = $events;
         return $this;
     }
 

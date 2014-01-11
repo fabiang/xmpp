@@ -43,21 +43,14 @@ namespace Fabiang\Xmpp\EventListener;
  */
 class Stream extends AbstractEventListener implements BlockingEventListenerInterface
 {
-    
+
     /**
      * Listener blocks stream.
-     * 
+     *
      * @var boolean
      */
-    protected $blocking   = false;
-    
-    /**
-     * Authentication mechanisms supported by server.
-     * 
-     * @var array
-     */
-    protected $mechanisms = array();
- 
+    protected $blocking = false;
+
     /**
      * {@inheritDoc}
      */
@@ -74,15 +67,18 @@ class Stream extends AbstractEventListener implements BlockingEventListenerInter
     /**
      * Stream starts.
      *
-     * @param Event   $event
-     * @param boolean $startElement
      * @return void
      */
     public function startStreamClient()
     {
         $this->blocking = true;
     }
-    
+
+    /**
+     * Server send stream start.
+     *
+     * @return void
+     */
     public function startStreamServer()
     {
         $this->blocking = false;

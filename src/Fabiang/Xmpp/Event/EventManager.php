@@ -129,9 +129,7 @@ class EventManager implements EventManagerInterface
     }
 
     /**
-     * Return event object.
-     * 
-     * @return EventInterface
+     * {@inheritDoc}
      */
     public function getEventObject()
     {
@@ -139,10 +137,7 @@ class EventManager implements EventManagerInterface
     }
 
     /**
-     * Set event object.
-     * 
-     * @param EventInterface $eventObject
-     * @return \Fabiang\Xmpp\Event\EventManager
+     * {@inheritDoc}
      */
     public function setEventObject(EventInterface $eventObject)
     {
