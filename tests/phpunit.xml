@@ -1,0 +1,22 @@
+<phpunit bootstrap="./bootstrap.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         forceCoversAnnotation="true"
+         strict="true"
+         verbose="true">
+
+    <testsuites>
+        <testsuite name="Xmpp">
+            <directory>src/Fabiang/Xmpp</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>../src/Fabiang/Xmpp</directory>
+        </whitelist>
+    </filter>
+
+</phpunit>
