@@ -1,4 +1,4 @@
-# fabiang/xmpp [![Build Status](https://api.travis-ci.org/fabiang/xmpp.png)](https://travis-ci.org/fabiang/xmpp)
+# fabiang/xmpp [![Build Status](https://travis-ci.org/fabiang/xmpp.png?branch=master)](https://travis-ci.org/fabiang/xmpp)
 
 Library for XMPP protocol connections (Jabber) for PHP.
 
