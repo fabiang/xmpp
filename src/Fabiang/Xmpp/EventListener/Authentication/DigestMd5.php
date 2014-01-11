@@ -34,14 +34,14 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Authentication;
+namespace Fabiang\Xmpp\EventListener\Authentication;
 
 /**
- * Handler for "plain" authentication mechanism.
+ * Handler for "digest md5" authentication mechanism.
  *
- * @package Xmpp
+ * @package Xmpp\EventListener\Authentication
  */
-class Plain
+class DigestMd5 implements AuthenticationInterface
 {
 
 }

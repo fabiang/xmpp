@@ -34,14 +34,14 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Authentication;
+namespace Fabiang\Xmpp\EventListener\Authentication;
 
 /**
- * Interface for classes that handle authentication.
+ * Handler for "plain" authentication mechanism.
  *
- * @package Xmpp
+ * @package Xmpp\EventListener\Authentication
  */
-interface AuthenticationInterface
+class Plain implements AuthenticationInterface
 {
 
 }
