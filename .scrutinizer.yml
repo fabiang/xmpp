@@ -5,7 +5,8 @@ before_commands:
 filter:
     excluded_paths: [vendor/*, tests/*]
 tools:
-    php_code_coverage: true
+    php_code_coverage:
+        test_command: phpunit -c tests/
     php_code_sniffer:
         config:
             standard: PSR2
