@@ -75,7 +75,7 @@ class XMLStreamTest extends \PHPUnit_Framework_TestCase
         $result = $this->object->parse($xml);
         $this->assertInstanceOf('\DOMDocument', $result);
         $this->assertSame($expected, $result->saveXML());
-        $this->assertSame(5, $triggered, 'Event where not triggered five times');
+        $this->assertSame(6, $triggered, 'Event where not triggered five times');
     }
     
     /**
@@ -108,7 +108,7 @@ class XMLStreamTest extends \PHPUnit_Framework_TestCase
         );
         $this->object->parse('<stream:features></stream:features>');
         $this->object->parse('</stream:stream>');
-        $this->assertSame(2, $triggered, 'Event where not triggered three times');
+        $this->assertSame(4, $triggered, 'Event where not triggered three times');
     }
 
     /**

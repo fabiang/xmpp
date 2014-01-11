@@ -22,7 +22,7 @@ class SocketTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $mock         = $this->getMock('\Socket\Raw\Socket', array(), array(), '', false);
-        $this->object = new Socket('tcp://localhost:9999', $mock);
+        $this->object = new Socket($mock, 'tcp://localhost:9999');
     }
 
     /**
@@ -34,7 +34,7 @@ class SocketTest extends \PHPUnit_Framework_TestCase
     public function testConstructor()
     {
         $mock = $this->getMock('\Socket\Raw\Socket', array(), array(), '', false);
-        $object = new Socket('', $mock);
+        $object = new Socket($mock, '');
         $this->assertSame($mock, $object->getSocket());
     }
 
