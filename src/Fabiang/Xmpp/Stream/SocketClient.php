@@ -106,7 +106,7 @@ class SocketClient
 
     /**
      * Set stream blocking mode.
-     * 
+     *
      * @param boolean $flag Flag
      * @return self
      */
@@ -129,7 +129,7 @@ class SocketClient
 
     /**
      * Write to stream.
-     * 
+     *
      * @param string  $string String
      * @param integer $length Limit
      * @return void
@@ -145,7 +145,7 @@ class SocketClient
 
     /**
      * Enable/disable cryptography on stream.
-     * 
+     *
      * @param boolean $enable     Flag
      * @param integer $cryptoType One of the STREAM_CRYPTO_METHOD_* constants.
      * @return void

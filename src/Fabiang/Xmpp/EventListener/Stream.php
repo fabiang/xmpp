@@ -36,6 +36,8 @@
 
 namespace Fabiang\Xmpp\EventListener;
 
+use Fabiang\Xmpp\Event\XMLEvent;
+
 /**
  * Listener
  *
@@ -58,22 +60,36 @@ class Stream extends AbstractEventListener implements BlockingEventListenerInter
     {
         $this->connection->getOutputStream()->getEventManager()->attach(
             '{http://etherx.jabber.org/streams}stream',
-            array($this, 'startStreamClient')
+            array($this, 'stream')
         );
-        $this->connection->getInputStream()->getEventManager()->attach(
-            '{http://etherx.jabber.org/streams}features',
-            array($this, 'startStreamServer')
-        );
+
+        $input = $this->connection->getInputStream()->getEventManager();
+        $input->attach('{http://etherx.jabber.org/streams}stream', array($this, 'streamServer'));
+        $input->attach('{http://etherx.jabber.org/streams}features', array($this, 'features'));
     }
 
     /**
      * Stream starts.
      *
+     * @param XMLEvent $event XMLEvent
      * @return void
      */
-    public function startStreamClient()
+    public function stream(XMLEvent $event)
     {
         $this->blocking = true;
+    }
+    
+    /**
+     * Stream server.
+     *
+     * @param XMLEvent $event XMLEvent
+     * @return void
+     */
+    public function streamServer(XMLEvent $event)
+    {
+        if (false === $event->isStartTag()) {
+            $this->blocking = false;
+        }
     }
 
     /**
@@ -81,7 +97,7 @@ class Stream extends AbstractEventListener implements BlockingEventListenerInter
      *
      * @return void
      */
-    public function startStreamServer()
+    public function features()
     {
         $this->blocking = false;
     }

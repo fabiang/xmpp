@@ -55,10 +55,14 @@ class StreamTest extends \PHPUnit_Framework_TestCase
      */
     public function testEvents()
     {
+        $element = new \DOMElement('machanism', 'PLAIN');
+        $event   = new XMLEvent;
+        $event->setParameters(array($element));
+        
         $this->assertFalse($this->object->isBlocking());
-        $this->object->startStreamClient();
+        $this->object->stream($event);
         $this->assertTrue($this->object->isBlocking());
-        $this->object->startStreamServer();
+        $this->object->features();
         $this->assertFalse($this->object->isBlocking());
     }
 

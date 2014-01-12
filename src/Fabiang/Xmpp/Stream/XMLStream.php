@@ -164,7 +164,7 @@ class XMLStream implements EventManagerAwareInterface
             }
         }
 
-        if (0 === xml_parse($this->parser, $source)) {
+        if (0 === xml_parse($this->parser, $source, false)) {
             XMLParserException::factory($this->parser);
         }
         
@@ -310,6 +310,8 @@ class XMLStream implements EventManagerAwareInterface
 
     /**
      * Reset class properties.
+     * 
+     * @return void
      */
     protected function reset()
     {

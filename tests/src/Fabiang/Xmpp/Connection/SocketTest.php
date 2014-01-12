@@ -31,7 +31,7 @@ class SocketTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test constructor.
-     * 
+     *
      * @covers Fabiang\Xmpp\Connection\Socket::__construct
      * @return void
      */
@@ -44,7 +44,7 @@ class SocketTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test receivding data.
-     * 
+     *
      * @covers Fabiang\Xmpp\Connection\Socket::receive
      * @return void
      */
@@ -61,56 +61,60 @@ class SocketTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test sending data.
-     * 
+     *
      * @covers Fabiang\Xmpp\Connection\Socket::send
      * @return void
      */
     public function testSend()
     {
         $data = '<xml xmlns="test"></xml>';
-        
+
         $mock = $this->object->getSocket();
         $mock->expects($this->once())
             ->method('write')
             ->with($this->equalTo($data));
-        
+
         $this->object->send($data);
     }
-    
+
     /**
      * Test connecting.
-     * 
+     *
      * @covers Fabiang\Xmpp\Connection\Socket::connect
      * @covers Fabiang\Xmpp\Connection\Socket::isConnected
      * @return void
      */
     public function testConnect()
-    {        
+    {
         $mock = $this->object->getSocket();
         $mock->expects($this->once())
             ->method('connect');
         $this->object->connect();
         $this->assertTrue($this->object->isConnected());
     }
-    
+
     /**
      * Test disconnecting.
-     * 
+     *
      * @covers Fabiang\Xmpp\Connection\Socket::disconnect
      * @covers Fabiang\Xmpp\Connection\Socket::isConnected
      * @return void
      */
     public function testDisconnect()
-    {        
+    {
+        $this->object->send('<stream:stream xmlns:stream="http://etherx.jabber.org/streams">');
+
         $mock = $this->object->getSocket();
+        $mock->expects($this->any())
+            ->method('write');
         $mock->expects($this->once())
             ->method('connect');
-        $this->object->connect();
-        $this->assertTrue($this->object->isConnected());
-        
-        $mock = $this->object->getSocket();
         $mock->expects($this->once())
             ->method('close');
+
+        $this->object->connect();
+        $this->assertTrue($this->object->isConnected());
+
         $this->object->disconnect();
         $this->assertFalse($this->object->isConnected());
     }
@@ -125,10 +129,10 @@ class SocketTest extends \PHPUnit_Framework_TestCase
         $socket = new SocketClient('tcp://localhost:9999');
         $this->assertSame($socket, $this->object->setSocket($socket)->getSocket());
     }
-    
+
     /**
      * Test adding listeners.
-     * 
+     *
      * @covers Fabiang\Xmpp\Connection\Socket::addListener
      * @covers Fabiang\Xmpp\Connection\Socket::getListeners
      * @return void
@@ -139,10 +143,10 @@ class SocketTest extends \PHPUnit_Framework_TestCase
         $this->object->addListener($eventListener);
         $this->assertSame(array($eventListener), $this->object->getListeners());
     }
-    
+
     /**
      * Test setting and getting output stream.
-     * 
+     *
      * @covers Fabiang\Xmpp\Connection\Socket::getOutputStream
      * @covers Fabiang\Xmpp\Connection\Socket::setOutputStream
      * @return void
@@ -153,10 +157,10 @@ class SocketTest extends \PHPUnit_Framework_TestCase
         $outputStream = new XMLStream;
         $this->assertSame($outputStream, $this->object->setOutputStream($outputStream)->getOutputStream());
     }
-    
+
     /**
      * Test setting and getting input stream.
-     * 
+     *
      * @covers Fabiang\Xmpp\Connection\Socket::getInputStream
      * @covers Fabiang\Xmpp\Connection\Socket::setInputStream
      * @return void

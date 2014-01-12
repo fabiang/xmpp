@@ -42,6 +42,7 @@ use Fabiang\Xmpp\Stream\SocketClient;
 use Fabiang\Xmpp\Stream\XMLStream;
 use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
+use Fabiang\Xmpp\Protocol\Stream;
 
 /**
  * Connection to a stream.
@@ -129,9 +130,12 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
     public function receive()
     {
         $buffer = $this->getSocket()->read(static::DEFAULT_LENGTH);
-        $this->log(LogLevel::DEBUG, "Received buffer '$buffer' from '{$this->address}'");
-        $this->getInputStream()->parse($buffer);
-        return $buffer;
+
+        if ($buffer) {
+            $this->log(LogLevel::DEBUG, "Received buffer '$buffer' from '{$this->address}'");
+            $this->getInputStream()->parse($buffer);
+            return $buffer;
+        }
     }
 
     /**
@@ -171,7 +175,7 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
     public function connect()
     {
         $this->getSocket()->connect();
-        $this->getSocket()->setBlocking(true);
+        //$this->getSocket()->setBlocking(true);
         $this->connected = true;
         $this->log(LogLevel::DEBUG, "Connected to '{$this->address}'");
     }
@@ -182,6 +186,7 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
     public function disconnect()
     {
         if ($this->connected) {
+            $this->send(Stream::STREAM_END);
             $this->getSocket()->close();
             $this->connected = false;
             $this->log(LogLevel::DEBUG, "Disconnected from '{$this->address}'");

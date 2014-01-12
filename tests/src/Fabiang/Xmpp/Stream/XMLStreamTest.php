@@ -99,8 +99,11 @@ class XMLStreamTest extends \PHPUnit_Framework_TestCase
             . '<register xmlns="http://jabber.org/features/iq-register"/></stream:features>';
         $this->assertInstanceOf('\DOMDocument', $this->object->parse($xml));
         
-        $xml = '<proceed xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>';
+        $xml = '<proceed ';
         $this->assertInstanceOf('\DOMDocument', $this->object->parse($xml));
+        
+        $xml = 'xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>';
+        $this->assertInstanceOf('\DOMDocument', $this->object->parse($xml));    
     }
 
     /**

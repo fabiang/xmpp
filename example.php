@@ -25,8 +25,8 @@ $client = new Client($connection, $logger);
 $client->connect();
 
 $client->registerListner(new Fabiang\Xmpp\EventListener\Stream());
-$client->registerListner(new Fabiang\Xmpp\EventListener\StartTls());
-//$client->registerListner(new Fabiang\Xmpp\EventListener\Authentication($username, $password));
+//$client->registerListner(new Fabiang\Xmpp\EventListener\StartTls());
+$client->registerListner(new Fabiang\Xmpp\EventListener\Authentication($username, $password));
 
 $stream = new Fabiang\Xmpp\Protocol\Stream();
 $stream->setTo('localhost');
