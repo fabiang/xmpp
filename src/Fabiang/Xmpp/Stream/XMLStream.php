@@ -165,7 +165,7 @@ class XMLStream implements EventManagerAwareInterface
         }
 
         if (0 === xml_parse($this->parser, $source)) {
-            //XMLParserException::factory($this->parser);
+            XMLParserException::factory($this->parser);
         }
         
         // </stream> was not there, so lets close the document
