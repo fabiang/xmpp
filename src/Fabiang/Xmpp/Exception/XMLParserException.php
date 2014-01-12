@@ -58,8 +58,7 @@ class XMLParserException extends RuntimeException
         $column = xml_get_current_column_number($parser);
 
         throw new static(
-            sprintf('XML parsing error: "%s" at Line %d at column %d', $error, $line, $column),
-            $code
+        sprintf('XML parsing error: "%s" at Line %d at column %d', $error, $line, $column), $code
         );
     }
 

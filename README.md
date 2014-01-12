@@ -5,7 +5,6 @@ Library for XMPP protocol connections (Jabber) for PHP.
 ## SYSTEM REQUIREMENTS
 
 - PHP 5.3
-- clue/socket-raw - a wrapper class for PHPs socket functions
 - psr/log - for PSR-3 logging
 
 ## INSTALLATION
