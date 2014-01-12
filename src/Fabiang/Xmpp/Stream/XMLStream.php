@@ -152,7 +152,7 @@ class XMLStream implements EventManagerAwareInterface
             $this->reset();
             
             $matches = array();
-            if (preg_match('/^<\?xml.*encoding=(\'|")([^\1]+)\1.*?>/i', $source, $matches)) {
+            if (preg_match('/^<\?xml.*encoding=(\'|")([\w-]+)\1.*?>/i', $source, $matches)) {
                 $this->encoding = $matches[2];
                 xml_parser_set_option($this->parser, XML_OPTION_TARGET_ENCODING, $this->encoding);
             }
@@ -165,7 +165,7 @@ class XMLStream implements EventManagerAwareInterface
         }
 
         if (0 === xml_parse($this->parser, $source)) {
-            XMLParserException::factory($this->parser);
+            //XMLParserException::factory($this->parser);
         }
         
         // </stream> was not there, so lets close the document

@@ -34,75 +34,33 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\EventListener;
-
-use Fabiang\Xmpp\Event\XMLEvent;
+namespace Fabiang\Xmpp\Exception;
 
 /**
- * Listener
+ * XML parser exception.
  *
- * @package Xmpp\EventListener
+ * @package Xmpp\Exception
  */
-class StartTls extends AbstractEventListener implements BlockingEventListenerInterface
+class XMLParserException extends RuntimeException
 {
 
     /**
-     * Listener blocks stream.
+     * Factory XML parsing exception.
      *
-     * @var boolean
+     * @param resource $parser
+     * @throws self
      */
-    protected $blocking = false;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function attachEvents()
+    public static function factory($parser)
     {
-        $this->connection->getInputStream()->getEventManager()->attach(
-            '{urn:ietf:params:xml:ns:xmpp-tls}starttls',
-            array($this, 'starttls')
+        $code   = xml_get_error_code($parser);
+        $error  = xml_error_string($code);
+        $line   = xml_get_current_line_number($parser);
+        $column = xml_get_current_column_number($parser);
+
+        throw new static(
+            sprintf('XML parsing error: "%s" at Line %d at column %d', $error, $line, $column),
+            $code
         );
-
-        $this->connection->getInputStream()->getEventManager()->attach(
-            '{urn:ietf:params:xml:ns:xmpp-tls}proceed',
-            array($this, 'proceed')
-        );
-    }
-
-    /**
-     * Send start tls command.
-     *
-     * @return void
-     */
-    public function starttls(XMLEvent $event)
-    {
-        if (false === $event->isStartTag()) {
-            $this->blocking = true;
-            $this->connection->send('<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>');
-        }
-    }
-
-    /**
-     * Start TLS response.
-     *
-     * @return void
-     */
-    public function proceed()
-    {
-        $this->blocking = false;
-        $this->connection->getSocket()->crypto(true, STREAM_CRYPTO_METHOD_SSLv23_CLIENT);
-
-        $stream = new Fabiang\Xmpp\Protocol\Stream();
-        $stream->setTo('localhost');
-        $this->connection->send($stream->toString());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isBlocking()
-    {
-        return $this->blocking;
     }
 
 }
