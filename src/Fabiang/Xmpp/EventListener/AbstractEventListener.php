@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2013 Fabian Grutschus. All rights reserved.
+ * Copyright 2014 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -29,7 +29,7 @@
  * either expressed or implied, of the copyright holders.
  *
  * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2013 Fabian Grutschus. All rights reserved.
+ * @copyright 2014 Fabian Grutschus. All rights reserved.
  * @license   BSD
  * @link      http://github.com/fabiang/xmpp
  */
@@ -52,20 +52,6 @@ abstract class AbstractEventListener implements EventListenerInterface
      * @var EventManagerInterface
      */
     protected $events;
-    
-    /**
-     * Event manager instance.
-     *
-     * @var EventManagerInterface
-     */
-    protected $inputEventManager;
-
-    /**
-     * Event manager instance.
-     *
-     * @var EventManagerInterface
-     */
-    protected $outputEventManager;
 
     /**
      * Connection.
@@ -77,48 +63,12 @@ abstract class AbstractEventListener implements EventListenerInterface
     /**
      * {@inheritDoc}
      */
-    public function setInputEventListener(EventManagerInterface $events)
-    {
-        $this->inputEventManager = $events;
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setOutputEventListener(EventManagerInterface $events)
-    {
-        $this->outputEventManager = $events;
-        return $this;
-    }
-
-    /**
-     *
-     * @return EventManagerInterface
-     */
-    public function getInputEventManager()
-    {
-        return $this->inputEventManager;
-    }
-
-    /**
-     *
-     * @return EventManagerInterface
-     */
-    public function getOutputEventManager()
-    {
-        return $this->outputEventManager;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function setConnection(ConnectionInterface $connection)
     {
         $this->connection = $connection;
         return $this;
     }
-    
+
     /**
      * {@inheritDoc}
      */

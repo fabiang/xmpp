@@ -32,7 +32,8 @@ class StreamTest extends \PHPUnit_Framework_TestCase
     {
         $this->object->setTo('foobar');
         $this->assertSame(
-            '<stream:stream to="foobar" xmlns:stream="http://etherx.jabber.org/streams"'
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            . '<stream:stream to="foobar" xmlns:stream="http://etherx.jabber.org/streams"'
             . ' xmlns="jabber:client" version="1.0">',
             $this->object->toString()
         );

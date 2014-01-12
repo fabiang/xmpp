@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2013 Fabian Grutschus. All rights reserved.
+ * Copyright 2014 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -29,19 +29,85 @@
  * either expressed or implied, of the copyright holders.
  *
  * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2013 Fabian Grutschus. All rights reserved.
+ * @copyright 2014 Fabian Grutschus. All rights reserved.
  * @license   BSD
  * @link      http://github.com/fabiang/xmpp
  */
 
 namespace Fabiang\Xmpp\EventListener\Authentication;
 
+use Fabiang\Xmpp\EventListener\AbstractEventListener;
+use Fabiang\Xmpp\Event\XMLEvent;
+
 /**
  * Handler for "digest md5" authentication mechanism.
  *
  * @package Xmpp\EventListener\Authentication
  */
-class DigestMd5 implements AuthenticationInterface
+class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
 {
+
+    /**
+     * IS event blocking stream.
+     *
+     * @var boolean
+     */
+    protected $blocking = false;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function attachEvents()
+    {
+        $input = $this->connection->getInputStream()->getEventManager();
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}challenge', array($this, 'challenge'));
+
+        $output = $this->connection->getOutputStream()->getEventManager();
+        $output->attach('{urn:ietf:params:xml:ns:xmpp-sasl}auth', array($this, 'auth'));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function authenticate($username, $password)
+    {
+        $auth = '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="DIGEST-MD5" '
+            . 'xmlns:ga="http://www.google.com/talk/protocol/auth" ga:client-uses-full-bind-result="true"/>';
+        $this->connection->send($auth);
+    }
+
+    /**
+     * Authentication starts blocking.
+     *
+     * @return void
+     */
+    public function auth()
+    {
+        $this->blocking = true;
+    }
+
+    /**
+     * Challenge string received.
+     *
+     * @param XMLEvent $event XML event
+     * @return void
+     */
+    public function challenge(XMLEvent $event)
+    {
+        var_dump(1);
+        if (false === $event->isStartTag()) {
+            list($element) = $event->getParameters();
+            var_dump($element->nodeValue);
+            $this->blocking = false;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isBlocking()
+    {
+        return $this->blocking;
+    }
 
 }

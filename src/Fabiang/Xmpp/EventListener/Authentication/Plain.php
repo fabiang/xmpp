@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2013 Fabian Grutschus. All rights reserved.
+ * Copyright 2014 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -29,19 +29,50 @@
  * either expressed or implied, of the copyright holders.
  *
  * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2013 Fabian Grutschus. All rights reserved.
+ * @copyright 2014 Fabian Grutschus. All rights reserved.
  * @license   BSD
  * @link      http://github.com/fabiang/xmpp
  */
 
 namespace Fabiang\Xmpp\EventListener\Authentication;
 
+use Fabiang\Xmpp\EventListener\AbstractEventListener;
+use Fabiang\Xmpp\Event\XMLEvent;
+
 /**
  * Handler for "plain" authentication mechanism.
  *
  * @package Xmpp\EventListener\Authentication
  */
-class Plain implements AuthenticationInterface
+class Plain extends AbstractEventListener implements AuthenticationInterface
 {
+    /**
+     * IS event blocking stream.
+     *
+     * @var boolean
+     */
+    protected $blocking = false;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function attachEvents()
+    {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function authenticate($username, $password)
+    {
+
+    }
+    /**
+     * {@inheritDoc}
+     */
+    public function isBlocking()
+    {
+        return $this->blocking;
+    }
 
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2013 Fabian Grutschus. All rights reserved.
+ * Copyright 2014 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -29,7 +29,7 @@
  * either expressed or implied, of the copyright holders.
  *
  * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2013 Fabian Grutschus. All rights reserved.
+ * @copyright 2014 Fabian Grutschus. All rights reserved.
  * @license   BSD
  * @link      http://github.com/fabiang/xmpp
  */
@@ -47,6 +47,21 @@ use Fabiang\Xmpp\EventListener\Authentication\AuthenticationInterface;
  */
 class Authentication extends AbstractEventListener implements BlockingEventListenerInterface
 {
+
+    /**
+     * Username.
+     *
+     * @var string
+     */
+    protected $username;
+
+    /**
+     * Password.
+     *
+     * @var string
+     */
+    protected $password;
+
     /**
      * Listener is blocking.
      *
@@ -72,11 +87,22 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
     );
 
     /**
+     * Constructor.
+     *
+     * @param string $username Username (optional)
+     * @param strung $password Password (optional)
+     */
+    public function __construct($username = null, $password = null)
+    {
+        $this->setUsername($username)->setPassword($password);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function attachEvents()
     {
-        $input = $this->getInputEventManager();
+        $input = $this->connection->getInputStream()->getEventManager();
         $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}mechanisms', array($this, 'authenticate'));
         $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}mechanism', array($this, 'collectMechanisms'));
     }
@@ -84,7 +110,7 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
     /**
      * Collect authentication machanisms.
      *
-     * @param \Fabiang\Xmpp\Event\XMLEvent $event
+     * @param XMLEvent $event
      * @return void
      */
     public function collectMechanisms(XMLEvent $event)
@@ -100,7 +126,7 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
     /**
      * Authenticate after collecting machanisms.
      *
-     * @param \Fabiang\Xmpp\Event\XMLEvent $event
+     * @param XMLEvent $event
      * @return void
      */
     public function authenticate(XMLEvent $event)
@@ -124,10 +150,14 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
             $authentication = new $authenticationClass;
 
             if (!($authentication instanceof AuthenticationInterface)) {
-                throw new RuntimeException(
-                    'Authentication class "' . get_class($authentication) . '" is no AuthenticationInterface'
-                );
+                $message = 'Authentication class "' . get_class($authentication) . '" is no AuthenticationInterface';
+                throw new RuntimeException($message);
             }
+
+            $authentication->setEventManager($this->getEventManager())->setConnection($this->connection);
+            $authentication->attachEvents();
+            $this->connection->addListener($authentication);
+            $authentication->authenticate($this->getUsername(), $this->getPassword());
         }
     }
 
@@ -138,10 +168,10 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
     {
         return $this->blocking;
     }
-    
+
     /**
      * Get collected mechanisms.
-     * 
+     *
      * @return array
      */
     public function getMechanisms()
@@ -167,6 +197,50 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
     public function setAuthenticationClasses(array $authenticationClasses)
     {
         $this->authenticationClasses = $authenticationClasses;
+        return $this;
+    }
+
+    /**
+     * Get username.
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Get password.
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * Set username.
+     *
+     * @param string $username Username
+     * @return self
+     */
+    public function setUsername($username)
+    {
+        $this->username = $username;
+        return $this;
+    }
+
+    /**
+     * Set password.
+     *
+     * @param string $password Password.
+     * @return self
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
         return $this;
     }
 

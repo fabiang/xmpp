@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2013 Fabian Grutschus. All rights reserved.
+ * Copyright 2014 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -29,7 +29,7 @@
  * either expressed or implied, of the copyright holders.
  *
  * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2013 Fabian Grutschus. All rights reserved.
+ * @copyright 2014 Fabian Grutschus. All rights reserved.
  * @license   BSD
  * @link      http://github.com/fabiang/xmpp
  */
@@ -40,6 +40,7 @@ use Fabiang\Xmpp\Event\EventManagerAwareInterface;
 use Fabiang\Xmpp\Event\EventManagerInterface;
 use Fabiang\Xmpp\Event\EventManager;
 use Fabiang\Xmpp\Event\XMLEvent;
+use Fabiang\Xmpp\Exception\XMLParserException;
 
 /**
  * Xml stream class.
@@ -118,17 +119,7 @@ class XMLStream implements EventManagerAwareInterface
      */
     public function __construct($encoding = 'UTF-8', XMLEvent $eventObject = null)
     {
-        $parser = xml_parser_create($encoding);
-        xml_set_object($parser, $this);
-
-        xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
-        xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 1);
-
-        xml_set_element_handler($parser, 'startXml', 'endXml');
-        xml_set_character_data_handler($parser, 'dataXml');
-        $this->parser   = $parser;
         $this->encoding = $encoding;
-
         $this->reset();
 
         if (null === $eventObject) {
@@ -158,22 +149,25 @@ class XMLStream implements EventManagerAwareInterface
 
         // collect xml declaration
         if ('<?xml' === substr($source, 0, 5) || null === $documentElement) {
+            $this->reset();
+            
             $matches = array();
             if (preg_match('/^<\?xml.*encoding=(\'|")([^\1]+)\1.*?>/i', $source, $matches)) {
                 $this->encoding = $matches[2];
                 xml_parser_set_option($this->parser, XML_OPTION_TARGET_ENCODING, $this->encoding);
             }
-            $this->reset();
         } else {
             // clean the document
-            /* @var $childNode DOMNode */
+            /* @var $childNode \DOMNode */
             foreach ($documentElement->childNodes as $childNode) {
                 $documentElement->removeChild($childNode);
             }
         }
 
-        xml_parse($this->parser, $source);
-
+        if (0 === xml_parse($this->parser, $source)) {
+            XMLParserException::factory($this->parser);
+        }
+        
         // </stream> was not there, so lets close the document
         if ($this->depth > 0) {
             $this->document->appendChild($this->elements[0]);
@@ -319,6 +313,16 @@ class XMLStream implements EventManagerAwareInterface
      */
     protected function reset()
     {
+        $parser = xml_parser_create($this->encoding);
+        xml_set_object($parser, $this);
+
+        xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
+        xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 1);
+
+        xml_set_element_handler($parser, 'startXml', 'endXml');
+        xml_set_character_data_handler($parser, 'dataXml');
+        
+        $this->parser     = $parser;
         $this->depth      = 0;
         $this->document   = new \DOMDocument('1.0', $this->encoding);
         $this->namespaces = array();

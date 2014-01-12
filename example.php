@@ -1,6 +1,7 @@
 <?php
 
 require_once 'vendor/autoload.php';
+error_reporting(-1);
 
 use Fabiang\Xmpp\Connection\Socket;
 use Fabiang\Xmpp\Client;
@@ -19,11 +20,13 @@ $address        = "$connectionType://$hostname:$port";
 $scheme         = 'tcp';
 
 $connection = Socket::factory($address);
-$client     = new Client($connection, $logger);
+
+$client = new Client($connection, $logger);
 $client->connect();
 
 $client->registerListner(new Fabiang\Xmpp\EventListener\Stream());
-$client->registerListner(new Fabiang\Xmpp\EventListener\Authentication());
+$client->registerListner(new Fabiang\Xmpp\EventListener\StartTls());
+//$client->registerListner(new Fabiang\Xmpp\EventListener\Authentication($username, $password));
 
 $stream = new Fabiang\Xmpp\Protocol\Stream();
 $stream->setTo('localhost');

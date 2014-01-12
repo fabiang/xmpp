@@ -36,12 +36,14 @@
 
 namespace Fabiang\Xmpp\EventListener;
 
+use Fabiang\Xmpp\Event\XMLEvent;
+
 /**
  * Listener
  *
  * @package Xmpp\EventListener
  */
-class Stream extends AbstractEventListener implements BlockingEventListenerInterface
+class StartTls extends AbstractEventListener implements BlockingEventListenerInterface
 {
 
     /**
@@ -56,34 +58,38 @@ class Stream extends AbstractEventListener implements BlockingEventListenerInter
      */
     public function attachEvents()
     {
-        $this->connection->getOutputStream()->getEventManager()->attach(
-            '{http://etherx.jabber.org/streams}stream',
-            array($this, 'startStreamClient')
-        );
         $this->connection->getInputStream()->getEventManager()->attach(
-            '{http://etherx.jabber.org/streams}features',
-            array($this, 'startStreamServer')
+            '{urn:ietf:params:xml:ns:xmpp-tls}starttls', array($this, 'starttls')
+        );
+
+        $this->connection->getInputStream()->getEventManager()->attach(
+            '{urn:ietf:params:xml:ns:xmpp-tls}proceed', array($this, 'starttlsOk')
         );
     }
 
     /**
-     * Stream starts.
+     * Send start tls command.
      *
      * @return void
      */
-    public function startStreamClient()
+    public function starttls(XMLEvent $event)
     {
-        $this->blocking = true;
+        if (false === $event->isStartTag()) {
+            $this->blocking = true;
+            $this->connection->send('<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>');
+        }
     }
 
     /**
-     * Server send stream start.
+     * Start TLS response.
      *
      * @return void
      */
-    public function startStreamServer()
+    public function starttlsOk()
     {
-        $this->blocking = false;
+        var_dump(1);
+        //$this->connection->getSocket()->crypto(true, STREAM_CRYPTO_METHOD_SSLv23_CLIENT);
+        //$this->blocking = false;
     }
 
     /**

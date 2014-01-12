@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2013 Fabian Grutschus. All rights reserved.
+ * Copyright 2014 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -29,12 +29,16 @@
  * either expressed or implied, of the copyright holders.
  *
  * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2013 Fabian Grutschus. All rights reserved.
+ * @copyright 2014 Fabian Grutschus. All rights reserved.
  * @license   BSD
  * @link      http://github.com/fabiang/xmpp
  */
 
 namespace Fabiang\Xmpp\Connection;
+
+use Fabiang\Xmpp\Stream\XMLStream;
+use Fabiang\Xmpp\EventListener\EventListenerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Connection double for testing.
@@ -43,5 +47,171 @@ namespace Fabiang\Xmpp\Connection;
  */
 class Test implements ConnectionInterface
 {
+
+    /**
+     *
+     * @var XMLStream
+     */
+    protected $outputStream;
+
+    /**
+     *
+     * @var \XMLStream
+     */
+    protected $inputStream;
+
+    /**
+     * Event listeners.
+     *
+     * @var EventListenerInterface[]
+     */
+    protected $listeners = array();
+
+    /**
+     * Connected.
+     *
+     * @var boolean
+     */
+    protected $connected = false;
+
+    /**
+     * Data for next receive().
+     *
+     * @var string|null
+     */
+    protected $data;
+
+    /**
+     * Buffer data.
+     *
+     * @var array
+     */
+    protected $buffer = array();
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getOutputStream()
+    {
+        if (null === $this->outputStream) {
+            $this->outputStream = new XMLStream();
+        }
+
+        return $this->outputStream;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getInputStream()
+    {
+        if (null === $this->inputStream) {
+            $this->inputStream = new XMLStream();
+        }
+
+        return $this->inputStream;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setOutputStream(XMLStream $outputStream)
+    {
+        $this->outputStream = $outputStream;
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setInputStream(XMLStream $inputStream)
+    {
+        $this->inputStream = $inputStream;
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addListener(EventListenerInterface $eventListener)
+    {
+        $this->listeners[] = $eventListener;
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function connect()
+    {
+        $this->connected = true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function disconnect()
+    {
+        $this->connected = false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isConnected()
+    {
+        return $this->connected;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function receive()
+    {
+        if (null !== $this->data) {
+            $data       = $this->data;
+            $this->data = null;
+            return $data;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function send($buffer)
+    {
+        $this->buffer[] = $buffer;
+    }
+
+    /**
+     * Set data for next receive().
+     *
+     * @param string|null $data
+     * @return self
+     */
+    public function setData($data = null)
+    {
+        $this->data = $data;
+        return $this;
+    }
+
+    /**
+     * Get buffer data.
+     *
+     * @return array
+     */
+    public function getBuffer()
+    {
+        return $this->buffer;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+        return $this;
+    }
 
 }

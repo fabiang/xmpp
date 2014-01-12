@@ -34,64 +34,14 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\EventListener;
+namespace Fabiang\Xmpp\Exception;
 
 /**
- * Listener
+ * XML parser exception.
  *
- * @package Xmpp\EventListener
+ * @package Xmpp\Exception
  */
-class Stream extends AbstractEventListener implements BlockingEventListenerInterface
+class SocketException extends RuntimeException
 {
-
-    /**
-     * Listener blocks stream.
-     *
-     * @var boolean
-     */
-    protected $blocking = false;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function attachEvents()
-    {
-        $this->connection->getOutputStream()->getEventManager()->attach(
-            '{http://etherx.jabber.org/streams}stream',
-            array($this, 'startStreamClient')
-        );
-        $this->connection->getInputStream()->getEventManager()->attach(
-            '{http://etherx.jabber.org/streams}features',
-            array($this, 'startStreamServer')
-        );
-    }
-
-    /**
-     * Stream starts.
-     *
-     * @return void
-     */
-    public function startStreamClient()
-    {
-        $this->blocking = true;
-    }
-
-    /**
-     * Server send stream start.
-     *
-     * @return void
-     */
-    public function startStreamServer()
-    {
-        $this->blocking = false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isBlocking()
-    {
-        return $this->blocking;
-    }
 
 }

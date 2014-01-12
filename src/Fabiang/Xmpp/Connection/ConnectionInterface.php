@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2013 Fabian Grutschus. All rights reserved.
+ * Copyright 2014 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -29,7 +29,7 @@
  * either expressed or implied, of the copyright holders.
  *
  * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2013 Fabian Grutschus. All rights reserved.
+ * @copyright 2014 Fabian Grutschus. All rights reserved.
  * @license   BSD
  * @link      http://github.com/fabiang/xmpp
  */
@@ -37,6 +37,8 @@
 namespace Fabiang\Xmpp\Connection;
 
 use Psr\Log\LoggerAwareInterface;
+use Fabiang\Xmpp\Stream\XMLStream;
+use Fabiang\Xmpp\EventListener\EventListenerInterface;
 
 /**
  * Connections must implement this interface.
@@ -47,37 +49,75 @@ interface ConnectionInterface extends LoggerAwareInterface
 {
     /**
      * Connect.
-     * 
+     *
      * @return void
      */
     public function connect();
-    
+
     /**
      * Disconnect.
-     * 
+     *
      * @return void
      */
     public function disconnect();
-    
+
     /**
      * Is connection established.
-     * 
+     *
      * @return boolean
      */
     public function isConnected();
-    
+
     /**
      * Receive data.
-     * 
+     *
      * @return string
      */
     public function receive();
-    
+
     /**
      * Send data.
-     * 
+     *
      * @param string $buffer Data to send.
      * @return void
      */
     public function send($buffer);
+
+    /**
+     * Get output stream.
+     *
+     * @return XMLStream
+     */
+    public function getOutputStream();
+
+    /**
+     * Get input stream.
+     *
+     * @return XMLStream
+     */
+    public function getInputStream();
+
+    /**
+     * Set output stream.
+     *
+     * @param XMLStream $outputStream Output stream
+     * @return void
+     */
+    public function setOutputStream(XMLStream $outputStream);
+
+    /**
+     * Set input stream.
+     *
+     * @param XMLStream $inputStream Input stream
+     * @return self
+     */
+    public function setInputStream(XMLStream $inputStream);
+
+    /**
+     * Add listener.
+     *
+     * @param EventListenerInterface $eventListener
+     * @return self
+     */
+    public function addListener(EventListenerInterface $eventListener);
 }

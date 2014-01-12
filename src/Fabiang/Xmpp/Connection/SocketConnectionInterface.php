@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2013 Fabian Grutschus. All rights reserved.
+ * Copyright 2014 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -29,14 +29,14 @@
  * either expressed or implied, of the copyright holders.
  *
  * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2013 Fabian Grutschus. All rights reserved.
+ * @copyright 2014 Fabian Grutschus. All rights reserved.
  * @license   BSD
  * @link      http://github.com/fabiang/xmpp
  */
 
 namespace Fabiang\Xmpp\Connection;
 
-use Socket\Raw\Socket as StreamSocket;
+use Fabiang\Xmpp\Stream\SocketClient;
 
 /**
  * Socket connection.
@@ -46,7 +46,7 @@ use Socket\Raw\Socket as StreamSocket;
 interface SocketConnectionInterface
 {
 
-    public function __construct(StreamSocket $socket, $address);
+    public function __construct(SocketClient $socket, $address);
 
     /**
      * Set socket instance.
@@ -55,5 +55,5 @@ interface SocketConnectionInterface
      *
      * @return self
      */
-    public function setSocket(StreamSocket $socket);
+    public function setSocket(SocketClient $socket);
 }

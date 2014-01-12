@@ -61,7 +61,7 @@ class XMLStreamTest extends \PHPUnit_Framework_TestCase
             . '<mechanism>CRAM-MD5</mechanism>'
             . '</mechanisms>'
             . '</stream:features>';
-        
+
         $expected = '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
             . '<stream:stream xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client" from="gamebox" '
             . 'id="b9a85bbd" xml:lang="en" version="1.0"><stream:features>'
@@ -77,10 +77,35 @@ class XMLStreamTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $result->saveXML());
         $this->assertSame(10, $triggered, 'Event where not triggered five times');
     }
-    
+
+    /**
+     * Test parsing xml.
+     *
+     * @covers Fabiang\Xmpp\Stream\XmlStream::parse
+     * @return void
+     */
+    public function testParseChallenge()
+    {
+        $xml = '<?xml version=\'1.0\' encoding=\'UTF-8\'?><stream:stream '
+            . 'xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client" from="gamebox" id="7f3ceab2" '
+            . 'xml:lang="en" version="1.0">';
+        $this->assertInstanceOf('\DOMDocument', $this->object->parse($xml));
+        
+        $xml = '<stream:features><starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"></starttls>'
+            . '<mechanisms xmlns="urn:ietf:params:xml:ns:xmpp-sasl"><mechanism>DIGEST-MD5</mechanism>'
+            . '<mechanism>PLAIN</mechanism><mechanism>ANONYMOUS</mechanism><mechanism>CRAM-MD5</mechanism>'
+            . '</mechanisms><compression xmlns="http://jabber.org/features/compress"><method>zlib</method>'
+            . '</compression><auth xmlns="http://jabber.org/features/iq-auth"/>'
+            . '<register xmlns="http://jabber.org/features/iq-register"/></stream:features>';
+        $this->assertInstanceOf('\DOMDocument', $this->object->parse($xml));
+        
+        $xml = '<proceed xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>';
+        $this->assertInstanceOf('\DOMDocument', $this->object->parse($xml));
+    }
+
     /**
      * Test parsing with namespaces, when a parse() is called second time without "xmlns"
-     * 
+     *
      * @covers Fabiang\Xmpp\Stream\XmlStream::parse
      * @covers Fabiang\Xmpp\Stream\XmlStream::endXml
      * @return void
@@ -101,7 +126,7 @@ class XMLStreamTest extends \PHPUnit_Framework_TestCase
                 $triggered++;
             }
         );
-        
+
         $this->object->parse(
             '<stream:stream xmlns:stream="http://etherx.jabber.org/streams"'
             . ' xmlns="jabber:client" from="gamebox" id="b9a85bbd" xml:lang="en" version="1.0">'

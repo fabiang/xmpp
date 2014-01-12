@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2013 Fabian Grutschus. All rights reserved.
+ * Copyright 2014 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -29,27 +29,41 @@
  * either expressed or implied, of the copyright holders.
  *
  * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2013 Fabian Grutschus. All rights reserved.
+ * @copyright 2014 Fabian Grutschus. All rights reserved.
  * @license   BSD
  * @link      http://github.com/fabiang/xmpp
  */
 
 namespace Fabiang\Xmpp\Connection;
 
-use Socket\Raw\Socket as StreamSocket;
-use Socket\Raw\Factory;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
+use Fabiang\Xmpp\Stream\SocketClient;
+use Fabiang\Xmpp\Stream\XMLStream;
+use Fabiang\Xmpp\EventListener\EventListenerInterface;
+use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 
 /**
  * Connection to a stream.
  *
  * @package Xmpp\Connection
  */
-class Socket implements SocketConnectionInterface, ConnectionInterface
+class Socket implements ConnectionInterface, SocketConnectionInterface
 {
 
-    const DEFAULT_LENGTH = 1024;
+    const DEFAULT_LENGTH = 4096;
+
+    /**
+     *
+     * @var XMLStream
+     */
+    protected $outputStream;
+
+    /**
+     *
+     * @var XMLStream
+     */
+    protected $inputStream;
 
     /**
      * Socket.
@@ -80,30 +94,33 @@ class Socket implements SocketConnectionInterface, ConnectionInterface
     protected $address;
 
     /**
+     * Event listeners.
+     *
+     * @var EventListenerInterface[]
+     */
+    protected $listeners = array();
+
+    /**
      * Constructor set default socket instance if no socket was given.
      *
      * @param StreamSocket $socket  Socket instance
      * @param string       $address Server address
      */
-    public function __construct(StreamSocket $socket, $address)
+    public function __construct(SocketClient $socket, $address)
     {
-        if (null !== $socket) {
-            $this->setSocket($socket);
-        }
-
+        $this->setSocket($socket);
         $this->address = $address;
     }
 
     /**
      *
      * @param string $address Server address
-     * @return Socket
+     * @return self
      */
     public static function factory($address)
     {
-        $socketFactory = new Factory;
-        $scheme        = null;
-        return new static($socketFactory->createFromString($address, $scheme), $address);
+        $socket = new SocketClient($address);
+        return new static($socket, $address);
     }
 
     /**
@@ -113,6 +130,7 @@ class Socket implements SocketConnectionInterface, ConnectionInterface
     {
         $buffer = $this->getSocket()->read(static::DEFAULT_LENGTH);
         $this->log(LogLevel::DEBUG, "Received buffer '$buffer' from '{$this->address}'");
+        $this->getInputStream()->parse($buffer);
         return $buffer;
     }
 
@@ -121,8 +139,30 @@ class Socket implements SocketConnectionInterface, ConnectionInterface
      */
     public function send($buffer)
     {
-        $this->getSocket()->write($buffer);
         $this->log(LogLevel::DEBUG, "Sending data '$buffer' to '{$this->address}'");
+        $this->getSocket()->write($buffer);
+        $this->getOutputStream()->parse($buffer);
+
+        while ($this->checkBlockingListeners()) {
+            $this->receive();
+        }
+    }
+
+    /**
+     * Check blocking event listeners.
+     *
+     * @return boolean
+     */
+    protected function checkBlockingListeners()
+    {
+        foreach ($this->listeners as $listerner) {
+            $instanceof = $listerner instanceof BlockingEventListenerInterface;
+            if ($instanceof && true === $listerner->isBlocking()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -130,7 +170,8 @@ class Socket implements SocketConnectionInterface, ConnectionInterface
      */
     public function connect()
     {
-        $this->getSocket()->connect($this->address);
+        $this->getSocket()->connect();
+        $this->getSocket()->setBlocking(true);
         $this->connected = true;
         $this->log(LogLevel::DEBUG, "Connected to '{$this->address}'");
     }
@@ -168,7 +209,7 @@ class Socket implements SocketConnectionInterface, ConnectionInterface
     /**
      * {@inheritDoc}
      */
-    public function setSocket(StreamSocket $socket)
+    public function setSocket(SocketClient $socket)
     {
         $this->socket = $socket;
         return $this;
@@ -199,6 +240,67 @@ class Socket implements SocketConnectionInterface, ConnectionInterface
         if ($this->logger) {
             $this->logger->log($level, $message, $context);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getOutputStream()
+    {
+        if (null === $this->outputStream) {
+            $this->outputStream = new XMLStream();
+        }
+
+        return $this->outputStream;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getInputStream()
+    {
+        if (null === $this->inputStream) {
+            $this->inputStream = new XMLStream();
+        }
+
+        return $this->inputStream;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setOutputStream(XMLStream $outputStream)
+    {
+        $this->outputStream = $outputStream;
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setInputStream(XMLStream $inputStream)
+    {
+        $this->inputStream = $inputStream;
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addListener(EventListenerInterface $eventListener)
+    {
+        $this->listeners[] = $eventListener;
+        return $this;
+    }
+
+    /**
+     * Get registered listeners.
+     *
+     * @return array
+     */
+    public function getListeners()
+    {
+        return $this->listeners;
     }
 
 }

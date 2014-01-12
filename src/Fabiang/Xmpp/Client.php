@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2013 Fabian Grutschus. All rights reserved.
+ * Copyright 2014 Fabian Grutschus. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
@@ -29,7 +29,7 @@
  * either expressed or implied, of the copyright holders.
  *
  * @author    Fabian Grutschus <f.grutschus@lubyte.de>
- * @copyright 2013 Fabian Grutschus. All rights reserved.
+ * @copyright 2014 Fabian Grutschus. All rights reserved.
  * @license   BSD
  * @link      http://github.com/fabiang/xmpp
  */
@@ -43,6 +43,7 @@ use Fabiang\Xmpp\Channel\Channel;
 use Fabiang\Xmpp\Event\EventManagerAwareInterface;
 use Fabiang\Xmpp\Event\EventManagerInterface;
 use Fabiang\Xmpp\Event\EventManager;
+use Fabiang\Xmpp\EventListener\EventListenerInterface;
 
 /**
  * Xmpp connection client.
@@ -57,7 +58,6 @@ class Client implements EventManagerAwareInterface, LoggerAwareInterface
      * @var EventManagerInterface
      */
     protected $events;
-    
 
     /**
      * Connection.
@@ -81,39 +81,6 @@ class Client implements EventManagerAwareInterface, LoggerAwareInterface
     protected $channels = array();
 
     /**
-     * Event manager instance.
-     *
-     * @var Event\EventManager
-     */
-    protected $inputEventManager;
-
-    /**
-     * Event manager instance.
-     *
-     * @var Event\EventManager
-     */
-    protected $outputEventManager;
-
-    /**
-     *
-     * @var Stream\XMLStream
-     */
-    protected $outputStream;
-
-    /**
-     *
-     * @var Stream\XMLStream
-     */
-    protected $inputStream;
-
-    /**
-     * Event listeners.
-     *
-     * @var EventListener\EventListenerInterface[]
-     */
-    protected $listeners = array();
-
-    /**
      * Constructor.
      *
      * @param ConnectionInterface $connection Connection
@@ -126,14 +93,6 @@ class Client implements EventManagerAwareInterface, LoggerAwareInterface
         if (null !== $logger) {
             $this->setLogger($logger);
         }
-
-        $this->outputEventManager = new Event\EventManager;
-        $this->outputStream       = new Stream\XMLStream();
-        $this->outputStream->setEventManager($this->outputEventManager);
-
-        $this->inputEventManager = new Event\EventManager;
-        $this->inputStream       = new Stream\XMLStream();
-        $this->inputStream->setEventManager($this->inputEventManager);
     }
 
     public function connect()
@@ -150,34 +109,13 @@ class Client implements EventManagerAwareInterface, LoggerAwareInterface
     {
         $data = $interface->toString();
         $this->connection->send($data);
-        $this->outputStream->parse($data);
-
-        while ($this->checkBlockingListeners()) {
-            $data = $this->connection->receive();
-            $this->inputStream->parse($data);
-        }
     }
 
-    public function registerListner(EventListener\EventListenerInterface $listener)
+    public function registerListner(EventListenerInterface $eventListener)
     {
-        $listener->setEventManager($this->getEventManager());
-        $listener->setInputEventListener($this->inputEventManager);
-        $listener->setOutputEventListener($this->outputEventManager);
-        $listener->setConnection($this->connection);
-        $listener->attachEvents();
-        $this->listeners[] = $listener;
-    }
-
-    protected function checkBlockingListeners()
-    {
-        foreach ($this->listeners as $listerner) {
-            $instanceof = $listerner instanceof EventListener\BlockingEventListenerInterface;
-            if ($instanceof && true === $listerner->isBlocking()) {
-                return true;
-            }
-        }
-
-        return false;
+        $eventListener->setConnection($this->connection)->setEventManager($this->getEventManager());
+        $eventListener->attachEvents();
+        $this->connection->addListener($eventListener);
     }
 
     /**
