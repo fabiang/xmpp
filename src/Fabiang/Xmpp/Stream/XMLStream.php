@@ -115,6 +115,13 @@ class XMLStream implements EventManagerAwareInterface
     protected $eventObject;
 
     /**
+     * Collected events while parsing.
+     *
+     * @var array
+     */
+    protected $eventCache = array();
+
+    /**
      * Constructor.
      */
     public function __construct($encoding = 'UTF-8', XMLEvent $eventObject = null)
@@ -150,7 +157,7 @@ class XMLStream implements EventManagerAwareInterface
         // collect xml declaration
         if ('<?xml' === substr($source, 0, 5) || null === $documentElement) {
             $this->reset();
-            
+
             $matches = array();
             if (preg_match('/^<\?xml.*encoding=(\'|")([\w-]+)\1.*?>/i', $source, $matches)) {
                 $this->encoding = $matches[2];
@@ -164,10 +171,13 @@ class XMLStream implements EventManagerAwareInterface
             }
         }
 
+        $this->eventCache = array();
         if (0 === xml_parse($this->parser, $source, false)) {
-            XMLParserException::factory($this->parser);
+            throw XMLParserException::factory($this->parser);
         }
-        
+        // trigger collected events.
+        $this->trigger();
+
         // </stream> was not there, so lets close the document
         if ($this->depth > 0) {
             $this->document->appendChild($this->elements[0]);
@@ -231,8 +241,7 @@ class XMLStream implements EventManagerAwareInterface
         $this->depth++;
 
         $event = '{' . $namespaceURI . '}' . $elementName;
-        $this->getEventManager()->getEventObject()->setStartTag(true);
-        $this->getEventManager()->trigger($event, $this, array($element));
+        $this->cacheEvent($event, true, array($element));
     }
 
     /**
@@ -262,13 +271,12 @@ class XMLStream implements EventManagerAwareInterface
     /**
      * End tag found.
      *
-     * @param resource $parser XML parser
-     * @param string   $name   Element name
      * @return void
      */
     protected function endXml()
     {
         $this->depth--;
+
         $element = $this->elements[$this->depth];
 
         if ($this->depth > 0) {
@@ -289,8 +297,7 @@ class XMLStream implements EventManagerAwareInterface
         }
 
         $event = '{' . $namespaceURI . '}' . $localName;
-        $this->getEventManager()->getEventObject()->setStartTag(false);
-        $this->getEventManager()->trigger($event, $this, array($element));
+        $this->cacheEvent($event, false, array($element));
     }
 
     /**
@@ -309,8 +316,35 @@ class XMLStream implements EventManagerAwareInterface
     }
 
     /**
+     * Add event to cache.
+     *
+     * @param string  $event
+     * @param boolean $startTag
+     * @param array   $params
+     * @return void
+     */
+    protected function cacheEvent($event, $startTag, $params)
+    {
+        $this->eventCache[] = array($event, $startTag, $params);
+    }
+
+    /**
+     * Trigger cached events
+     *
+     * @return void
+     */
+    protected function trigger()
+    {
+        foreach ($this->eventCache as $event) {
+            list($event, $startTag, $param) = $event;
+            $this->getEventManager()->getEventObject()->setStartTag($startTag);
+            $this->getEventManager()->trigger($event, $this, $param);
+        }
+    }
+
+    /**
      * Reset class properties.
-     * 
+     *
      * @return void
      */
     protected function reset()
@@ -323,12 +357,13 @@ class XMLStream implements EventManagerAwareInterface
 
         xml_set_element_handler($parser, 'startXml', 'endXml');
         xml_set_character_data_handler($parser, 'dataXml');
-        
-        $this->parser     = $parser;
-        $this->depth      = 0;
-        $this->document   = new \DOMDocument('1.0', $this->encoding);
-        $this->namespaces = array();
-        $this->elements   = array();
+
+        $this->parser            = $parser;
+        $this->depth             = 0;
+        $this->document          = new \DOMDocument('1.0', $this->encoding);
+        $this->namespaces        = array();
+        $this->namespacePrefixes = array();
+        $this->elements          = array();
     }
 
     /**

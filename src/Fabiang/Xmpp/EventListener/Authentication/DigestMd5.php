@@ -71,8 +71,7 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
      */
     public function authenticate($username, $password)
     {
-        $auth = '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="DIGEST-MD5" '
-            . 'xmlns:ga="http://www.google.com/talk/protocol/auth" ga:client-uses-full-bind-result="true"/>';
+        $auth = '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="DIGEST-MD5"/>';
         $this->connection->send($auth);
     }
 
@@ -94,10 +93,9 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
      */
     public function challenge(XMLEvent $event)
     {
-        var_dump(1);
         if (false === $event->isStartTag()) {
             list($element) = $event->getParameters();
-            var_dump($element->nodeValue);
+            $challenge      = $element->nodeValue;
             $this->blocking = false;
         }
     }

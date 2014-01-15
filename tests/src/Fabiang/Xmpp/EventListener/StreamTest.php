@@ -15,6 +15,12 @@ class StreamTest extends \PHPUnit_Framework_TestCase
      * @var Stream
      */
     protected $object;
+    
+    /**
+     * 
+     * @var Test
+     */
+    protected $connection;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -25,6 +31,9 @@ class StreamTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->object = new Stream;
+        $this->connection = new Test;
+        $this->object->setConnection($this->connection);
+        $this->connection->setReady(true);
     }
 
     /**
@@ -35,12 +44,10 @@ class StreamTest extends \PHPUnit_Framework_TestCase
      */
     public function testAttachEvents()
     {
-        $connection = new Test();
-        $this->object->setConnection($connection);
         $this->object->attachEvents();
 
-        $output = $connection->getOutputStream()->getEventManager();
-        $input  = $connection->getInputStream()->getEventManager();
+        $output = $this->connection->getOutputStream()->getEventManager();
+        $input  = $this->connection->getInputStream()->getEventManager();
         $this->assertArrayHasKey('{http://etherx.jabber.org/streams}stream', $output->getEventList());
         $this->assertArrayHasKey('{http://etherx.jabber.org/streams}features', $input->getEventList());
     }
@@ -48,8 +55,9 @@ class StreamTest extends \PHPUnit_Framework_TestCase
     /**
      * Test starting client stream.
      *
-     * @covers Fabiang\Xmpp\EventListener\Stream::startStreamClient
-     * @covers Fabiang\Xmpp\EventListener\Stream::startStreamServer
+     * @covers Fabiang\Xmpp\EventListener\Stream::stream
+     * @covers Fabiang\Xmpp\EventListener\Stream::streamServer
+     * @covers Fabiang\Xmpp\EventListener\Stream::features
      * @covers Fabiang\Xmpp\EventListener\Stream::isBlocking
      * @return void
      */
@@ -58,12 +66,23 @@ class StreamTest extends \PHPUnit_Framework_TestCase
         $element = new \DOMElement('machanism', 'PLAIN');
         $event   = new XMLEvent;
         $event->setParameters(array($element));
+        $this->connection->setReady(false);
         
         $this->assertFalse($this->object->isBlocking());
+        $event->setStartTag(true);
         $this->object->stream($event);
         $this->assertTrue($this->object->isBlocking());
+
+        $event->setStartTag(false);
+        $this->object->streamServer($event);
+        $this->assertFalse($this->object->isBlocking());
+        
+        $event->setStartTag(true);
+        $this->object->stream($event);
+        $event->setStartTag(false);
         $this->object->features();
         $this->assertFalse($this->object->isBlocking());
+        $this->assertTrue($this->connection->isReady());
     }
 
 }

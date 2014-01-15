@@ -66,15 +66,19 @@ class SocketTest extends \PHPUnit_Framework_TestCase
      * @return void
      */
     public function testSend()
-    {
+    {   
         $data = '<xml xmlns="test"></xml>';
-
+        
         $mock = $this->object->getSocket();
-        $mock->expects($this->once())
+        $mock->expects($this->at(0))
+            ->method('write');
+        
+        $mock->expects($this->at(3))
             ->method('write')
             ->with($this->equalTo($data));
 
         $this->object->send($data);
+        $this->assertTrue($this->object->isConnected());
     }
 
     /**
@@ -92,6 +96,25 @@ class SocketTest extends \PHPUnit_Framework_TestCase
         $this->object->connect();
         $this->assertTrue($this->object->isConnected());
     }
+    
+    /**
+     * Test reseting streams.
+     * 
+     * @covers Fabiang\Xmpp\Connection\Socket::resetStreams
+     * @return void
+     */
+    public function testResetStreams()
+    {
+        $oldInput  = $this->object->getInputStream();
+        $oldOutput = $this->object->getOutputStream();
+        
+        $this->object->resetStreams();
+        
+        $this->assertNotSame($oldInput, $this->object->getInputStream());
+        $this->assertNotSame($oldOutput, $this->object->getOutputStream());
+        $this->assertSame($oldInput->getEventManager(), $this->object->getInputStream()->getEventManager());
+        $this->assertSame($oldOutput->getEventManager(), $this->object->getOutputStream()->getEventManager());
+    }
 
     /**
      * Test disconnecting.
@@ -102,8 +125,6 @@ class SocketTest extends \PHPUnit_Framework_TestCase
      */
     public function testDisconnect()
     {
-        $this->object->send('<stream:stream xmlns:stream="http://etherx.jabber.org/streams">');
-
         $mock = $this->object->getSocket();
         $mock->expects($this->any())
             ->method('write');

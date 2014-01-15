@@ -37,14 +37,13 @@
 namespace Fabiang\Xmpp\EventListener\Authentication;
 
 use Fabiang\Xmpp\EventListener\EventListenerInterface;
-use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 
 /**
  * Interface for classes that handle authentication.
  *
  * @package Xmpp\EventListener\Authentication
  */
-interface AuthenticationInterface extends EventListenerInterface, BlockingEventListenerInterface
+interface AuthenticationInterface extends EventListenerInterface
 {
 
     /**

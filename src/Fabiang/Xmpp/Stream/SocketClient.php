@@ -154,14 +154,14 @@ class SocketClient
     public function crypto($enable, $cryptoType = null)
     {
         if (false === $enable) {
-            stream_socket_enable_crypto($this->resource, false);
-        } else {
-            if (null === $cryptoType) {
-                throw new InvalidArgumentException('Second argument is require when enabling crypto an stream');
-            }
-
-            stream_socket_enable_crypto($this->resource, $enable, $cryptoType);
+            return @stream_socket_enable_crypto($this->resource, false);
         }
+
+        if (null === $cryptoType) {
+            throw new InvalidArgumentException('Second argument is require when enabling crypto an stream');
+        }
+
+        return stream_socket_enable_crypto($this->resource, $enable, $cryptoType);
     }
 
     protected function assertSuccess($value, $errno, $errstr)

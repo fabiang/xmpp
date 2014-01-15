@@ -34,54 +34,32 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Protocol;
+namespace Fabiang\Xmpp\Util;
 
 /**
- * Protocol setting for stream.
+ * Xml stream class.
  *
- * @package Xmpp\Protocol
+ * @package Xmpp\Util
  */
-class Stream implements ProtocolImplementationInterface
+class XML
 {
 
-    const STREAM_START = '<?xml version="1.0" encoding="UTF-8"?><stream:stream to="%s" xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client" version="1.0">';
-    const STREAM_END   = '</stream:stream>';
-
     /**
-     * To, usally the server name.
+     * Quote XML string.
      *
-     * @var string
-     */
-    protected $to = '';
-
-    /**
-     * {@inheritDoc}
-     */
-    public function toString()
-    {
-        return sprintf(static::STREAM_START, $this->getTo());
-    }
-
-    /**
-     * Set to.
-     *
+     * @param string $string   String to be quoted
+     * @param string $encoding Encoding used for quotation
      * @return string
      */
-    public function getTo()
+    public static function quote($string, $encoding = 'UTF-8')
     {
-        return $this->to;
-    }
+        $flags = ENT_QUOTES;
 
-    /**
-     * Get to.
-     *
-     * @param string $to To
-     * @return \Fabiang\Xmpp\Protocol\Stream
-     */
-    public function setTo($to)
-    {
-        $this->to = (string) $to;
-        return $this;
+        if (defined('ENT_XML1')) {
+            $flags |= ENT_XML1;
+        }
+
+        return htmlspecialchars($string, $flags, $encoding);
     }
 
 }

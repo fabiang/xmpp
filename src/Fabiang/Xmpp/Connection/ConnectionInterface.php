@@ -60,6 +60,21 @@ interface ConnectionInterface extends LoggerAwareInterface
      * @return void
      */
     public function disconnect();
+    
+    /**
+     * Set stream is ready.
+     * 
+     * @param boolean $flag Flag
+     * @return $this
+     */
+    public function setReady($flag);
+
+    /**
+     * Is stream ready.
+     * 
+     * @return boolean
+     */
+    public function isReady();
 
     /**
      * Is connection established.
@@ -67,7 +82,7 @@ interface ConnectionInterface extends LoggerAwareInterface
      * @return boolean
      */
     public function isConnected();
-
+    
     /**
      * Receive data.
      *
@@ -101,7 +116,7 @@ interface ConnectionInterface extends LoggerAwareInterface
      * Set output stream.
      *
      * @param XMLStream $outputStream Output stream
-     * @return void
+     * @return $this
      */
     public function setOutputStream(XMLStream $outputStream);
 
@@ -109,15 +124,22 @@ interface ConnectionInterface extends LoggerAwareInterface
      * Set input stream.
      *
      * @param XMLStream $inputStream Input stream
-     * @return self
+     * @return $this
      */
     public function setInputStream(XMLStream $inputStream);
+    
+    /**
+     * Reset streams.
+     * 
+     * @return void
+     */
+    public function resetStreams();
 
     /**
      * Add listener.
      *
      * @param EventListenerInterface $eventListener
-     * @return self
+     * @return $this
      */
     public function addListener(EventListenerInterface $eventListener);
 }

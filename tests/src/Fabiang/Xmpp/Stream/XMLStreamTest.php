@@ -105,6 +105,18 @@ class XMLStreamTest extends \PHPUnit_Framework_TestCase
         $xml = 'xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>';
         $this->assertInstanceOf('\DOMDocument', $this->object->parse($xml));    
     }
+    
+    /**
+     * Test parsing invalid XML.
+     *
+     * @covers Fabiang\Xmpp\Stream\XmlStream::parse
+     * @expectedException Fabiang\Xmpp\Exception\XMLParserException
+     * @return void
+     */
+    public function testParseInvalidXML()
+    {
+        $this->object->parse('<tsst<>');
+    }
 
     /**
      * Test parsing with namespaces, when a parse() is called second time without "xmlns"

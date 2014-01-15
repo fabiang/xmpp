@@ -87,6 +87,12 @@ class Test implements ConnectionInterface
      * @var array
      */
     protected $buffer = array();
+    
+    /**
+     *
+     * @var boolean
+     */
+    protected $ready = false;
 
     /**
      * {@inheritDoc}
@@ -211,6 +217,35 @@ class Test implements ConnectionInterface
     public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isReady()
+    {
+        return $this->ready;
+    }
+
+    
+    public function resetStreams()
+    {
+        $inputEvents       = $this->getInputStream()->getEventManager();
+        $this->inputStream = null;
+        $this->getInputStream()->setEventManager($inputEvents);
+
+        $outputEvents       = $this->getOutputStream()->getEventManager();
+        $this->outputStream = null;
+        $this->getOutputStream()->setEventManager($outputEvents);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setReady($flag)
+    {
+        $this->ready = (bool) $flag;
         return $this;
     }
 

@@ -22,14 +22,8 @@ $scheme         = 'tcp';
 $connection = Socket::factory($address);
 
 $client = new Client($connection, $logger);
-$client->connect();
 
-$client->registerListner(new Fabiang\Xmpp\EventListener\Stream());
-//$client->registerListner(new Fabiang\Xmpp\EventListener\StartTls());
 $client->registerListner(new Fabiang\Xmpp\EventListener\Authentication($username, $password));
 
-$stream = new Fabiang\Xmpp\Protocol\Stream();
-$stream->setTo('localhost');
-$client->send($stream);
-
+$client->send(new Fabiang\Xmpp\Protocol\Message);
 $client->disconnect();

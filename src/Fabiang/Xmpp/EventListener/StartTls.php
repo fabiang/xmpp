@@ -58,26 +58,22 @@ class StartTls extends AbstractEventListener implements BlockingEventListenerInt
      */
     public function attachEvents()
     {
-        $this->connection->getInputStream()->getEventManager()->attach(
-            '{urn:ietf:params:xml:ns:xmpp-tls}starttls',
-            array($this, 'starttls')
-        );
-
-        $this->connection->getInputStream()->getEventManager()->attach(
-            '{urn:ietf:params:xml:ns:xmpp-tls}proceed',
-            array($this, 'proceed')
-        );
+        $input = $this->connection->getInputStream()->getEventManager();
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-tls}starttls', array($this, 'starttls'));
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-tls}proceed', array($this, 'proceed'));
     }
 
     /**
      * Send start tls command.
      *
+     * @param XMLEvent $event XMLEvent object
      * @return void
      */
     public function starttls(XMLEvent $event)
     {
         if (false === $event->isStartTag()) {
             $this->blocking = true;
+            $this->connection->setReady(false);
             $this->connection->send('<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>');
         }
     }
@@ -85,16 +81,18 @@ class StartTls extends AbstractEventListener implements BlockingEventListenerInt
     /**
      * Start TLS response.
      *
+     * @param XMLEvent $event XMLEvent object
      * @return void
      */
-    public function proceed()
+    public function proceed(XMLEvent $event)
     {
-        $this->blocking = false;
-        $this->connection->getSocket()->crypto(true, STREAM_CRYPTO_METHOD_SSLv23_CLIENT);
+        if (false === $event->isStartTag()) {
+            $this->blocking = false;
 
-        $stream = new Fabiang\Xmpp\Protocol\Stream();
-        $stream->setTo('localhost');
-        $this->connection->send($stream->toString());
+            $this->connection->getSocket()->crypto(true, STREAM_CRYPTO_METHOD_SSLv23_CLIENT);
+            $this->connection->resetStreams();
+            $this->connection->connect();
+        }
     }
 
     /**

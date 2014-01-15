@@ -38,6 +38,7 @@ namespace Fabiang\Xmpp\EventListener;
 
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\Exception\RuntimeException;
+use Fabiang\Xmpp\Exception\StreamErrorException;
 use Fabiang\Xmpp\EventListener\Authentication\AuthenticationInterface;
 
 /**
@@ -77,6 +78,13 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
     protected $mechanisms = array();
 
     /**
+     * Already authenticated?
+     *
+     * @var boolean
+     */
+    protected $authenticated = false;
+
+    /**
      * Authentication methods.
      *
      * @var array
@@ -105,6 +113,8 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
         $input = $this->connection->getInputStream()->getEventManager();
         $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}mechanisms', array($this, 'authenticate'));
         $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}mechanism', array($this, 'collectMechanisms'));
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}failure', array($this, 'failure'));
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}success', array($this, 'success'));
     }
 
     /**
@@ -115,11 +125,13 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
      */
     public function collectMechanisms(XMLEvent $event)
     {
-        /* @var $element \DOMElement */
-        list($element) = $event->getParameters();
-        $this->blocking = true;
-        if (false === $event->isStartTag()) {
-            $this->mechanisms[] = strtolower($element->nodeValue);
+        if ($this->connection->isReady() && false === $this->authenticated) {
+            /* @var $element \DOMElement */
+            list($element) = $event->getParameters();
+            $this->blocking = true;
+            if (false === $event->isStartTag()) {
+                $this->mechanisms[] = strtolower($element->nodeValue);
+            }
         }
     }
 
@@ -131,9 +143,8 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
      */
     public function authenticate(XMLEvent $event)
     {
-        if (false === $event->isStartTag()) {
-            $this->blocking = false;
-
+        if ($this->connection->isReady() && false === $this->authenticated && false === $event->isStartTag()) {
+            $this->blocking      = true;
             $authenticationClass = null;
 
             foreach ($this->mechanisms as $machanism) {
@@ -144,7 +155,7 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
             }
 
             if (null === $authenticationClass) {
-                throw new RuntimeException('No supportet authentication method found.');
+                throw new RuntimeException('No supportet authentication machanism found.');
             }
 
             $authentication = new $authenticationClass;
@@ -158,6 +169,37 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
             $authentication->attachEvents();
             $this->connection->addListener($authentication);
             $authentication->authenticate($this->getUsername(), $this->getPassword());
+        }
+    }
+
+    /**
+     * Authentication failed.
+     *
+     * @param \Fabiang\Xmpp\Event\XMLEvent $event
+     * @throws StreamErrorException
+     */
+    public function failure(XMLEvent $event)
+    {
+        if (false === $event->isStartTag()) {
+            $this->blocking = false;
+            throw StreamErrorException::createFromEvent($event);
+        }
+    }
+
+    /**
+     * Authentication successful.
+     *
+     * @param \Fabiang\Xmpp\Event\XMLEvent $event
+     * @return void
+     */
+    public function success(XMLEvent $event)
+    {
+        if (false === $event->isStartTag()) {
+            $this->authenticated = true;
+            $this->blocking      = false;
+
+            $this->connection->resetStreams();
+            $this->connection->connect();
         }
     }
 

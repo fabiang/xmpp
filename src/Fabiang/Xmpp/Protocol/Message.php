@@ -53,5 +53,10 @@ class Message implements ProtocolImplementationInterface
      * Chat in a multi-user channel (MUC).
      */
     const TYPE_GROUPCHAT = 'groupchat';
-
+    
+    
+    public function toString()
+    {
+        return '';
+    }
 }

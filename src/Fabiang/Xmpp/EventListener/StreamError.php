@@ -34,33 +34,41 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Exception;
+namespace Fabiang\Xmpp\EventListener;
+
+use Fabiang\Xmpp\Event\XMLEvent;
+use Fabiang\Xmpp\Exception\StreamErrorException;
 
 /**
- * XML parser exception.
+ * Listener for stream errors.
  *
- * @package Xmpp\Exception
+ * @package Xmpp\EventListener
  */
-class XMLParserException extends RuntimeException
+class StreamError extends AbstractEventListener
 {
 
     /**
-     * Factory XML parsing exception.
-     *
-     * @param resource $parser
-     * @throws self
+     * {@inheritDoc}
      */
-    public static function factory($parser)
+    public function attachEvents()
     {
-        $code   = xml_get_error_code($parser);
-        $error  = xml_error_string($code);
-        $line   = xml_get_current_line_number($parser);
-        $column = xml_get_current_column_number($parser);
-
-        return new static(
-            sprintf('XML parsing error: "%s" at Line %d at column %d', $error, $line, $column),
-            $code
+        $this->connection->getInputStream()->getEventManager()->attach(
+            '{http://etherx.jabber.org/streams}error',
+            array($this, 'error')
         );
+    }
+
+    /**
+     * Throws an exception when stream error comes from input stream.
+     *
+     * @param \Fabiang\Xmpp\Event\XMLEvent $event
+     * @throws StreamErrorException
+     */
+    public function error(XMLEvent $event)
+    {
+        if (false === $event->isStartTag()) {
+            throw StreamErrorException::createFromEvent($event);
+        }
     }
 
 }

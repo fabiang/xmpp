@@ -44,6 +44,9 @@ use Fabiang\Xmpp\Event\EventManagerAwareInterface;
 use Fabiang\Xmpp\Event\EventManagerInterface;
 use Fabiang\Xmpp\Event\EventManager;
 use Fabiang\Xmpp\EventListener\EventListenerInterface;
+use Fabiang\Xmpp\EventListener\Stream;
+use Fabiang\Xmpp\EventListener\StreamError;
+use Fabiang\Xmpp\EventListener\StartTls;
 
 /**
  * Xmpp connection client.
@@ -52,6 +55,7 @@ use Fabiang\Xmpp\EventListener\EventListenerInterface;
  */
 class Client implements EventManagerAwareInterface, LoggerAwareInterface
 {
+
     /**
      * Eventmanager.
      *
@@ -89,10 +93,12 @@ class Client implements EventManagerAwareInterface, LoggerAwareInterface
     public function __construct(ConnectionInterface $connection, LoggerInterface $logger = null)
     {
         $this->connection = $connection;
-        
+
         if (null !== $logger) {
             $this->setLogger($logger);
         }
+
+        $this->registerDefaultListeners();
     }
 
     public function connect()
@@ -116,6 +122,13 @@ class Client implements EventManagerAwareInterface, LoggerAwareInterface
         $eventListener->setConnection($this->connection)->setEventManager($this->getEventManager());
         $eventListener->attachEvents();
         $this->connection->addListener($eventListener);
+    }
+
+    public function registerDefaultListeners()
+    {
+        $this->registerListner(new Stream);
+        $this->registerListner(new StreamError);
+        $this->registerListner(new StartTls);
     }
 
     /**
@@ -145,7 +158,7 @@ class Client implements EventManagerAwareInterface, LoggerAwareInterface
             $this->logger->log($level, $message, $context);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */

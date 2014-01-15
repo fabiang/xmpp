@@ -37,7 +37,7 @@
 namespace Fabiang\Xmpp\EventListener\Authentication;
 
 use Fabiang\Xmpp\EventListener\AbstractEventListener;
-use Fabiang\Xmpp\Event\XMLEvent;
+use Fabiang\Xmpp\Util\XML;
 
 /**
  * Handler for "plain" authentication mechanism.
@@ -46,18 +46,13 @@ use Fabiang\Xmpp\Event\XMLEvent;
  */
 class Plain extends AbstractEventListener implements AuthenticationInterface
 {
-    /**
-     * IS event blocking stream.
-     *
-     * @var boolean
-     */
-    protected $blocking = false;
 
     /**
      * {@inheritDoc}
      */
     public function attachEvents()
     {
+
     }
 
     /**
@@ -65,14 +60,10 @@ class Plain extends AbstractEventListener implements AuthenticationInterface
      */
     public function authenticate($username, $password)
     {
-
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public function isBlocking()
-    {
-        return $this->blocking;
+        $authString = XML::quote(base64_encode("\x00" . $username . "\x00" . $password));
+        $this->connection->send(
+            '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="PLAIN">' . $authString . '</auth>'
+        );
     }
 
 }

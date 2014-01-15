@@ -42,7 +42,6 @@ use Fabiang\Xmpp\Stream\SocketClient;
 use Fabiang\Xmpp\Stream\XMLStream;
 use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
-use Fabiang\Xmpp\Protocol\Stream;
 
 /**
  * Connection to a stream.
@@ -53,14 +52,18 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
 {
 
     const DEFAULT_LENGTH = 4096;
+    const STREAM_START   = '<?xml version="1.0" encoding="UTF-8"?><stream:stream to="%s" xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client" version="1.0">';
+    const STREAM_END     = '</stream:stream>';
 
     /**
+     * Output XML stream.
      *
      * @var XMLStream
      */
     protected $outputStream;
 
     /**
+     * Input XML stream.
      *
      * @var XMLStream
      */
@@ -102,6 +105,20 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
     protected $listeners = array();
 
     /**
+     * Server hostname; is send as attribute "to".
+     *
+     * @var string
+     */
+    protected $to;
+
+    /**
+     * Is stream ready.
+     *
+     * @var boolean
+     */
+    protected $ready = false;
+
+    /**
      * Constructor set default socket instance if no socket was given.
      *
      * @param StreamSocket $socket  Socket instance
@@ -111,9 +128,11 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
     {
         $this->setSocket($socket);
         $this->address = $address;
+        $this->setTo(parse_url($address, PHP_URL_HOST));
     }
 
     /**
+     * Factory for connection class.
      *
      * @param string $address Server address
      * @return self
@@ -143,6 +162,10 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
      */
     public function send($buffer)
     {
+        if (false === $this->isConnected()) {
+            $this->connect();
+        }
+
         $this->log(LogLevel::DEBUG, "Sending data '$buffer' to '{$this->address}'");
         $this->getSocket()->write($buffer);
         $this->getOutputStream()->parse($buffer);
@@ -159,14 +182,16 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
      */
     protected function checkBlockingListeners()
     {
+        $blocking = false;
         foreach ($this->listeners as $listerner) {
             $instanceof = $listerner instanceof BlockingEventListenerInterface;
             if ($instanceof && true === $listerner->isBlocking()) {
-                return true;
+                $this->log(LogLevel::DEBUG, 'Listener "' . get_class($listerner) . '" is currently blocking');
+                $blocking = true;
             }
         }
 
-        return false;
+        return $blocking;
     }
 
     /**
@@ -174,10 +199,28 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
      */
     public function connect()
     {
-        $this->getSocket()->connect();
-        //$this->getSocket()->setBlocking(true);
-        $this->connected = true;
-        $this->log(LogLevel::DEBUG, "Connected to '{$this->address}'");
+        if (false === $this->connected) {
+            $this->getSocket()->connect();
+            $this->getSocket()->setBlocking(true);
+            $this->connected = true;
+            $this->log(LogLevel::DEBUG, "Connected to '{$this->address}'");
+        }
+
+        $this->send(sprintf(static::STREAM_START, $this->getTo()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function resetStreams()
+    {
+        $inputEvents       = $this->getInputStream()->getEventManager();
+        $this->inputStream = null;
+        $this->getInputStream()->setEventManager($inputEvents);
+
+        $outputEvents       = $this->getOutputStream()->getEventManager();
+        $this->outputStream = null;
+        $this->getOutputStream()->setEventManager($outputEvents);
     }
 
     /**
@@ -185,8 +228,8 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
      */
     public function disconnect()
     {
-        if ($this->connected) {
-            $this->send(Stream::STREAM_END);
+        if (true === $this->connected) {
+            $this->send(static::STREAM_END);
             $this->getSocket()->close();
             $this->connected = false;
             $this->log(LogLevel::DEBUG, "Disconnected from '{$this->address}'");
@@ -306,6 +349,45 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
     public function getListeners()
     {
         return $this->listeners;
+    }
+
+    /**
+     * Get server hostname (to).
+     *
+     * @return string
+     */
+    public function getTo()
+    {
+        return $this->to;
+    }
+
+    /**
+     * Set server hostname (to).
+     *
+     * @param string $to Server hostname
+     * @return $this
+     */
+    public function setTo($to)
+    {
+        $this->to = (string) $to;
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setReady($flag)
+    {
+        $this->ready = (bool) $flag;
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isReady()
+    {
+        return $this->ready;
     }
 
 }

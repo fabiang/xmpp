@@ -76,9 +76,11 @@ class Stream extends AbstractEventListener implements BlockingEventListenerInter
      */
     public function stream(XMLEvent $event)
     {
-        $this->blocking = true;
+        if (true === $event->isStartTag()) {
+            $this->blocking = true;
+        }
     }
-    
+
     /**
      * Stream server.
      *
@@ -100,6 +102,7 @@ class Stream extends AbstractEventListener implements BlockingEventListenerInter
     public function features()
     {
         $this->blocking = false;
+        $this->connection->setReady(true);
     }
 
     /**
