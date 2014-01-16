@@ -36,6 +36,8 @@
 
 namespace Fabiang\Xmpp\Exception;
 
+use Fabiang\Xmpp\Exception\InvalidArgumentException;
+
 /**
  * XML parser exception.
  *
@@ -48,10 +50,16 @@ class XMLParserException extends RuntimeException
      * Factory XML parsing exception.
      *
      * @param resource $parser
-     * @throws self
+     * @throws static
      */
-    public static function factory($parser)
+    public static function create($parser)
     {
+        if (!is_resource($parser) || 'xml' !== get_resource_type($parser)) {
+            $message = 'Argument #1 of "' . __CLASS__ . '::'
+                . __METHOD__ . '" must be a resource returned by "xml_parser_create"';
+            throw new InvalidArgumentException($message);
+        }
+        
         $code   = xml_get_error_code($parser);
         $error  = xml_error_string($code);
         $line   = xml_get_current_line_number($parser);

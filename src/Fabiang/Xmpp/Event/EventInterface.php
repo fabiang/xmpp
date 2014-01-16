@@ -37,7 +37,7 @@
 namespace Fabiang\Xmpp\Event;
 
 /**
- * Event.
+ * Interface for events.
  *
  * @package Xmpp\Event
  */
@@ -55,7 +55,7 @@ interface EventInterface
      * Set event name.
      *
      * @param string $name Event name
-     * @return self
+     * @return $this
      */
     public function setName($name);
 
@@ -70,7 +70,7 @@ interface EventInterface
      * Set calling object.
      *
      * @param object $target Calling object
-     * @return self
+     * @return $this
      */
     public function setTarget($target);
 
@@ -85,7 +85,7 @@ interface EventInterface
      * Set parameters.
      *
      * @param array $parameters Parameters
-     * @return self
+     * @return $this
      */
     public function setParameters(array $parameters);
 
@@ -99,7 +99,8 @@ interface EventInterface
     /**
      * Set event stack.
      * 
-     * @return array
+     * @param array $stack Event stack
+     * @return $this
      */
     public function setEventStack(array $stack);
 }

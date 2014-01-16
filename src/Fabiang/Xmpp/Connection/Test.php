@@ -41,7 +41,7 @@ use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Connection double for testing.
+ * Connection test double.
  *
  * @package Xmpp\Connection
  */
@@ -193,7 +193,7 @@ class Test implements ConnectionInterface
      * Set data for next receive().
      *
      * @param string|null $data
-     * @return self
+     * @return $this
      */
     public function setData($data = null)
     {
@@ -231,13 +231,8 @@ class Test implements ConnectionInterface
     
     public function resetStreams()
     {
-        $inputEvents       = $this->getInputStream()->getEventManager();
-        $this->inputStream = null;
-        $this->getInputStream()->setEventManager($inputEvents);
-
-        $outputEvents       = $this->getOutputStream()->getEventManager();
-        $this->outputStream = null;
-        $this->getOutputStream()->setEventManager($outputEvents);
+        $this->getInputStream()->reset();
+        $this->getOutputStream()->reset();
     }
 
     /**

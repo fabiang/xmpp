@@ -37,7 +37,7 @@
 namespace Fabiang\Xmpp\Event;
 
 /**
- * Event.
+ * Generic event.
  *
  * @package Xmpp\Event
  */

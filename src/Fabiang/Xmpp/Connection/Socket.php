@@ -44,7 +44,7 @@ use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 
 /**
- * Connection to a stream.
+ * Connection to a socket stream.
  *
  * @package Xmpp\Connection
  */
@@ -135,7 +135,7 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
      * Factory for connection class.
      *
      * @param string $address Server address
-     * @return self
+     * @return static
      */
     public static function factory($address)
     {
@@ -214,13 +214,8 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
      */
     public function resetStreams()
     {
-        $inputEvents       = $this->getInputStream()->getEventManager();
-        $this->inputStream = null;
-        $this->getInputStream()->setEventManager($inputEvents);
-
-        $outputEvents       = $this->getOutputStream()->getEventManager();
-        $this->outputStream = null;
-        $this->getOutputStream()->setEventManager($outputEvents);
+        $this->getInputStream()->reset();
+        $this->getOutputStream()->reset();
     }
 
     /**

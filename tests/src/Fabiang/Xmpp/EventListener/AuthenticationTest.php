@@ -150,7 +150,7 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
      * Test authentication failure.
      * 
      * @covers Fabiang\Xmpp\EventListener\Authentication::failure
-     * @expectedException Fabiang\Xmpp\Exception\StreamErrorException
+     * @expectedException Fabiang\Xmpp\Exception\Stream\StreamErrorException
      * @return void
      */
     public function testFailure()

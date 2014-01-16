@@ -43,9 +43,10 @@ namespace Fabiang\Xmpp\Protocol;
  */
 interface ProtocolImplementationInterface
 {
+
     /**
      * Protocol implementations should be turned into an string.
-     * 
+     *
      * @return string
      */
     public function toString();

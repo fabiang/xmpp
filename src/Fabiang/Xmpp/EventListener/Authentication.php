@@ -38,8 +38,8 @@ namespace Fabiang\Xmpp\EventListener;
 
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\Exception\RuntimeException;
-use Fabiang\Xmpp\Exception\StreamErrorException;
 use Fabiang\Xmpp\EventListener\Authentication\AuthenticationInterface;
+use Fabiang\Xmpp\Exception\Stream\AuthenticationErrorException;
 
 /**
  * Listener
@@ -98,7 +98,7 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
      * Constructor.
      *
      * @param string $username Username (optional)
-     * @param strung $password Password (optional)
+     * @param string $password Password (optional)
      */
     public function __construct($username = null, $password = null)
     {
@@ -182,7 +182,7 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
     {
         if (false === $event->isStartTag()) {
             $this->blocking = false;
-            throw StreamErrorException::createFromEvent($event);
+            throw AuthenticationErrorException::createFromEvent($event);
         }
     }
 
@@ -266,7 +266,7 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
      * Set username.
      *
      * @param string $username Username
-     * @return self
+     * @return $this
      */
     public function setUsername($username)
     {
@@ -278,7 +278,7 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
      * Set password.
      *
      * @param string $password Password.
-     * @return self
+     * @return $this
      */
     public function setPassword($password)
     {

@@ -39,7 +39,7 @@ namespace Fabiang\Xmpp\Connection;
 use Fabiang\Xmpp\Stream\SocketClient;
 
 /**
- * Socket connection.
+ * Interface for connection that connect to a socket.
  *
  * @package Xmpp\Connection
  */
@@ -52,8 +52,7 @@ interface SocketConnectionInterface
      * Set socket instance.
      *
      * @param \Socket\Raw\Socket $socket
-     *
-     * @return self
+     * @return $this
      */
     public function setSocket(SocketClient $socket);
 }

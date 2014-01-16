@@ -105,15 +105,13 @@ class SocketTest extends \PHPUnit_Framework_TestCase
      */
     public function testResetStreams()
     {
-        $oldInput  = $this->object->getInputStream();
-        $oldOutput = $this->object->getOutputStream();
+        $oldInput  = $this->object->getInputStream()->getParser();
+        $oldOutput = $this->object->getOutputStream()->getParser();
         
         $this->object->resetStreams();
         
-        $this->assertNotSame($oldInput, $this->object->getInputStream());
-        $this->assertNotSame($oldOutput, $this->object->getOutputStream());
-        $this->assertSame($oldInput->getEventManager(), $this->object->getInputStream()->getEventManager());
-        $this->assertSame($oldOutput->getEventManager(), $this->object->getOutputStream()->getEventManager());
+        $this->assertNotSame($oldInput, $this->object->getInputStream()->getParser());
+        $this->assertNotSame($oldOutput, $this->object->getOutputStream()->getParser());
     }
 
     /**

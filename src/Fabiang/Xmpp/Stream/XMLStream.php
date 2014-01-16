@@ -152,6 +152,33 @@ class XMLStream implements EventManagerAwareInterface
      */
     public function parse($source)
     {
+        $this->clearDocument($source);
+
+        $this->eventCache = array();
+        if (0 === xml_parse($this->parser, $source, false)) {
+            throw XMLParserException::create($this->parser);
+        }
+        // trigger collected events.
+        $this->trigger();
+        $this->eventCache = array();
+
+        // </stream> was not there, so lets close the document
+        if ($this->depth > 0) {
+            $this->document->appendChild($this->elements[0]);
+        }
+
+        return $this->document;
+    }
+    
+    /**
+     * Clear document.
+     * 
+     * Method resets the parser instance if <?xml is found. Overwise it clears the DOM document.
+     * 
+     * @return void
+     */
+    protected function clearDocument($source)
+    {
         $documentElement = $this->document->documentElement;
 
         // collect xml declaration
@@ -166,24 +193,10 @@ class XMLStream implements EventManagerAwareInterface
         } else {
             // clean the document
             /* @var $childNode \DOMNode */
-            foreach ($documentElement->childNodes as $childNode) {
-                $documentElement->removeChild($childNode);
+            while ($documentElement->hasChildNodes()) {
+                $documentElement->removeChild($documentElement->firstChild);
             }
         }
-
-        $this->eventCache = array();
-        if (0 === xml_parse($this->parser, $source, false)) {
-            throw XMLParserException::factory($this->parser);
-        }
-        // trigger collected events.
-        $this->trigger();
-
-        // </stream> was not there, so lets close the document
-        if ($this->depth > 0) {
-            $this->document->appendChild($this->elements[0]);
-        }
-
-        return $this->document;
     }
 
     /**
@@ -347,7 +360,7 @@ class XMLStream implements EventManagerAwareInterface
      *
      * @return void
      */
-    protected function reset()
+    public function reset()
     {
         $parser = xml_parser_create($this->encoding);
         xml_set_object($parser, $this);
@@ -365,6 +378,16 @@ class XMLStream implements EventManagerAwareInterface
         $this->namespacePrefixes = array();
         $this->elements          = array();
     }
+    
+    /**
+     * Get XML parser resource.
+     * 
+     * @return resource
+     */
+    public function getParser()
+    {
+        return $this->parser;
+    }
 
     /**
      * {@inheritDoc}
@@ -375,8 +398,6 @@ class XMLStream implements EventManagerAwareInterface
             $this->setEventManager(new EventManager());
         }
 
-        $this->events->setEventObject($this->getEventObject());
-
         return $this->events;
     }
 
@@ -386,6 +407,7 @@ class XMLStream implements EventManagerAwareInterface
     public function setEventManager(EventManagerInterface $events)
     {
         $this->events = $events;
+        $events->setEventObject($this->getEventObject());
         return $this;
     }
 
@@ -403,7 +425,7 @@ class XMLStream implements EventManagerAwareInterface
      * Set event object.
      *
      * @param \Fabiang\Xmpp\Event\XMLEvent $eventObject
-     * @return self
+     * @return $this
      */
     public function setEventObject(XMLEvent $eventObject)
     {

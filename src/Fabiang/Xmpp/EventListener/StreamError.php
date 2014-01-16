@@ -37,7 +37,7 @@
 namespace Fabiang\Xmpp\EventListener;
 
 use Fabiang\Xmpp\Event\XMLEvent;
-use Fabiang\Xmpp\Exception\StreamErrorException;
+use Fabiang\Xmpp\Exception\Stream\StreamErrorException;
 
 /**
  * Listener for stream errors.

@@ -82,6 +82,7 @@ class XMLStreamTest extends \PHPUnit_Framework_TestCase
      * Test parsing xml.
      *
      * @covers Fabiang\Xmpp\Stream\XmlStream::parse
+     * @covers Fabiang\Xmpp\Stream\XmlStream::clearDocument
      * @return void
      */
     public function testParseChallenge()

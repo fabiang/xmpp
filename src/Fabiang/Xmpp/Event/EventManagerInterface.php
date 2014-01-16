@@ -39,7 +39,7 @@ namespace Fabiang\Xmpp\Event;
 use Fabiang\Xmpp\Event\EventInterface;
 
 /**
- * Event manager.
+ * Event manager interface.
  *
  * @package Xmpp\Event
  */
@@ -75,7 +75,7 @@ interface EventManagerInterface
      * Set event object.
      * 
      * @param EventInterface $eventObject
-     * @return self
+     * @return $this
      */
     public function setEventObject(EventInterface $eventObject);
 }

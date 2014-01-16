@@ -40,7 +40,7 @@ use Fabiang\Xmpp\Exception\InvalidArgumentException;
 use Fabiang\Xmpp\Exception\SocketException;
 
 /**
- * Xml stream class.
+ * Stream functions wrapper class.
  *
  * @package Xmpp\Stream
  */
@@ -108,7 +108,7 @@ class SocketClient
      * Set stream blocking mode.
      *
      * @param boolean $flag Flag
-     * @return self
+     * @return $this
      */
     public function setBlocking($flag = true)
     {
@@ -164,6 +164,14 @@ class SocketClient
         return stream_socket_enable_crypto($this->resource, $enable, $cryptoType);
     }
 
+    /**
+     * Assert that a command was successful.
+     * 
+     * @param mixed   $value
+     * @param integer $errno
+     * @param string  $errstr
+     * @throws SocketException
+     */
     protected function assertSuccess($value, $errno, $errstr)
     {
         if (!$value) {

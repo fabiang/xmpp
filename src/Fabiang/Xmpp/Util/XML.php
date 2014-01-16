@@ -37,7 +37,7 @@
 namespace Fabiang\Xmpp\Util;
 
 /**
- * Xml stream class.
+ * XML utility methods.
  *
  * @package Xmpp\Util
  */

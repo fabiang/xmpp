@@ -40,6 +40,8 @@ use Fabiang\Xmpp\Exception\InvalidArgumentException;
 
 /**
  * Event manager.
+ * 
+ * The EventManager holds and triggers events.
  *
  * @package Xmpp\Event
  */
@@ -79,11 +81,11 @@ class EventManager implements EventManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function attach($event, $callback)
+    public function attach($event, /* callback */$callback)
     {
         if (!is_callable($callback, true)) {
             throw new InvalidArgumentException(
-                "Second argument of '" . __CLASS__ . "'::attach must be a valid callback"
+                'Second argument of "' . __CLASS__ . '"::attach must be a valid callback'
             );
         }
 

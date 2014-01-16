@@ -48,7 +48,7 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
 {
 
     /**
-     * IS event blocking stream.
+     * Is event blocking stream.
      *
      * @var boolean
      */
@@ -76,7 +76,7 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
     }
 
     /**
-     * Authentication starts blocking.
+     * Authentication starts -> blocking.
      *
      * @return void
      */

@@ -37,7 +37,7 @@
 namespace Fabiang\Xmpp\Event;
 
 /**
- * Event manager.
+ * Objects that use an event manager must implement this interface.
  *
  * @package Xmpp\Event
  */
@@ -48,7 +48,7 @@ interface EventManagerAwareInterface
      * Set event manager.
      *
      * @param EventManagerInterface $events Instance of event manager
-     * @return self
+     * @return $this
      */
     public function setEventManager(EventManagerInterface $events);
 

@@ -46,6 +46,7 @@ use Fabiang\Xmpp\Event\EventManagerInterface;
  */
 abstract class AbstractEventListener implements EventListenerInterface
 {
+
     /**
      * Eventmanager.
      *
