@@ -2,10 +2,14 @@
     "name": "fabiang/xmpp",
     "description": "Library for XMPP protocol connections (Jabber)",
     "license": "BSD-2-Clause",
+    "homepage": "https://github.com/fabiang/xmpp",
+    "keywords": ["jabber", "xmpp"],
     "authors": [
         {
             "name": "Fabian Grutschus",
-            "email": "f.grutschus@lubyte.de"
+            "email": "f.grutschus@lubyte.de",
+            "homepage": "http://www.lubyte.de/",
+            "role": "developer"
         }
     ],
     "autoload": {"psr-0": {"Fabiang\\Xmpp\\": "src/"}},
@@ -16,5 +20,8 @@
     "require-dev": {
         "monolog/monolog": "*"
     },
-    "extra": {"branch-alias": {"dev-master": "1.0.x-dev"}}
+    "extra": {"branch-alias": {"dev-master": "1.0.x-dev"}},
+    "archive": {
+        "exclude": ["/tests", "/example.php"]
+    }
 }
