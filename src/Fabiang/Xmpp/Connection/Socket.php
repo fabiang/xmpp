@@ -36,12 +36,14 @@
 
 namespace Fabiang\Xmpp\Connection;
 
-use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Fabiang\Xmpp\Stream\SocketClient;
 use Fabiang\Xmpp\Stream\XMLStream;
+use Fabiang\Xmpp\Event\EventManager;
+use Fabiang\Xmpp\Event\EventManagerInterface;
 use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
+use Fabiang\Xmpp\Util\XML;
 
 /**
  * Connection to a socket stream.
@@ -54,6 +56,13 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
     const DEFAULT_LENGTH = 4096;
     const STREAM_START   = '<?xml version="1.0" encoding="UTF-8"?><stream:stream to="%s" xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client" version="1.0">';
     const STREAM_END     = '</stream:stream>';
+    
+    /**
+     * Eventmanager.
+     *
+     * @var EventManagerInterface
+     */
+    protected $events;
 
     /**
      * Output XML stream.
@@ -75,13 +84,6 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
      * @var Socket
      */
     protected $socket;
-
-    /**
-     * Logger instance.
-     *
-     * @var LoggerInterface
-     */
-    protected $logger;
 
     /**
      * Is stream connected.
@@ -151,7 +153,7 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
         $buffer = $this->getSocket()->read(static::DEFAULT_LENGTH);
 
         if ($buffer) {
-            $this->log(LogLevel::DEBUG, "Received buffer '$buffer' from '{$this->address}'");
+            $this->log("Received buffer '$buffer' from '{$this->address}'", LogLevel::DEBUG);
             $this->getInputStream()->parse($buffer);
             return $buffer;
         }
@@ -166,7 +168,7 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
             $this->connect();
         }
 
-        $this->log(LogLevel::DEBUG, "Sending data '$buffer' to '{$this->address}'");
+        $this->log("Sending data '$buffer' to '{$this->address}'", LogLevel::DEBUG);
         $this->getSocket()->write($buffer);
         $this->getOutputStream()->parse($buffer);
 
@@ -186,7 +188,7 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
         foreach ($this->listeners as $listerner) {
             $instanceof = $listerner instanceof BlockingEventListenerInterface;
             if ($instanceof && true === $listerner->isBlocking()) {
-                $this->log(LogLevel::DEBUG, 'Listener "' . get_class($listerner) . '" is currently blocking');
+                $this->log('Listener "' . get_class($listerner) . '" is currently blocking', LogLevel::DEBUG);
                 $blocking = true;
             }
         }
@@ -203,10 +205,22 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
             $this->getSocket()->connect();
             $this->getSocket()->setBlocking(true);
             $this->connected = true;
-            $this->log(LogLevel::DEBUG, "Connected to '{$this->address}'");
+            $this->log("Connected to '{$this->address}'", LogLevel::DEBUG);
         }
 
-        $this->send(sprintf(static::STREAM_START, $this->getTo()));
+        $this->send(sprintf(static::STREAM_START, XML::quote($this->getTo())));
+    }
+    
+    /**
+     * Call logging event.
+     * 
+     * @param string  $message Log message
+     * @param integer $level   Log level
+     * @return void
+     */
+    protected function log($message, $level = LogLevel::DEBUG)
+    {
+        $this->getEventManager()->trigger('logger', $this, array($message, $level));
     }
 
     /**
@@ -227,7 +241,7 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
             $this->send(static::STREAM_END);
             $this->getSocket()->close();
             $this->connected = false;
-            $this->log(LogLevel::DEBUG, "Disconnected from '{$this->address}'");
+            $this->log("Disconnected from '{$this->address}'", LogLevel::DEBUG);
         }
     }
 
@@ -257,34 +271,28 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
         $this->socket = $socket;
         return $this;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function getEventManager()
+    {
+        if (null === $this->events) {
+            $this->setEventManager(new EventManager());
+        }
+
+        return $this->events;
+    }
 
     /**
      * {@inheritDoc}
      */
-    public function setLogger(LoggerInterface $logger)
+    public function setEventManager(EventManagerInterface $events)
     {
-        $this->logger = $logger;
+        $this->events = $events;
         return $this;
     }
-
-    /**
-     * Mapper function for logger interface.
-     *
-     * See {@link https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md} for more
-     * information about PSR-3 logging standard.
-     *
-     * @param string $level   Log level
-     * @param string $message Log message
-     * @param array  $context Context parameters (optional)
-     * @return void
-     */
-    protected function log($level, $message, array $context = array())
-    {
-        if ($this->logger) {
-            $this->logger->log($level, $message, $context);
-        }
-    }
-
+    
     /**
      * {@inheritDoc}
      */

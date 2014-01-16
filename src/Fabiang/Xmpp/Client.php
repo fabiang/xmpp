@@ -37,7 +37,6 @@
 namespace Fabiang\Xmpp;
 
 use Psr\Log\LoggerInterface;
-use Psr\Log\LoggerAwareInterface;
 use Fabiang\Xmpp\Connection\ConnectionInterface;
 use Fabiang\Xmpp\Channel\Channel;
 use Fabiang\Xmpp\Event\EventManagerAwareInterface;
@@ -47,13 +46,14 @@ use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Fabiang\Xmpp\EventListener\Stream;
 use Fabiang\Xmpp\EventListener\StreamError;
 use Fabiang\Xmpp\EventListener\StartTls;
+use Fabiang\Xmpp\EventListener\Logger;
 
 /**
  * Xmpp connection client.
  *
  * @package Xmpp
  */
-class Client implements EventManagerAwareInterface, LoggerAwareInterface
+class Client implements EventManagerAwareInterface
 {
 
     /**
@@ -71,13 +71,6 @@ class Client implements EventManagerAwareInterface, LoggerAwareInterface
     protected $connection;
 
     /**
-     * Logger.
-     *
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * Channel list.
      *
      * @var Channel[]
@@ -93,12 +86,11 @@ class Client implements EventManagerAwareInterface, LoggerAwareInterface
     public function __construct(ConnectionInterface $connection, LoggerInterface $logger = null)
     {
         $this->connection = $connection;
-
-        if (null !== $logger) {
-            $this->setLogger($logger);
-        }
-
+        $this->connection->setEventManager($this->getEventManager());
         $this->registerDefaultListeners();
+        
+        $loggerListener = new Logger($logger);
+        $this->getEventManager()->attach('logger', array($loggerListener, 'event'));
     }
 
     public function connect()
@@ -129,34 +121,6 @@ class Client implements EventManagerAwareInterface, LoggerAwareInterface
         $this->registerListner(new Stream);
         $this->registerListner(new StreamError);
         $this->registerListner(new StartTls);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-        $this->connection->setLogger($logger);
-        return $this;
-    }
-
-    /**
-     * Mapper function for logger interface.
-     *
-     * See {@link https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md} for more
-     * information about PSR-3 logging standard.
-     *
-     * @param string $level   Log level
-     * @param string $message Log message
-     * @param array  $context Context parameters (optional)
-     * @return void
-     */
-    protected function log($level, $message, array $context = array())
-    {
-        if ($this->logger) {
-            $this->logger->log($level, $message, $context);
-        }
     }
 
     /**

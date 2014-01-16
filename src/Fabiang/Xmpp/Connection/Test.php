@@ -39,6 +39,8 @@ namespace Fabiang\Xmpp\Connection;
 use Fabiang\Xmpp\Stream\XMLStream;
 use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Psr\Log\LoggerInterface;
+use Fabiang\Xmpp\Event\EventManager;
+use Fabiang\Xmpp\Event\EventManagerInterface; 
 
 /**
  * Connection test double.
@@ -241,6 +243,27 @@ class Test implements ConnectionInterface
     public function setReady($flag)
     {
         $this->ready = (bool) $flag;
+        return $this;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function getEventManager()
+    {
+        if (null === $this->events) {
+            $this->setEventManager(new EventManager());
+        }
+
+        return $this->events;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setEventManager(EventManagerInterface $events)
+    {
+        $this->events = $events;
         return $this;
     }
 

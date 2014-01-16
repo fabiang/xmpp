@@ -36,8 +36,8 @@
 
 namespace Fabiang\Xmpp\Connection;
 
-use Psr\Log\LoggerAwareInterface;
 use Fabiang\Xmpp\Stream\XMLStream;
+use Fabiang\Xmpp\Event\EventManagerAwareInterface;
 use Fabiang\Xmpp\EventListener\EventListenerInterface;
 
 /**
@@ -45,7 +45,7 @@ use Fabiang\Xmpp\EventListener\EventListenerInterface;
  *
  * @package Xmpp\Connection
  */
-interface ConnectionInterface extends LoggerAwareInterface
+interface ConnectionInterface extends EventManagerAwareInterface
 {
     /**
      * Connect.
