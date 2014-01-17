@@ -39,6 +39,7 @@ namespace Fabiang\Xmpp\EventListener\Stream;
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
+use Fabiang\Xmpp\Connection\SocketConnectionInterface;
 
 /**
  * Listener
@@ -91,9 +92,12 @@ class StartTls extends AbstractEventListener implements BlockingEventListenerInt
         if (false === $event->isStartTag()) {
             $this->blocking = false;
 
-            $this->getConnection()->getSocket()->crypto(true, STREAM_CRYPTO_METHOD_SSLv23_CLIENT);
-            $this->getConnection()->resetStreams();
-            $this->getConnection()->connect();
+            $connection = $this->getConnection();
+            if ($connection instanceof SocketConnectionInterface) {
+                $connection->getSocket()->crypto(true, STREAM_CRYPTO_METHOD_SSLv23_CLIENT);
+            }
+            $connection->resetStreams();
+            $connection->connect();
         }
     }
 

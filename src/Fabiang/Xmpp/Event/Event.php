@@ -36,6 +36,9 @@
 
 namespace Fabiang\Xmpp\Event;
 
+use Fabiang\Xmpp\Exception\OutOfRangeException;
+use Fabiang\Xmpp\Exception\InvalidArgumentException;
+
 /**
  * Generic event.
  *
@@ -119,7 +122,7 @@ class Event implements EventInterface
      */
     public function setParameters(array $parameters)
     {
-        $this->parameters = $parameters;
+        $this->parameters = array_values($parameters);
         return $this;
     }
 
@@ -138,6 +141,26 @@ class Event implements EventInterface
     {
         $this->eventStack = $eventStack;
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getParameter($index)
+    {
+        $parameters = $this->getParameters();
+        
+        if (!is_int($index)) {
+            throw new InvalidArgumentException(
+                'Argument #1 of "' . __CLASS__ . '::' . __METHOD__ . '" must be an integer'
+            );
+        }
+        
+        if (!array_key_exists($index, $parameters)) {
+            throw new OutOfRangeException("The offset $index is out of range.");
+        }
+        
+        return $parameters[$index];
     }
 
 }

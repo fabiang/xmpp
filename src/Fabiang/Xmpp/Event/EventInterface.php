@@ -88,6 +88,14 @@ interface EventInterface
      * @return $this
      */
     public function setParameters(array $parameters);
+    
+    /**
+     * Get a parameter by index.
+     * 
+     * @param integer $index
+     * @retrun mixed
+     */
+    public function getParameter($index);
 
     /**
      * Get list of previous called callbacks.

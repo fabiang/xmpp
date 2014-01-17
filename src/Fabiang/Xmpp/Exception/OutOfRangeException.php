@@ -37,13 +37,14 @@
 namespace Fabiang\Xmpp\Exception;
 
 /**
- * Runtime exception.
- * 
- * "It should be throw in cases where the calling code does not necessarily have the capacity to handle it."
+ * Exception for out-of-bounds.
+ *
+ * "This is the same as OutOfBoundsException, but this should be used
+ * for normal arrays which are indexed by number, not by key."
  *
  * @package Xmpp\Exception
  */
-class RuntimeException extends \RuntimeException implements ExceptionInterface
+class OutOfRangeException extends \OutOfBoundsException implements ExceptionInterface
 {
 
 }

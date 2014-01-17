@@ -76,5 +76,43 @@ class EventTest extends \PHPUnit_Framework_TestCase
         });
         $this->assertSame($stack, $this->object->setEventStack($stack)->getEventStack());
     }
+    
+    /**
+     * Test getting parameter by index.
+     * 
+     * @covers Fabiang\Xmpp\Event\Event::getParameter
+     * @return void
+     */
+    public function testGetParameter()
+    {
+        $this->object->setParameters(array(1, 2, 3));
+        $this->assertSame(1, $this->object->getParameter(0));
+        $this->assertSame(2, $this->object->getParameter(1));
+        $this->assertSame(3, $this->object->getParameter(2));
+    }
+    
+    /**
+     * Test getting parameter by missing index.
+     * 
+     * @covers Fabiang\Xmpp\Event\Event::getParameter
+     * @expectedException \Fabiang\Xmpp\Exception\OutOfRangeException
+     * @return void
+     */
+    public function testGetParameterNotSet()
+    {
+        $this->object->getParameter(0);
+    }
+    
+    /**
+     * Test getting parameter by missing index.
+     * 
+     * @covers Fabiang\Xmpp\Event\Event::getParameter
+     * @expectedException \Fabiang\Xmpp\Exception\InvalidArgumentException
+     * @return void
+     */
+    public function testGetParameterIbvalidType()
+    {
+        $this->object->getParameter('test');
+    }
 
 }
