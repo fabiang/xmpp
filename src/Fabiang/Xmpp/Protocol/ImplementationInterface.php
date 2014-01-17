@@ -34,71 +34,33 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\EventListener;
+namespace Fabiang\Xmpp\Protocol;
 
-use Fabiang\Xmpp\Connection\ConnectionInterface;
-use Fabiang\Xmpp\Event\EventManagerInterface;
+use Fabiang\Xmpp\OptionsAwareInterface;
+use Fabiang\Xmpp\EventListener\EventListenerInterface;
+use Fabiang\Xmpp\Event\EventManagerAwareInterface;
 
 /**
- * Abstract implementaion of event listener
+ * Protocol implementation interface.
  *
- * @package Xmpp\EventListener
+ * @package Xmpp\Protocol
  */
-abstract class AbstractEventListener implements EventListenerInterface
+interface ImplementationInterface extends OptionsAwareInterface, EventManagerAwareInterface
 {
-
+    
     /**
-     * Eventmanager.
-     *
-     * @var EventManagerInterface
-     */
-    protected $events;
-
-    /**
-     * Connection.
-     *
-     * @var ConnectionInterface
-     */
-    protected $connection;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setConnection(ConnectionInterface $connection)
-    {
-        $this->connection = $connection;
-        return $this;
-    }
-
-    /**
-     * Get connection.
+     * Register listeners that implement xmpp protocol.
      * 
-     * @return ConnectionInterface
+     * @return void
      */
-    public function getConnection()
-    {
-        return $this->connection;
-    }
-
+    public function register();
+    
     /**
-     * {@inheritDoc}
+     * Register a listener.
+     * 
+     * @param EventListenerInterface $eventListener Event listener
+     * @return $this
      */
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-
-        return $this->events;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
+    public function registerListener(EventListenerInterface $eventListener);
+    
 }

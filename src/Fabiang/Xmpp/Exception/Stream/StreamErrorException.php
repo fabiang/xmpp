@@ -69,7 +69,7 @@ class StreamErrorException extends RuntimeException
         $first = $element->firstChild;
 
         if (null !== $first && XML_ELEMENT_NODE === $first->nodeType) {
-            $message = 'Stream Error: ' . $first->localName;
+            $message = 'Stream Error: "' . $first->localName . '"';
         } else {
             $message = 'Generic stream error';
         }

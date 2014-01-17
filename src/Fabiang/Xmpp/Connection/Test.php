@@ -266,5 +266,15 @@ class Test implements ConnectionInterface
         $this->events = $events;
         return $this;
     }
+    
+    /**
+     * Get listeners.
+     * 
+     * @return EventListenerInterface
+     */
+    public function getListeners()
+    {
+        return $this->listeners;
+    }
 
 }

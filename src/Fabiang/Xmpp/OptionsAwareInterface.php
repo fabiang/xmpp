@@ -34,71 +34,28 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\EventListener;
-
-use Fabiang\Xmpp\Connection\ConnectionInterface;
-use Fabiang\Xmpp\Event\EventManagerInterface;
+namespace Fabiang\Xmpp;
 
 /**
- * Abstract implementaion of event listener
+ * Classes that take options should implent this interface.
  *
- * @package Xmpp\EventListener
+ * @package Xmpp
  */
-abstract class AbstractEventListener implements EventListenerInterface
+interface OptionsAwareInterface
 {
 
     /**
-     * Eventmanager.
+     * Set options.
      *
-     * @var EventManagerInterface
+     * @param Options $options
+     * @return $this
      */
-    protected $events;
+    public function setOptions(Options $options);
 
     /**
-     * Connection.
+     * Get options.
      *
-     * @var ConnectionInterface
+     * @return Options
      */
-    protected $connection;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setConnection(ConnectionInterface $connection)
-    {
-        $this->connection = $connection;
-        return $this;
-    }
-
-    /**
-     * Get connection.
-     * 
-     * @return ConnectionInterface
-     */
-    public function getConnection()
-    {
-        return $this->connection;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-
-        return $this->events;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
+    public function getOptions();
 }

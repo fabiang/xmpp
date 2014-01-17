@@ -34,19 +34,31 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\EventListener;
+namespace Fabiang\Xmpp\Protocol;
 
-use Fabiang\Xmpp\Connection\ConnectionInterface;
+use Fabiang\Xmpp\Options;
+use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Fabiang\Xmpp\Event\EventManagerInterface;
+use Fabiang\Xmpp\Event\EventManager;
+use Fabiang\Xmpp\EventListener\Stream;
+use Fabiang\Xmpp\EventListener\StreamError;
+use Fabiang\Xmpp\EventListener\StartTls;
 
 /**
- * Abstract implementaion of event listener
+ * Default Protocol implementation.
  *
- * @package Xmpp\EventListener
+ * @package Xmpp\Protocol
  */
-abstract class AbstractEventListener implements EventListenerInterface
+class DefaultImplementation implements ImplementationInterface
 {
 
+    /**
+     * Options.
+     *
+     * @var Options
+     */
+    protected $options;
+    
     /**
      * Eventmanager.
      *
@@ -55,31 +67,46 @@ abstract class AbstractEventListener implements EventListenerInterface
     protected $events;
 
     /**
-     * Connection.
-     *
-     * @var ConnectionInterface
+     * {@inheritDoc}
      */
-    protected $connection;
+    public function register()
+    {
+        $this->registerListener(new Stream);
+        $this->registerListener(new StreamError);
+        $this->registerListener(new StartTls);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function registerListener(EventListenerInterface $eventListener)
+    {
+        $connection = $this->getOptions()->getConnection();
+        
+        $eventListener->setConnection($connection)
+            ->setEventManager($this->getEventManager())
+            ->attachEvents();
+
+        $connection->addListener($eventListener);
+    }
 
     /**
      * {@inheritDoc}
      */
-    public function setConnection(ConnectionInterface $connection)
+    public function getOptions()
     {
-        $this->connection = $connection;
-        return $this;
+        return $this->options;
     }
 
     /**
-     * Get connection.
-     * 
-     * @return ConnectionInterface
+     * {@inheritDoc}
      */
-    public function getConnection()
+    public function setOptions(Options $options)
     {
-        return $this->connection;
+        $this->options = $options;
+        return $this;
     }
-
+    
     /**
      * {@inheritDoc}
      */

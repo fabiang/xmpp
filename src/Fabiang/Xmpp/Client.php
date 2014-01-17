@@ -36,16 +36,13 @@
 
 namespace Fabiang\Xmpp;
 
-use Psr\Log\LoggerInterface;
+use Fabiang\Xmpp\Options;
 use Fabiang\Xmpp\Connection\ConnectionInterface;
-use Fabiang\Xmpp\Channel\Channel;
+use Fabiang\Xmpp\Connection\Socket;
+use Fabiang\Xmpp\Protocol\ProtocolImplementationInterface;
 use Fabiang\Xmpp\Event\EventManagerAwareInterface;
 use Fabiang\Xmpp\Event\EventManagerInterface;
 use Fabiang\Xmpp\Event\EventManager;
-use Fabiang\Xmpp\EventListener\EventListenerInterface;
-use Fabiang\Xmpp\EventListener\Stream;
-use Fabiang\Xmpp\EventListener\StreamError;
-use Fabiang\Xmpp\EventListener\StartTls;
 use Fabiang\Xmpp\EventListener\Logger;
 
 /**
@@ -64,63 +61,88 @@ class Client implements EventManagerAwareInterface
     protected $events;
 
     /**
-     * Connection.
+     * Options.
      *
-     * @var ConnectionInterface
+     * @var Options
      */
-    protected $connection;
-
-    /**
-     * Channel list.
-     *
-     * @var Channel[]
-     */
-    protected $channels = array();
+    protected $options;
 
     /**
      * Constructor.
      *
-     * @param ConnectionInterface $connection Connection
-     * @param LoggerInterface     $logger     Logger instance (optional)
+     * @param Options $options Client options
      */
-    public function __construct(ConnectionInterface $connection, LoggerInterface $logger = null)
+    public function __construct(Options $options)
     {
-        $this->connection = $connection;
-        $this->connection->setEventManager($this->getEventManager());
-        $this->registerDefaultListeners();
-        
-        $loggerListener = new Logger($logger);
-        $this->getEventManager()->attach('logger', array($loggerListener, 'event'));
+        $this->options = $options;
+
+        // create default connection
+        if (null === $options->getConnection()) {
+            $options->setConnection(Socket::factory($options->getAddress()));
+        }
+
+        $this->setupImplementation();
     }
 
+    /**
+     * Setup implementation.
+     *
+     * @return void
+     */
+    protected function setupImplementation()
+    {
+        $this->getConnection()->setEventManager($this->getEventManager());
+        $options = $this->getOptions();
+
+        $loggerListener = new Logger($options->getLogger());
+        $this->getEventManager()->attach('logger', array($loggerListener, 'event'));
+
+        $implementation = $options->getImplementation();
+        $implementation->setEventManager($this->getEventManager());
+        $implementation->setOptions($options);
+        $implementation->register();
+    }
+    
+    /**
+     * Connect to server.
+     *
+     * @return void
+     */
     public function connect()
     {
-        $this->connection->connect();
+        $this->getConnection()->connect();
     }
 
+    /**
+     * Disconnect from server.
+     *
+     * @return void
+     */
     public function disconnect()
     {
-        $this->connection->disconnect();
+        $this->getConnection()->disconnect();
     }
 
-    public function send(Protocol\ProtocolImplementationInterface $interface)
+    /**
+     * Send data to server.
+     *
+     * @param ProtocolImplementationInterface $interface Interface
+     * @return void
+     */
+    public function send(ProtocolImplementationInterface $interface)
     {
         $data = $interface->toString();
-        $this->connection->send($data);
+        $this->getConnection()->send($data);
     }
-
-    public function registerListner(EventListenerInterface $eventListener)
+    
+    /**
+     * Get connection.
+     * 
+     * @return ConnectionInterface
+     */
+    protected function getConnection()
     {
-        $eventListener->setConnection($this->connection)->setEventManager($this->getEventManager());
-        $eventListener->attachEvents();
-        $this->connection->addListener($eventListener);
-    }
-
-    public function registerDefaultListeners()
-    {
-        $this->registerListner(new Stream);
-        $this->registerListner(new StreamError);
-        $this->registerListner(new StartTls);
+        return $this->getOptions()->getConnection();
     }
 
     /**
@@ -142,6 +164,16 @@ class Client implements EventManagerAwareInterface
     {
         $this->events = $events;
         return $this;
+    }
+
+    /**
+     * Get options.
+     *
+     * @return Options
+     */
+    public function getOptions()
+    {
+        return $this->options;
     }
 
 }
