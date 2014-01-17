@@ -66,23 +66,6 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
     protected $mechanisms = array();
 
     /**
-     * Already authenticated?
-     *
-     * @var boolean
-     */
-    protected $authenticated = false;
-
-    /**
-     * Authentication methods.
-     *
-     * @var array
-     */
-    protected $authenticationClasses = array(
-        'digest-md5' => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\DigestMd5',
-        'plain'      => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Plain'
-    );
-
-    /**
      * {@inheritDoc}
      */
     public function attachEvents()
@@ -102,7 +85,7 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
      */
     public function collectMechanisms(XMLEvent $event)
     {
-        if ($this->getConnection()->isReady() && false === $this->authenticated) {
+        if ($this->getConnection()->isReady() && false === $this->isAuthenticated()) {
             /* @var $element \DOMElement */
             list($element) = $event->getParameters();
             $this->blocking = true;
@@ -120,27 +103,10 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
      */
     public function authenticate(XMLEvent $event)
     {
-        if ($this->getConnection()->isReady() && false === $this->authenticated && false === $event->isStartTag()) {
-            $this->blocking      = true;
-            $authenticationClass = null;
+        if ($this->getConnection()->isReady() && false === $this->isAuthenticated() && false === $event->isStartTag()) {
+            $this->blocking = true;
 
-            foreach ($this->mechanisms as $machanism) {
-                if (array_key_exists($machanism, $this->authenticationClasses)) {
-                    $authenticationClass = $this->authenticationClasses[$machanism];
-                    break;
-                }
-            }
-
-            if (null === $authenticationClass) {
-                throw new RuntimeException('No supportet authentication machanism found.');
-            }
-
-            $authentication = new $authenticationClass;
-
-            if (!($authentication instanceof AuthenticationInterface)) {
-                $message = 'Authentication class "' . get_class($authentication) . '" is no AuthenticationInterface';
-                throw new RuntimeException($message);
-            }
+            $authentication = $this->determineMechanismClass();
 
             $authentication->setEventManager($this->getEventManager())
                 ->setOptions($this->getOptions())
@@ -149,6 +115,38 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
             $this->getConnection()->addListener($authentication);
             $authentication->authenticate($this->getOptions()->getUsername(), $this->getOptions()->getPassword());
         }
+    }
+
+    /**
+     * Determine mechanismclass from collected mechanisms.
+     *
+     * @return AuthenticationInterface
+     * @throws RuntimeException
+     */
+    protected function determineMechanismClass()
+    {
+        $authenticationClass = null;
+
+        $authenticationClasses = $this->getOptions()->getAuthenticationClasses();
+        foreach ($this->mechanisms as $machanism) {
+            if (array_key_exists($machanism, $authenticationClasses)) {
+                $authenticationClass = $authenticationClasses[$machanism];
+                break;
+            }
+        }
+
+        if (null === $authenticationClass) {
+            throw new RuntimeException('No supportet authentication machanism found.');
+        }
+
+        $authentication = new $authenticationClass;
+
+        if (!($authentication instanceof AuthenticationInterface)) {
+            $message = 'Authentication class "' . get_class($authentication) . '" is no AuthenticationInterface';
+            throw new RuntimeException($message);
+        }
+
+        return $authentication;
     }
 
     /**
@@ -174,8 +172,8 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
     public function success(XMLEvent $event)
     {
         if (false === $event->isStartTag()) {
-            $this->authenticated = true;
-            $this->blocking      = false;
+            $this->getOptions()->setAuthenticated(true);
+            $this->blocking = false;
 
             $this->getConnection()->resetStreams();
             $this->getConnection()->connect();
@@ -201,24 +199,12 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
     }
 
     /**
-     * Get authentication classes.
      *
-     * @return array
+     * @return boolean
      */
-    public function getAuthenticationClasses()
+    protected function isAuthenticated()
     {
-        return $this->authenticationClasses;
-    }
-
-    /**
-     *
-     * @param array $authenticationClasses Authentication classes
-     * @return \Fabiang\Xmpp\EventListener\Stream\Authentication
-     */
-    public function setAuthenticationClasses(array $authenticationClasses)
-    {
-        $this->authenticationClasses = $authenticationClasses;
-        return $this;
+        return $this->getOptions()->isAuthenticated();
     }
 
 }

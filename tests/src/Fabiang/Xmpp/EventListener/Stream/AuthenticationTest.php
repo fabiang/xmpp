@@ -66,6 +66,7 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
      * @covers Fabiang\Xmpp\EventListener\Stream\Authentication::collectMechanisms
      * @covers Fabiang\Xmpp\EventListener\Stream\Authentication::getMechanisms
      * @covers Fabiang\Xmpp\EventListener\Stream\Authentication::isBlocking
+     * @covers Fabiang\Xmpp\EventListener\Stream\Authentication::isAuthenticated
      * @return void
      */
     public function testCollectMechanisms()
@@ -88,6 +89,7 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
      * Test authentication.
      * 
      * @covers Fabiang\Xmpp\EventListener\Stream\Authentication::authenticate
+     * @covers Fabiang\Xmpp\EventListener\Stream\Authentication::determineMechanismClass
      * @return void
      */
     public function testAuthenticate()
@@ -116,6 +118,7 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
      * Test authentication when no mechanisms where collected.
      * 
      * @covers Fabiang\Xmpp\EventListener\Stream\Authentication::authenticate
+     * @covers Fabiang\Xmpp\EventListener\Stream\Authentication::determineMechanismClass
      * @expectedException \Fabiang\Xmpp\Exception\RuntimeException
      * @expectedExceptionMessage No supportet authentication machanism found.
      * @return void
@@ -133,12 +136,13 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
      * Test authentication when mechanism class is invalid instance.
      * 
      * @covers Fabiang\Xmpp\EventListener\Stream\Authentication::authenticate
+     * @covers Fabiang\Xmpp\EventListener\Stream\Authentication::determineMechanismClass
      * @expectedException \Fabiang\Xmpp\Exception\RuntimeException
      * @return void
      */
     public function testAuthenticateInvalidMechanismHandler()
     {
-        $this->object->setAuthenticationClasses(array('plain' => '\stdClass'));
+        $this->object->getOptions()->setAuthenticationClasses(array('plain' => '\stdClass'));
         
         $element = new \DOMElement('machanism', 'PLAIN');
         $event   = new XMLEvent;
@@ -198,17 +202,7 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
         
         $this->object->success($event);
         $this->assertFalse($this->object->isBlocking());
-    }
-
-    /**
-     * @covers Fabiang\Xmpp\EventListener\Stream\Authentication::getAuthenticationClasses
-     * @covers Fabiang\Xmpp\EventListener\Stream\Authentication::setAuthenticationClasses
-     * @return void
-     */
-    public function testSetAndGetAuthenticationClasses()
-    {
-        $classes = array('plain' => '\stdClass');
-        $this->assertSame($classes, $this->object->setAuthenticationClasses($classes)->getAuthenticationClasses());
+        $this->assertTrue($this->object->getOptions()->isAuthenticated());
     }
 
 }

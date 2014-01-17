@@ -39,6 +39,7 @@ namespace Fabiang\Xmpp;
 use Fabiang\Xmpp\Connection\ConnectionInterface;
 use Fabiang\Xmpp\Protocol\ImplementationInterface;
 use Fabiang\Xmpp\Protocol\DefaultImplementation;
+use Fabiang\Xmpp\EventListener\Stream\Authentication\AuthenticationInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -122,6 +123,16 @@ class Options
      * @var array
      */
     protected $channels = array();
+
+    /**
+     * Authentication methods.
+     *
+     * @var array
+     */
+    protected $authenticationClasses = array(
+        'digest-md5' => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\DigestMd5',
+        'plain'      => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Plain'
+    );
 
     /**
      * Constructor.
@@ -405,6 +416,27 @@ class Options
     public function setChannels(array $channels)
     {
         $this->channels = $channels;
+        return $this;
+    }
+
+    /**
+     * Get authentication classes.
+     *
+     * @return array
+     */
+    public function getAuthenticationClasses()
+    {
+        return $this->authenticationClasses;
+    }
+
+    /**
+     *
+     * @param array $authenticationClasses Authentication classes
+     * @return \Fabiang\Xmpp\EventListener\Stream\Authentication
+     */
+    public function setAuthenticationClasses(array $authenticationClasses)
+    {
+        $this->authenticationClasses = $authenticationClasses;
         return $this;
     }
 

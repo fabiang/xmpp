@@ -195,5 +195,16 @@ class OptionsTest extends \PHPUnit_Framework_TestCase
         $channels = array(1, 2, 3);
         $this->assertSame($channels, $this->object->setChannels($channels)->getChannels());
     }
+    
+    /**
+     * @covers Fabiang\Xmpp\Options::getAuthenticationClasses
+     * @covers Fabiang\Xmpp\Options::setAuthenticationClasses
+     * @return void
+     */
+    public function testSetAndGetAuthenticationClasses()
+    {
+        $classes = array('plain' => '\stdClass');
+        $this->assertSame($classes, $this->object->setAuthenticationClasses($classes)->getAuthenticationClasses());
+    }
 
 }
