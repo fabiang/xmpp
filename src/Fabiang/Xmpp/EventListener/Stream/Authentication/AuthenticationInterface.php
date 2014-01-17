@@ -34,7 +34,7 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\EventListener\Authentication;
+namespace Fabiang\Xmpp\EventListener\Stream\Authentication;
 
 use Fabiang\Xmpp\EventListener\EventListenerInterface;
 

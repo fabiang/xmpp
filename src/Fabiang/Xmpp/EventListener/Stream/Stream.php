@@ -34,16 +34,18 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\EventListener;
+namespace Fabiang\Xmpp\EventListener\Stream;
 
 use Fabiang\Xmpp\Event\XMLEvent;
+use Fabiang\Xmpp\EventListener\AbstractEventListener;
+use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 
 /**
  * Listener
  *
  * @package Xmpp\EventListener
  */
-class StartTls extends AbstractEventListener implements BlockingEventListenerInterface
+class Stream extends AbstractEventListener implements BlockingEventListenerInterface
 {
 
     /**
@@ -58,41 +60,51 @@ class StartTls extends AbstractEventListener implements BlockingEventListenerInt
      */
     public function attachEvents()
     {
-        $input = $this->connection->getInputStream()->getEventManager();
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-tls}starttls', array($this, 'starttls'));
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-tls}proceed', array($this, 'proceed'));
+        $this->getConnection()->getOutputStream()->getEventManager()->attach(
+            '{http://etherx.jabber.org/streams}stream',
+            array($this, 'stream')
+        );
+
+        $input = $this->getConnection()->getInputStream()->getEventManager();
+        $input->attach('{http://etherx.jabber.org/streams}stream', array($this, 'streamServer'));
+        $input->attach('{http://etherx.jabber.org/streams}features', array($this, 'features'));
     }
 
     /**
-     * Send start tls command.
+     * Stream starts.
      *
-     * @param XMLEvent $event XMLEvent object
+     * @param XMLEvent $event XMLEvent
      * @return void
      */
-    public function starttls(XMLEvent $event)
+    public function stream(XMLEvent $event)
     {
-        if (false === $event->isStartTag()) {
+        if (true === $event->isStartTag()) {
             $this->blocking = true;
-            $this->connection->setReady(false);
-            $this->connection->send('<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>');
         }
     }
 
     /**
-     * Start TLS response.
+     * Stream server.
      *
-     * @param XMLEvent $event XMLEvent object
+     * @param XMLEvent $event XMLEvent
      * @return void
      */
-    public function proceed(XMLEvent $event)
+    public function streamServer(XMLEvent $event)
     {
         if (false === $event->isStartTag()) {
             $this->blocking = false;
-
-            $this->connection->getSocket()->crypto(true, STREAM_CRYPTO_METHOD_SSLv23_CLIENT);
-            $this->connection->resetStreams();
-            $this->connection->connect();
         }
+    }
+
+    /**
+     * Server send stream start.
+     *
+     * @return void
+     */
+    public function features()
+    {
+        $this->blocking = false;
+        $this->getConnection()->setReady(true);
     }
 
     /**

@@ -40,9 +40,10 @@ use Fabiang\Xmpp\Options;
 use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Fabiang\Xmpp\Event\EventManagerInterface;
 use Fabiang\Xmpp\Event\EventManager;
-use Fabiang\Xmpp\EventListener\Stream;
-use Fabiang\Xmpp\EventListener\StreamError;
-use Fabiang\Xmpp\EventListener\StartTls;
+use Fabiang\Xmpp\EventListener\Stream\Stream;
+use Fabiang\Xmpp\EventListener\Stream\StreamError;
+use Fabiang\Xmpp\EventListener\Stream\StartTls;
+use Fabiang\Xmpp\EventListener\Stream\Authentication;
 
 /**
  * Default Protocol implementation.
@@ -74,6 +75,7 @@ class DefaultImplementation implements ImplementationInterface
         $this->registerListener(new Stream);
         $this->registerListener(new StreamError);
         $this->registerListener(new StartTls);
+        $this->registerListener(new Authentication);
     }
     
     /**
@@ -83,8 +85,8 @@ class DefaultImplementation implements ImplementationInterface
     {
         $connection = $this->getOptions()->getConnection();
         
-        $eventListener->setConnection($connection)
-            ->setEventManager($this->getEventManager())
+        $eventListener->setEventManager($this->getEventManager())
+            ->setOptions($this->getOptions())
             ->attachEvents();
 
         $connection->addListener($eventListener);

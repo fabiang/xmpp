@@ -34,78 +34,42 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\EventListener\Authentication;
+namespace Fabiang\Xmpp\EventListener\Stream;
 
-use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\Event\XMLEvent;
+use Fabiang\Xmpp\Exception\Stream\StreamErrorException;
+use Fabiang\Xmpp\EventListener\AbstractEventListener;
 
 /**
- * Handler for "digest md5" authentication mechanism.
+ * Listener for stream errors.
  *
- * @package Xmpp\EventListener\Authentication
+ * @package Xmpp\EventListener
  */
-class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
+class StreamError extends AbstractEventListener
 {
-
-    /**
-     * Is event blocking stream.
-     *
-     * @var boolean
-     */
-    protected $blocking = false;
 
     /**
      * {@inheritDoc}
      */
     public function attachEvents()
     {
-        $input = $this->connection->getInputStream()->getEventManager();
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}challenge', array($this, 'challenge'));
-
-        $output = $this->connection->getOutputStream()->getEventManager();
-        $output->attach('{urn:ietf:params:xml:ns:xmpp-sasl}auth', array($this, 'auth'));
+        $this->getConnection()->getInputStream()->getEventManager()->attach(
+            '{http://etherx.jabber.org/streams}error',
+            array($this, 'error')
+        );
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function authenticate($username, $password)
-    {
-        $auth = '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="DIGEST-MD5"/>';
-        $this->connection->send($auth);
-    }
-
-    /**
-     * Authentication starts -> blocking.
+     * Throws an exception when stream error comes from input stream.
      *
-     * @return void
+     * @param \Fabiang\Xmpp\Event\XMLEvent $event
+     * @throws StreamErrorException
      */
-    public function auth()
-    {
-        $this->blocking = true;
-    }
-
-    /**
-     * Challenge string received.
-     *
-     * @param XMLEvent $event XML event
-     * @return void
-     */
-    public function challenge(XMLEvent $event)
+    public function error(XMLEvent $event)
     {
         if (false === $event->isStartTag()) {
-            list($element) = $event->getParameters();
-            $challenge      = $element->nodeValue;
-            $this->blocking = false;
+            throw StreamErrorException::createFromEvent($event);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isBlocking()
-    {
-        return $this->blocking;
     }
 
 }

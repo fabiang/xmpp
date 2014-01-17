@@ -47,7 +47,7 @@ class DefaultImplementationTest extends \PHPUnit_Framework_TestCase
 
         foreach ($connection->getListeners() as $listener) {
             $this->assertSame($eventManager, $listener->getEventManager());
-            $this->assertSame($connection, $listener->getConnection());
+            $this->assertSame($connection, $listener->getOptions()->getConnection());
         }
     }
 

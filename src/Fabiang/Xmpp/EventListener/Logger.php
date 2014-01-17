@@ -37,35 +37,14 @@
 namespace Fabiang\Xmpp\EventListener;
 
 use Fabiang\Xmpp\Event\EventInterface;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerInterface;
 
 /**
- * Interface for event listeners.
+ * Event listener for logging events.
  *
  * @package Xmpp\EventListener
  */
-class Logger implements LoggerAwareInterface
+class Logger extends AbstractEventListener
 {
-
-    /**
-     * Logger instance.
-     *
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * Constructor may take logger instance.
-     *
-     * @param \Psr\Log\LoggerInterface $logger
-     */
-    public function __construct(LoggerInterface $logger = null)
-    {
-        if (null !== $logger) {
-            $this->setLogger($logger);
-        }
-    }
 
     /**
      * Log event.
@@ -75,19 +54,17 @@ class Logger implements LoggerAwareInterface
      */
     public function event(EventInterface $event)
     {
-        if (null !== $this->logger) {
+        $logger = $this->getOptions()->getLogger();
+
+        if (null !== $logger) {
             list($message, $level) = $event->getParameters();
-            $this->logger->log($level, $message);
+            $logger->log($level, $message);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function setLogger(LoggerInterface $logger)
+    public function attachEvents()
     {
-        $this->logger = $logger;
-        return $this;
+        $this->getEventManager()->attach('logger', array($this, 'event'));
     }
 
 }

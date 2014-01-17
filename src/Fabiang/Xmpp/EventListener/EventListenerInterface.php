@@ -38,13 +38,14 @@ namespace Fabiang\Xmpp\EventListener;
 
 use Fabiang\Xmpp\Connection\ConnectionInterface;
 use Fabiang\Xmpp\Event\EventManagerAwareInterface;
+use Fabiang\Xmpp\OptionsAwareInterface;
 
 /**
  * Interface for event listeners.
  *
  * @package Xmpp\EventListener
  */
-interface EventListenerInterface extends EventManagerAwareInterface
+interface EventListenerInterface extends EventManagerAwareInterface, OptionsAwareInterface
 {
 
     /**
@@ -53,12 +54,4 @@ interface EventListenerInterface extends EventManagerAwareInterface
      * @return void
      */
     public function attachEvents();
-
-    /**
-     * Set connection.
-     *
-     * @param ConnectionInterface $connection Connect
-     * @return $this
-     */
-    public function setConnection(ConnectionInterface $connection);
 }

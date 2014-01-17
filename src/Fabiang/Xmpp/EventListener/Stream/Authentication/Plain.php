@@ -34,7 +34,7 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\EventListener\Authentication;
+namespace Fabiang\Xmpp\EventListener\Stream\Authentication;
 
 use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\Util\XML;
@@ -61,7 +61,7 @@ class Plain extends AbstractEventListener implements AuthenticationInterface
     public function authenticate($username, $password)
     {
         $authString = XML::quote(base64_encode("\x00" . $username . "\x00" . $password));
-        $this->connection->send(
+        $this->getConnection()->send(
             '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="PLAIN">' . $authString . '</auth>'
         );
     }

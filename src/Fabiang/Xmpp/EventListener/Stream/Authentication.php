@@ -34,12 +34,14 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\EventListener;
+namespace Fabiang\Xmpp\EventListener\Stream;
 
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\Exception\RuntimeException;
-use Fabiang\Xmpp\EventListener\Authentication\AuthenticationInterface;
+use Fabiang\Xmpp\EventListener\Stream\Authentication\AuthenticationInterface;
 use Fabiang\Xmpp\Exception\Stream\AuthenticationErrorException;
+use Fabiang\Xmpp\EventListener\AbstractEventListener;
+use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 
 /**
  * Listener
@@ -48,20 +50,6 @@ use Fabiang\Xmpp\Exception\Stream\AuthenticationErrorException;
  */
 class Authentication extends AbstractEventListener implements BlockingEventListenerInterface
 {
-
-    /**
-     * Username.
-     *
-     * @var string
-     */
-    protected $username;
-
-    /**
-     * Password.
-     *
-     * @var string
-     */
-    protected $password;
 
     /**
      * Listener is blocking.
@@ -90,27 +78,16 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
      * @var array
      */
     protected $authenticationClasses = array(
-        'digest-md5' => '\\Fabiang\\Xmpp\\EventListener\\Authentication\\DigestMd5',
-        'plain'      => '\\Fabiang\\Xmpp\\EventListener\\Authentication\\Plain'
+        'digest-md5' => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\DigestMd5',
+        'plain'      => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Plain'
     );
-
-    /**
-     * Constructor.
-     *
-     * @param string $username Username (optional)
-     * @param string $password Password (optional)
-     */
-    public function __construct($username = null, $password = null)
-    {
-        $this->setUsername($username)->setPassword($password);
-    }
 
     /**
      * {@inheritDoc}
      */
     public function attachEvents()
     {
-        $input = $this->connection->getInputStream()->getEventManager();
+        $input = $this->getConnection()->getInputStream()->getEventManager();
         $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}mechanisms', array($this, 'authenticate'));
         $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}mechanism', array($this, 'collectMechanisms'));
         $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}failure', array($this, 'failure'));
@@ -125,7 +102,7 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
      */
     public function collectMechanisms(XMLEvent $event)
     {
-        if ($this->connection->isReady() && false === $this->authenticated) {
+        if ($this->getConnection()->isReady() && false === $this->authenticated) {
             /* @var $element \DOMElement */
             list($element) = $event->getParameters();
             $this->blocking = true;
@@ -143,7 +120,7 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
      */
     public function authenticate(XMLEvent $event)
     {
-        if ($this->connection->isReady() && false === $this->authenticated && false === $event->isStartTag()) {
+        if ($this->getConnection()->isReady() && false === $this->authenticated && false === $event->isStartTag()) {
             $this->blocking      = true;
             $authenticationClass = null;
 
@@ -165,10 +142,12 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
                 throw new RuntimeException($message);
             }
 
-            $authentication->setEventManager($this->getEventManager())->setConnection($this->connection);
-            $authentication->attachEvents();
-            $this->connection->addListener($authentication);
-            $authentication->authenticate($this->getUsername(), $this->getPassword());
+            $authentication->setEventManager($this->getEventManager())
+                ->setOptions($this->getOptions())
+                ->attachEvents();
+
+            $this->getConnection()->addListener($authentication);
+            $authentication->authenticate($this->getOptions()->getUsername(), $this->getOptions()->getPassword());
         }
     }
 
@@ -198,8 +177,8 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
             $this->authenticated = true;
             $this->blocking      = false;
 
-            $this->connection->resetStreams();
-            $this->connection->connect();
+            $this->getConnection()->resetStreams();
+            $this->getConnection()->connect();
         }
     }
 
@@ -234,55 +213,11 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
     /**
      *
      * @param array $authenticationClasses Authentication classes
-     * @return \Fabiang\Xmpp\EventListener\Authentication
+     * @return \Fabiang\Xmpp\EventListener\Stream\Authentication
      */
     public function setAuthenticationClasses(array $authenticationClasses)
     {
         $this->authenticationClasses = $authenticationClasses;
-        return $this;
-    }
-
-    /**
-     * Get username.
-     *
-     * @return string
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
-     * Get password.
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Set username.
-     *
-     * @param string $username Username
-     * @return $this
-     */
-    public function setUsername($username)
-    {
-        $this->username = $username;
-        return $this;
-    }
-
-    /**
-     * Set password.
-     *
-     * @param string $password Password.
-     * @return $this
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
         return $this;
     }
 

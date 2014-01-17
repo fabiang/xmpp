@@ -38,6 +38,7 @@ namespace Fabiang\Xmpp\EventListener;
 
 use Fabiang\Xmpp\Connection\ConnectionInterface;
 use Fabiang\Xmpp\Event\EventManagerInterface;
+use Fabiang\Xmpp\Options;
 
 /**
  * Abstract implementaion of event listener
@@ -46,38 +47,28 @@ use Fabiang\Xmpp\Event\EventManagerInterface;
  */
 abstract class AbstractEventListener implements EventListenerInterface
 {
-
+    /**
+     * Options.
+     *
+     * @var Options
+     */
+    protected $options;
+    
     /**
      * Eventmanager.
      *
      * @var EventManagerInterface
      */
     protected $events;
-
-    /**
-     * Connection.
-     *
-     * @var ConnectionInterface
-     */
-    protected $connection;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setConnection(ConnectionInterface $connection)
-    {
-        $this->connection = $connection;
-        return $this;
-    }
-
+   
     /**
      * Get connection.
      * 
      * @return ConnectionInterface
      */
-    public function getConnection()
+    protected function getConnection()
     {
-        return $this->connection;
+        return $this->getOptions()->getConnection();
     }
 
     /**
@@ -100,5 +91,23 @@ abstract class AbstractEventListener implements EventListenerInterface
         $this->events = $events;
         return $this;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setOptions(Options $options)
+    {
+        $this->options = $options;
+        return $this;
+    }
+
 
 }

@@ -94,14 +94,13 @@ class Client implements EventManagerAwareInterface
         $this->getConnection()->setEventManager($this->getEventManager());
         $this->getConnection()->setOptions($this->getOptions());
         $options = $this->getOptions();
-
-        $loggerListener = new Logger($options->getLogger());
-        $this->getEventManager()->attach('logger', array($loggerListener, 'event'));
-
+        
         $implementation = $options->getImplementation();
         $implementation->setEventManager($this->getEventManager());
         $implementation->setOptions($options);
         $implementation->register();
+        
+        $implementation->registerListener(new Logger());
     }
     
     /**
