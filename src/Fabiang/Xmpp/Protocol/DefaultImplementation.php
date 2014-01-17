@@ -45,6 +45,7 @@ use Fabiang\Xmpp\EventListener\Stream\StreamError;
 use Fabiang\Xmpp\EventListener\Stream\StartTls;
 use Fabiang\Xmpp\EventListener\Stream\Authentication;
 use Fabiang\Xmpp\EventListener\Stream\Bind;
+use Fabiang\Xmpp\EventListener\Stream\Session;
 
 /**
  * Default Protocol implementation.
@@ -78,6 +79,7 @@ class DefaultImplementation implements ImplementationInterface
         $this->registerListener(new StartTls);
         $this->registerListener(new Authentication);
         $this->registerListener(new Bind);
+        $this->registerListener(new Session);
     }
     
     /**

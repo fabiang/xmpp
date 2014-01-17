@@ -46,7 +46,7 @@ use Fabiang\Xmpp\Util\XML;
  *
  * @package Xmpp\EventListener
  */
-class Bind extends AbstractEventListener implements BlockingEventListenerInterface
+class Session extends AbstractEventListener implements BlockingEventListenerInterface
 {
 
     /**
@@ -62,17 +62,16 @@ class Bind extends AbstractEventListener implements BlockingEventListenerInterfa
     public function attachEvents()
     {
         $input = $this->getConnection()->getInputStream()->getEventManager();
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-bind}bind', array($this, 'bind'));
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-bind}jid', array($this, 'jid'));
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-session}session', array($this, 'session'));
     }
 
     /**
-     * Handle XML events for "bind".
-     *
+     * Handle session event.
+     * 
      * @param XMLEvent $event
      * @return void
      */
-    public function bind(XMLEvent $event)
+    public function session(XMLEvent $event)
     {
         if ($event->isEndTag()) {
             /* @var $element \DOMDocument */
@@ -82,27 +81,13 @@ class Bind extends AbstractEventListener implements BlockingEventListenerInterfa
             if ('features' === $element->parentNode->localName) {
                 $this->blocking = true;
                 $this->getConnection()->send(sprintf(
-                    '<iq type="set" id="%s"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"/></iq>',
+                    '<iq type="set" id="%s"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>',
                     XML::generateId()
                 ));
+            } else {
+                $this->blocking = false;
             }
         }
-    }
-
-    /**
-     * Handle jid.
-     *
-     * @param XMLEvent $event
-     * @return void
-     */
-    public function jid(XMLEvent $event)
-    {
-        /* @var $element \DOMDocument */
-        $element = $event->getParameter(0);
-
-        $jid = $element->nodeValue;
-        $this->getOptions()->setJid($jid);
-        $this->blocking = false;
     }
 
     /**
