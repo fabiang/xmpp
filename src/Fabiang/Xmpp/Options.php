@@ -39,7 +39,6 @@ namespace Fabiang\Xmpp;
 use Fabiang\Xmpp\Connection\ConnectionInterface;
 use Fabiang\Xmpp\Protocol\ImplementationInterface;
 use Fabiang\Xmpp\Protocol\DefaultImplementation;
-use Fabiang\Xmpp\EventListener\Stream\Authentication\AuthenticationInterface;
 use Psr\Log\LoggerInterface;
 
 /**
