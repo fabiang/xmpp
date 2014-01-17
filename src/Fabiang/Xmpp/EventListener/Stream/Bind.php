@@ -34,102 +34,81 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Protocol;
+namespace Fabiang\Xmpp\EventListener\Stream;
 
-use Fabiang\Xmpp\Options;
-use Fabiang\Xmpp\EventListener\EventListenerInterface;
-use Fabiang\Xmpp\Event\EventManagerInterface;
-use Fabiang\Xmpp\Event\EventManager;
-use Fabiang\Xmpp\EventListener\Stream\Stream;
-use Fabiang\Xmpp\EventListener\Stream\StreamError;
-use Fabiang\Xmpp\EventListener\Stream\StartTls;
-use Fabiang\Xmpp\EventListener\Stream\Authentication;
-use Fabiang\Xmpp\EventListener\Stream\Bind;
+use Fabiang\Xmpp\Event\XMLEvent;
+use Fabiang\Xmpp\EventListener\AbstractEventListener;
+use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
+use Fabiang\Xmpp\Util\XML;
 
 /**
- * Default Protocol implementation.
+ * Listener
  *
- * @package Xmpp\Protocol
+ * @package Xmpp\EventListener
  */
-class DefaultImplementation implements ImplementationInterface
+class Bind extends AbstractEventListener implements BlockingEventListenerInterface
 {
-
+    
     /**
-     * Options.
+     * Listener is blocking.
      *
-     * @var Options
+     * @var boolean
      */
-    protected $options;
-    
-    /**
-     * Eventmanager.
-     *
-     * @var EventManagerInterface
-     */
-    protected $events;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function register()
-    {
-        $this->registerListener(new Stream);
-        $this->registerListener(new StreamError);
-        $this->registerListener(new StartTls);
-        $this->registerListener(new Authentication);
-        $this->registerListener(new Bind);
-    }
+    protected $blocking = false;
     
     /**
      * {@inheritDoc}
      */
-    public function registerListener(EventListenerInterface $eventListener)
+    public function attachEvents()
     {
-        $connection = $this->getOptions()->getConnection();
-        
-        $eventListener->setEventManager($this->getEventManager())
-            ->setOptions($this->getOptions())
-            ->attachEvents();
-
-        $connection->addListener($eventListener);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setOptions(Options $options)
-    {
-        $this->options = $options;
-        return $this;
-    }
+        $input = $this->getConnection()->getInputStream()->getEventManager();
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-bind}bind', array($this, 'bind'));
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-bind}jid', array($this, 'jid'));
+    }    
     
     /**
-     * {@inheritDoc}
+     * Handle XML events for "bind".
+     * 
+     * @param XMLEvent $event
+     * @return void
      */
-    public function getEventManager()
+    public function bind(XMLEvent $event)
     {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
+        if ($event->isEndTag()) {
+            /* @var $element \DOMDocument */
+            $element = $event->getParameter(0);
+
+            // bind element occured in <features>
+            if ('features' === $element->parentNode->localName) {
+                $this->blocking = true;
+                $this->getConnection()->send(sprintf(
+                    '<iq type="set" id="%s"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"/></iq>',
+                    XML::generateId()
+                ));
+            }
         }
-
-        return $this->events;
     }
-
+    
+    /**
+     * Handle jid.
+     * 
+     * @param XMLEvent $event
+     * @return void
+     */
+    public function jid(XMLEvent $event)
+    {
+        /* @var $element \DOMDocument */
+        $element = $event->getParameter(0);
+        $jid = $element->nodeValue;
+        $this->getOptions()->setJid($jid);
+        $this->blocking = false;
+    }
+    
     /**
      * {@inheritDoc}
      */
-    public function setEventManager(EventManagerInterface $events)
+    public function isBlocking()
     {
-        $this->events = $events;
-        return $this;
+        return $this->blocking;
     }
-
 }

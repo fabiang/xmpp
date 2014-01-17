@@ -61,5 +61,15 @@ class XML
 
         return htmlspecialchars($string, $flags, $encoding);
     }
+    
+    /**
+     * Generate a unique id.
+     * 
+     * @return string
+     */
+    public static function generateId()
+    {
+        return 'fabiang_xmpp_' . uniqid();
+    }
 
 }
