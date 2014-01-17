@@ -22,6 +22,6 @@
     },
     "extra": {"branch-alias": {"dev-master": "1.0.x-dev"}},
     "archive": {
-        "exclude": ["/tests", "/example.php"]
+        "exclude": ["/tests", "/example.php", "/.gitignore", "/.scrutinizer.yml", "/.travis.yml"]
     }
 }
