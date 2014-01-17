@@ -44,39 +44,22 @@ use Fabiang\Xmpp\Event\EventManagerInterface;
 use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 use Fabiang\Xmpp\Util\XML;
+use Fabiang\Xmpp\Options;
 
 /**
  * Connection to a socket stream.
  *
  * @package Xmpp\Connection
  */
-class Socket implements ConnectionInterface, SocketConnectionInterface
+class Socket extends AbstractConnection implements SocketConnectionInterface
 {
 
     const DEFAULT_LENGTH = 4096;
-    const STREAM_START   = '<?xml version="1.0" encoding="UTF-8"?><stream:stream to="%s" xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client" version="1.0">';
+    const STREAM_START   = <<<'XML'
+<?xml version="1.0" encoding="UTF-8"?>
+<stream:stream to="%s" xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client" version="1.0">
+XML;
     const STREAM_END     = '</stream:stream>';
-    
-    /**
-     * Eventmanager.
-     *
-     * @var EventManagerInterface
-     */
-    protected $events;
-
-    /**
-     * Output XML stream.
-     *
-     * @var XMLStream
-     */
-    protected $outputStream;
-
-    /**
-     * Input XML stream.
-     *
-     * @var XMLStream
-     */
-    protected $inputStream;
 
     /**
      * Socket.
@@ -86,63 +69,27 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
     protected $socket;
 
     /**
-     * Is stream connected.
-     *
-     * @var boolean
-     */
-    protected $connected = false;
-
-    /**
-     * Connection address.
-     *
-     * @var string
-     */
-    protected $address;
-
-    /**
-     * Event listeners.
-     *
-     * @var EventListenerInterface[]
-     */
-    protected $listeners = array();
-
-    /**
-     * Server hostname; is send as attribute "to".
-     *
-     * @var string
-     */
-    protected $to;
-
-    /**
-     * Is stream ready.
-     *
-     * @var boolean
-     */
-    protected $ready = false;
-
-    /**
      * Constructor set default socket instance if no socket was given.
      *
      * @param StreamSocket $socket  Socket instance
-     * @param string       $address Server address
      */
-    public function __construct(SocketClient $socket, $address)
+    public function __construct(SocketClient $socket)
     {
         $this->setSocket($socket);
-        $this->address = $address;
-        $this->setTo(parse_url($address, PHP_URL_HOST));
     }
 
     /**
      * Factory for connection class.
      *
-     * @param string $address Server address
+     * @param Options $options Options object
      * @return static
      */
-    public static function factory($address)
+    public static function factory(Options $options)
     {
-        $socket = new SocketClient($address);
-        return new static($socket, $address);
+        $socket = new SocketClient($options->getAddress());
+        $object = new static($socket);
+        $object->setOptions($options);
+        return $object;
     }
 
     /**
@@ -153,7 +100,8 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
         $buffer = $this->getSocket()->read(static::DEFAULT_LENGTH);
 
         if ($buffer) {
-            $this->log("Received buffer '$buffer' from '{$this->address}'", LogLevel::DEBUG);
+            $address = $this->getAddress();
+            $this->log("Received buffer '$buffer' from '{$address}'", LogLevel::DEBUG);
             $this->getInputStream()->parse($buffer);
             return $buffer;
         }
@@ -168,7 +116,8 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
             $this->connect();
         }
 
-        $this->log("Sending data '$buffer' to '{$this->address}'", LogLevel::DEBUG);
+        $address = $this->getAddress();
+        $this->log("Sending data '$buffer' to '{$address}'", LogLevel::DEBUG);
         $this->getSocket()->write($buffer);
         $this->getOutputStream()->parse($buffer);
 
@@ -202,34 +151,14 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
     public function connect()
     {
         if (false === $this->connected) {
+            $address         = $this->getAddress();
             $this->getSocket()->connect();
             $this->getSocket()->setBlocking(true);
             $this->connected = true;
-            $this->log("Connected to '{$this->address}'", LogLevel::DEBUG);
+            $this->log("Connected to '{$address}'", LogLevel::DEBUG);
         }
 
-        $this->send(sprintf(static::STREAM_START, XML::quote($this->getTo())));
-    }
-    
-    /**
-     * Call logging event.
-     * 
-     * @param string  $message Log message
-     * @param integer $level   Log level
-     * @return void
-     */
-    protected function log($message, $level = LogLevel::DEBUG)
-    {
-        $this->getEventManager()->trigger('logger', $this, array($message, $level));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function resetStreams()
-    {
-        $this->getInputStream()->reset();
-        $this->getOutputStream()->reset();
+        $this->send(sprintf(static::STREAM_START, XML::quote($this->getOptions()->getTo())));
     }
 
     /**
@@ -238,19 +167,22 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
     public function disconnect()
     {
         if (true === $this->connected) {
+            $address         = $this->getAddress();
             $this->send(static::STREAM_END);
             $this->getSocket()->close();
             $this->connected = false;
-            $this->log("Disconnected from '{$this->address}'", LogLevel::DEBUG);
+            $this->log("Disconnected from '{$address}'", LogLevel::DEBUG);
         }
     }
 
     /**
-     * {@inheritDoc}
+     * Get address from options object.
+     *
+     * @return string
      */
-    public function isConnected()
+    protected function getAddress()
     {
-        return $this->connected;
+        return $this->getOptions()->getAddress();
     }
 
     /**
@@ -270,127 +202,6 @@ class Socket implements ConnectionInterface, SocketConnectionInterface
     {
         $this->socket = $socket;
         return $this;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-
-        return $this->events;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public function getOutputStream()
-    {
-        if (null === $this->outputStream) {
-            $this->outputStream = new XMLStream();
-        }
-
-        return $this->outputStream;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getInputStream()
-    {
-        if (null === $this->inputStream) {
-            $this->inputStream = new XMLStream();
-        }
-
-        return $this->inputStream;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setOutputStream(XMLStream $outputStream)
-    {
-        $this->outputStream = $outputStream;
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setInputStream(XMLStream $inputStream)
-    {
-        $this->inputStream = $inputStream;
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function addListener(EventListenerInterface $eventListener)
-    {
-        $this->listeners[] = $eventListener;
-        return $this;
-    }
-
-    /**
-     * Get registered listeners.
-     *
-     * @return array
-     */
-    public function getListeners()
-    {
-        return $this->listeners;
-    }
-
-    /**
-     * Get server hostname (to).
-     *
-     * @return string
-     */
-    public function getTo()
-    {
-        return $this->to;
-    }
-
-    /**
-     * Set server hostname (to).
-     *
-     * @param string $to Server hostname
-     * @return $this
-     */
-    public function setTo($to)
-    {
-        $this->to = (string) $to;
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setReady($flag)
-    {
-        $this->ready = (bool) $flag;
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isReady()
-    {
-        return $this->ready;
     }
 
 }

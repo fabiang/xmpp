@@ -78,7 +78,7 @@ class Client implements EventManagerAwareInterface
 
         // create default connection
         if (null === $options->getConnection()) {
-            $options->setConnection(Socket::factory($options->getAddress()));
+            $options->setConnection(Socket::factory($options));
         }
 
         $this->setupImplementation();
@@ -92,6 +92,7 @@ class Client implements EventManagerAwareInterface
     protected function setupImplementation()
     {
         $this->getConnection()->setEventManager($this->getEventManager());
+        $this->getConnection()->setOptions($this->getOptions());
         $options = $this->getOptions();
 
         $loggerListener = new Logger($options->getLogger());

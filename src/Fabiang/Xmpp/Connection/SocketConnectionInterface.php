@@ -46,8 +46,6 @@ use Fabiang\Xmpp\Stream\SocketClient;
 interface SocketConnectionInterface
 {
 
-    public function __construct(SocketClient $socket, $address);
-
     /**
      * Set socket instance.
      *

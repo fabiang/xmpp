@@ -40,41 +40,15 @@ use Fabiang\Xmpp\Stream\XMLStream;
 use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Psr\Log\LoggerInterface;
 use Fabiang\Xmpp\Event\EventManager;
-use Fabiang\Xmpp\Event\EventManagerInterface; 
+use Fabiang\Xmpp\Event\EventManagerInterface;
 
 /**
  * Connection test double.
  *
  * @package Xmpp\Connection
  */
-class Test implements ConnectionInterface
+class Test extends AbstractConnection
 {
-
-    /**
-     *
-     * @var XMLStream
-     */
-    protected $outputStream;
-
-    /**
-     *
-     * @var \XMLStream
-     */
-    protected $inputStream;
-
-    /**
-     * Event listeners.
-     *
-     * @var EventListenerInterface[]
-     */
-    protected $listeners = array();
-
-    /**
-     * Connected.
-     *
-     * @var boolean
-     */
-    protected $connected = false;
 
     /**
      * Data for next receive().
@@ -89,63 +63,6 @@ class Test implements ConnectionInterface
      * @var array
      */
     protected $buffer = array();
-    
-    /**
-     *
-     * @var boolean
-     */
-    protected $ready = false;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getOutputStream()
-    {
-        if (null === $this->outputStream) {
-            $this->outputStream = new XMLStream();
-        }
-
-        return $this->outputStream;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getInputStream()
-    {
-        if (null === $this->inputStream) {
-            $this->inputStream = new XMLStream();
-        }
-
-        return $this->inputStream;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setOutputStream(XMLStream $outputStream)
-    {
-        $this->outputStream = $outputStream;
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setInputStream(XMLStream $inputStream)
-    {
-        $this->inputStream = $inputStream;
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function addListener(EventListenerInterface $eventListener)
-    {
-        $this->listeners[] = $eventListener;
-        return $this;
-    }
 
     /**
      * {@inheritDoc}
@@ -161,14 +78,6 @@ class Test implements ConnectionInterface
     public function disconnect()
     {
         $this->connected = false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isConnected()
-    {
-        return $this->connected;
     }
 
     /**
@@ -211,70 +120,6 @@ class Test implements ConnectionInterface
     public function getBuffer()
     {
         return $this->buffer;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isReady()
-    {
-        return $this->ready;
-    }
-
-    
-    public function resetStreams()
-    {
-        $this->getInputStream()->reset();
-        $this->getOutputStream()->reset();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setReady($flag)
-    {
-        $this->ready = (bool) $flag;
-        return $this;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-
-        return $this->events;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-    
-    /**
-     * Get listeners.
-     * 
-     * @return EventListenerInterface
-     */
-    public function getListeners()
-    {
-        return $this->listeners;
     }
 
 }

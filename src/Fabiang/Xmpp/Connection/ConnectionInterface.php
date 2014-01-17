@@ -39,13 +39,14 @@ namespace Fabiang\Xmpp\Connection;
 use Fabiang\Xmpp\Stream\XMLStream;
 use Fabiang\Xmpp\Event\EventManagerAwareInterface;
 use Fabiang\Xmpp\EventListener\EventListenerInterface;
+use Fabiang\Xmpp\OptionsAwareInterface;
 
 /**
  * Connections must implement this interface.
  *
  * @package Xmpp\Connection
  */
-interface ConnectionInterface extends EventManagerAwareInterface
+interface ConnectionInterface extends EventManagerAwareInterface, OptionsAwareInterface
 {
     /**
      * Connect.
