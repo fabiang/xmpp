@@ -33,8 +33,8 @@ class PresenceTest extends \PHPUnit_Framework_TestCase
     public function testToString()
     {
         $this->assertSame('<presence><priority>1</priority></presence>', $this->object->toString());
-        $this->object->setTo('foobar');
-        $this->assertSame('<presence to="foobar"><priority>1</priority></presence>', $this->object->toString());
+        $this->object->setTo('foobar')->setNickname('phpunit');
+        $this->assertSame('<presence to="foobar/phpunit"><priority>1</priority></presence>', $this->object->toString());
     }
 
     /**

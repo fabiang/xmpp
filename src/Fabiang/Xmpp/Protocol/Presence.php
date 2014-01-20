@@ -126,6 +126,13 @@ class Presence implements ProtocolImplementationInterface
     protected $priority = 1;
 
     /**
+     * Nickname for presence.
+     *
+     * @var string
+     */
+    protected $nickname;
+
+    /**
      * {@inheritDoc}
      */
     public function toString()
@@ -133,10 +140,32 @@ class Presence implements ProtocolImplementationInterface
         $presence = '<presence';
 
         if (null !== $this->getTo()) {
-            $presence .= ' to="' . XML::quote($this->getTo()) . '"';
+            $presence .= ' to="' . XML::quote($this->getTo()) . '/' . XML::quote($this->getNickname()) . '"';
         }
 
         return $presence . '><priority>' . $this->getPriority() . '</priority></presence>';
+    }
+
+    /**
+     * Get nickname.
+     *
+     * @return string
+     */
+    public function getNickname()
+    {
+        return $this->nickname;
+    }
+
+    /**
+     * Set nickname.
+     *
+     * @param string $nickname
+     * @return $this
+     */
+    public function setNickname($nickname)
+    {
+        $this->nickname = $nickname;
+        return $this;
     }
 
     /**
