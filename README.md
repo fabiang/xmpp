@@ -16,3 +16,8 @@ Add this to your composer file:
             "fabiang/xmpp": "*"
         }
     }
+
+## DOCUMENTATION
+
+Read the [documentation](docs/00-intro.md).
+
