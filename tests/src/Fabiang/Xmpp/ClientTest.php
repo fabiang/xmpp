@@ -145,7 +145,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $connection = new Test;
         $this->options->setConnection($connection);
         $this->object->send(new Protocol\Message);
-        $this->assertContains('', $connection->getBuffer());
+        $this->assertCount(1, $connection->getBuffer());
     }
 
     /**
