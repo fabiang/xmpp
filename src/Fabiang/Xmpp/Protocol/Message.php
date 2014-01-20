@@ -36,6 +36,8 @@
 
 namespace Fabiang\Xmpp\Protocol;
 
+use Fabiang\Xmpp\Util\XML;
+
 /**
  * Protocol setting for Xmpp.
  *
@@ -54,9 +56,54 @@ class Message implements ProtocolImplementationInterface
      */
     const TYPE_GROUPCHAT = 'groupchat';
     
+    protected $type = self::TYPE_CHAT;
+    
+    protected $to;
+
+    protected $message = '';
     
     public function toString()
     {
-        return '';
+        return sprintf(
+            '<message type="%s" id="%s" to="%s"><body>%s</body></message>',
+            $this->getType(),
+            XML::generateId(),
+            $this->getTo(),
+            $this->getMessage()
+        );
     }
+    
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function getTo()
+    {
+        return $this->to;
+    }
+
+    public function setTo($to)
+    {
+        $this->to = $to;
+        return $this;
+    }
+
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    public function setMessage($message)
+    {
+        $this->message = $message;
+        return $this;
+    }
+
 }
