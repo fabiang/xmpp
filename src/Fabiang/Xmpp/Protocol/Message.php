@@ -45,23 +45,53 @@ use Fabiang\Xmpp\Util\XML;
  */
 class Message implements ProtocolImplementationInterface
 {
-
     /**
      * Chat between to users.
      */
-    const TYPE_CHAT      = 'chat';
-    
+
+    const TYPE_CHAT = 'chat';
+
     /**
      * Chat in a multi-user channel (MUC).
      */
     const TYPE_GROUPCHAT = 'groupchat';
-    
+
+    /**
+     * Message type.
+     *
+     * @var string
+     */
     protected $type = self::TYPE_CHAT;
-    
+
+    /**
+     * Set message receiver.
+     *
+     * @var string
+     */
     protected $to;
 
+    /**
+     * Message.
+     *
+     * @var string
+     */
     protected $message = '';
-    
+
+    /**
+     * Constructor.
+     *
+     * @param string $message
+     * @param string $to
+     * @param string $type
+     */
+    public function __construct($message = '', $to = '', $type = self::TYPE_CHAT)
+    {
+        $this->setMessage($message)->setTo($to)->setType($type);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function toString()
     {
         return sprintf(
@@ -72,37 +102,72 @@ class Message implements ProtocolImplementationInterface
             $this->getMessage()
         );
     }
-    
+
+    /**
+     * Get message type.
+     *
+     * @return string
+     */
     public function getType()
     {
         return $this->type;
     }
 
+    /**
+     * Set message type.
+     *
+     * See {@link self::TYPE_CHAT} and {@link self::TYPE_GROUPCHAT}
+     *
+     * @param string $type
+     * @return $this
+     */
     public function setType($type)
     {
         $this->type = $type;
         return $this;
     }
 
+    /**
+     * Get message receiver.
+     *
+     * @return string
+     */
     public function getTo()
     {
         return $this->to;
     }
 
+    /**
+     * Set message receiver.
+     *
+     * @param string $to
+     * @return $this
+     */
     public function setTo($to)
     {
-        $this->to = $to;
+        $this->to = (string) $to;
         return $this;
     }
 
+    /**
+     * Get message.
+     *
+     * @return string
+     */
     public function getMessage()
     {
         return $this->message;
     }
 
+    /**
+     * Set message.
+     *
+     * @param string $message
+     * @return $this
+     */
     public function setMessage($message)
     {
-        $this->message = $message;
+        $this->message = (string) $message;
         return $this;
     }
 
