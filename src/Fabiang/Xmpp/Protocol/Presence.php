@@ -131,6 +131,18 @@ class Presence implements ProtocolImplementationInterface
      * @var string
      */
     protected $nickname;
+    
+    /**
+     * Constructor.
+     * 
+     * @param integer $priority
+     * @param string $to
+     * @param string $nickname
+     */
+    public function __construct($priority = 1, $to = null, $nickname = null)
+    {
+        $this->setPriority($priority)->setTo($to)->setNickname($nickname);
+    }
 
     /**
      * {@inheritDoc}
@@ -164,7 +176,7 @@ class Presence implements ProtocolImplementationInterface
      */
     public function setNickname($nickname)
     {
-        $this->nickname = $nickname;
+        $this->nickname = (string) $nickname;
         return $this;
     }
 

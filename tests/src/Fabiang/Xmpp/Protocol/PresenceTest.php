@@ -36,6 +36,20 @@ class PresenceTest extends \PHPUnit_Framework_TestCase
         $this->object->setTo('foobar')->setNickname('phpunit');
         $this->assertSame('<presence to="foobar/phpunit"><priority>1</priority></presence>', $this->object->toString());
     }
+    
+    /**
+     * Test constructor.
+     * 
+     * @covers Fabiang\Xmpp\Protocol\Presence::__construct
+     * @return void
+     */
+    public function testConstructor()
+    {
+        $object = new Presence('2', 'foo', 3);
+        $this->assertSame('foo', $object->getTo());
+        $this->assertSame(2, $object->getPriority());
+        $this->assertSame('3', $object->getNickname());
+    }
 
     /**
      * Test setter and getter.
@@ -44,12 +58,15 @@ class PresenceTest extends \PHPUnit_Framework_TestCase
      * @covers Fabiang\Xmpp\Protocol\Presence::setTo
      * @covers Fabiang\Xmpp\Protocol\Presence::getPriority
      * @covers Fabiang\Xmpp\Protocol\Presence::setPriority
+     * @covers Fabiang\Xmpp\Protocol\Presence::setNickname
+     * @covers Fabiang\Xmpp\Protocol\Presence::getNickname
      * @return void
      */
     public function testSetterAndGetter()
     {
         $this->assertSame('foobar', $this->object->setTo('foobar')->getTo());
         $this->assertSame(2, $this->object->setPriority('2')->getPriority());
+        $this->assertSame('3', $this->object->setNickname(3)->getNickname());
     }
 
 }
