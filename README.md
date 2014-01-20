@@ -5,7 +5,7 @@ Library for XMPP protocol connections (Jabber) for PHP (work in progress).
 ## SYSTEM REQUIREMENTS
 
 - PHP 5.3
-- psr/log - for PSR-3 logging
+- psr/log - for PSR-3 logging (optional)
 
 ## INSTALLATION
 

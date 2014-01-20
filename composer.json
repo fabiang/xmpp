@@ -20,6 +20,9 @@
     "require-dev": {
         "monolog/monolog": "*"
     },
+    "suggest": {
+        "monolog/monolog": "Allows more advanced logging of the application flow"
+    },
     "extra": {"branch-alias": {"dev-master": "1.0.x-dev"}},
     "archive": {
         "exclude": ["/tests", "/docs", "/example.php", "/.gitignore", "/.scrutinizer.yml", "/.travis.yml"]
