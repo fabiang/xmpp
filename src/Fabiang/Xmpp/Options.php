@@ -377,7 +377,7 @@ class Options
     /**
      * Get users.
      *
-     * @return array
+     * @return Protocol\User\User[]
      */
     public function getUsers()
     {

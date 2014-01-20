@@ -34,42 +34,24 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Util;
+namespace Fabiang\Xmpp\Protocol;
+
+use Fabiang\Xmpp\Util\XML;
 
 /**
- * XML utility methods.
+ * Protocol setting for Xmpp.
  *
- * @package Xmpp\Util
+ * @package Xmpp\Protocol
  */
-class XML
+class Roster implements ProtocolImplementationInterface
 {
 
     /**
-     * Quote XML string.
-     *
-     * @param string $string   String to be quoted
-     * @param string $encoding Encoding used for quotation
-     * @return string
+     * {@inheritDoc}
      */
-    public static function quote($string, $encoding = 'UTF-8')
+    public function toString()
     {
-        $flags = ENT_QUOTES;
-
-        if (defined('ENT_XML1')) {
-            $flags |= ENT_XML1;
-        }
-
-        return htmlspecialchars($string, $flags, $encoding);
-    }
-    
-    /**
-     * Generate a unique id.
-     * 
-     * @return string
-     */
-    public static function generateId()
-    {
-        return static::quote('fabiang_xmpp_' . uniqid());
+        return '<iq type="get" id="' . XML::generateId() . '"><query xmlns="jabber:iq:roster"/></iq>';
     }
 
 }

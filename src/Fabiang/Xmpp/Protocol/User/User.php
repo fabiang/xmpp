@@ -34,42 +34,92 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Util;
+namespace Fabiang\Xmpp\Protocol\User;
 
 /**
- * XML utility methods.
+ * User object.
  *
- * @package Xmpp\Util
+ * @package Xmpp\Protocol
  */
-class XML
+class User
 {
 
     /**
-     * Quote XML string.
      *
-     * @param string $string   String to be quoted
-     * @param string $encoding Encoding used for quotation
-     * @return string
+     * @var string
      */
-    public static function quote($string, $encoding = 'UTF-8')
-    {
-        $flags = ENT_QUOTES;
+    protected $name;
 
-        if (defined('ENT_XML1')) {
-            $flags |= ENT_XML1;
-        }
-
-        return htmlspecialchars($string, $flags, $encoding);
-    }
-    
     /**
-     * Generate a unique id.
-     * 
-     * @return string
+     *
+     * @var string
      */
-    public static function generateId()
+    protected $jid;
+
+    /**
+     *
+     * @var string
+     */
+    protected $subscription;
+
+    /**
+     *
+     * @var array
+     */
+    protected $groups = array();
+
+    public function getName()
     {
-        return static::quote('fabiang_xmpp_' . uniqid());
+        return $this->name;
+    }
+
+    public function setName($name = null)
+    {
+        if (null === $name || '' === $name) {
+            $this->name = null;
+        } else {
+            $this->name = $name;
+        }
+        return $this;
+    }
+
+    public function getJid()
+    {
+        return $this->jid;
+    }
+
+    public function setJid($jid)
+    {
+        $this->jid = (string) $jid;
+        return $this;
+    }
+
+    public function getSubscription()
+    {
+        return $this->subscription;
+    }
+
+    public function setSubscription($subscription)
+    {
+        $this->subscription = (string) $subscription;
+        return $this;
+    }
+
+    public function getGroups()
+    {
+        return $this->groups;
+    }
+
+    public function setGroups(array $groups)
+    {
+        $this->groups = $groups;
+        return $this;
+    }
+
+    public function addGroup($group)
+    {
+        $this->groups[] = (string) $group;
+        return $this;
     }
 
 }

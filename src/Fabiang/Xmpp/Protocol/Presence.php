@@ -36,6 +36,8 @@
 
 namespace Fabiang\Xmpp\Protocol;
 
+use Fabiang\Xmpp\Util\XML;
+
 /**
  * Protocol setting for Xmpp.
  *
@@ -43,10 +45,10 @@ namespace Fabiang\Xmpp\Protocol;
  */
 class Presence implements ProtocolImplementationInterface
 {
-
     /**
      * Signals that the entity is available for communication.
      */
+
     const TYPE_AVAILABLE = 'available';
 
     /**
@@ -108,5 +110,77 @@ class Presence implements ProtocolImplementationInterface
      * The entity or resource is away for an extended period (xa = "eXtended Away").
      */
     const SHOW_XA = 'xa';
+
+    /**
+     * Presence to.
+     *
+     * @var string|null
+     */
+    protected $to;
+
+    /**
+     * Priority.
+     *
+     * @var integer
+     */
+    protected $priority = 1;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function toString()
+    {
+        $presence = '<presence';
+
+        if (null !== $this->getTo()) {
+            $presence .= ' to="' . XML::quote($this->getTo()) . '"';
+        }
+
+        return $presence . '><priority>' . $this->getPriority() . '</priority></presence>';
+    }
+
+    /**
+     * Get to.
+     *
+     * @return string¦null
+     */
+    public function getTo()
+    {
+        return $this->to;
+    }
+
+    /**
+     * Set to.
+     *
+     * @param string|null $to
+     * @return $this
+     */
+    public function setTo($to = null)
+    {
+        $this->to = $to;
+        return $this;
+    }
+
+    /**
+     * Get priority.
+     *
+     * @return integer
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
+    /**
+     * Set priority.
+     *
+     * @param integer $priority
+     * @return $this
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = (int) $priority;
+        return $this;
+    }
 
 }

@@ -18,7 +18,8 @@
         "psr/log": "*"
     },
     "require-dev": {
-        "monolog/monolog": "*"
+        "monolog/monolog": "*",
+        "phpunit/phpunit": "~3.7"
     },
     "suggest": {
         "monolog/monolog": "Allows more advanced logging of the application flow"
