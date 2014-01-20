@@ -19,13 +19,29 @@
     },
     "require-dev": {
         "monolog/monolog": "*",
-        "phpunit/phpunit": "~3.7"
+        "phpunit/phpunit": "~3.7",
+        "behat/behat": "2.4.*@stable"
     },
     "suggest": {
         "monolog/monolog": "Allows more advanced logging of the application flow"
     },
-    "extra": {"branch-alias": {"dev-master": "1.0.x-dev"}},
+    "config": {
+        "bin-dir": "bin/"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    },
     "archive": {
-        "exclude": ["/tests", "/docs", "/example.php", "/.gitignore", "/.scrutinizer.yml", "/.travis.yml"]
+        "exclude": [
+            ".gitignore",
+            "/tests",
+            "/docs",
+            "/bin",
+            "/example.php",
+            "/.scrutinizer.yml",
+            "/.travis.yml"
+        ]
     }
 }
