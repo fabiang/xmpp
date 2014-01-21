@@ -57,6 +57,12 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      * @var Options
      */
     protected $options;
+    
+    /**
+     *
+     * @var Connection\ConnectionInterface
+     */
+    protected $connection;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -66,22 +72,19 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        $this->connection = new Test;
+        $this->connection->setData(array(
+            "<?xml version='1.0'?><stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' "
+            . "id='1234567890' from='localhost' version='1.0' xml:lang='en'><stream:features></stream:features>"
+        ));
+
         $options = new Options;
         $options->setImplementation(new DefaultImplementation);
+        $options->setTo('a');
+        $options->setConnection($this->connection);
 
         $this->object  = new Client($options);
         $this->options = $options;
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     *
-     * @return void
-     */
-    protected function tearDown()
-    {
-        
     }
 
     /**
@@ -96,7 +99,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $connection     = $this->object->getOptions()->getConnection();
         $eventManager   = $this->object->getEventManager();
         $implementation = $this->object->getOptions()->getImplementation();
-        $this->assertInstanceOf(__NAMESPACE__ . '\\Connection\\Socket', $connection);
+
         $this->assertSame($connection->getEventManager(), $eventManager);
 
         $eventList = $eventManager->getEventList();
@@ -116,7 +119,6 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testConnect()
     {
-        $this->options->setConnection(new Test);
         $this->object->connect();
         $this->assertTrue($this->options->getConnection()->isConnected());
     }
@@ -130,6 +132,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testDisconnect()
     {
+        $this->object->connect();
         $this->object->disconnect();
         $this->assertFalse($this->options->getConnection()->isConnected());
     }
@@ -142,10 +145,9 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testSend()
     {
-        $connection = new Test;
-        $this->options->setConnection($connection);
+        $this->object->connect();
         $this->object->send(new Protocol\Message);
-        $this->assertCount(1, $connection->getBuffer());
+        $this->assertCount(2, $this->connection->getBuffer());
     }
 
     /**

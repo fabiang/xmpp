@@ -94,15 +94,15 @@ class Client implements EventManagerAwareInterface
         $this->getConnection()->setEventManager($this->getEventManager());
         $this->getConnection()->setOptions($this->getOptions());
         $options = $this->getOptions();
-        
+
         $implementation = $options->getImplementation();
         $implementation->setEventManager($this->getEventManager());
         $implementation->setOptions($options);
         $implementation->register();
-        
+
         $implementation->registerListener(new Logger());
     }
-    
+
     /**
      * Connect to server.
      *
@@ -134,10 +134,10 @@ class Client implements EventManagerAwareInterface
         $data = $interface->toString();
         $this->getConnection()->send($data);
     }
-    
+
     /**
      * Get connection.
-     * 
+     *
      * @return ConnectionInterface
      */
     protected function getConnection()

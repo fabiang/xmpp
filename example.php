@@ -20,15 +20,15 @@ $port           = 5222;
 $connectionType = 'tcp';
 $address        = "$connectionType://$hostname:$port";
 
-$options = new Options($address);
-$options->setLogger($logger);
-
 $username = 'xmpp';
 $password = 'test';
 
-$client = new Client($options);
+$options = new Options($address);
+$options->setLogger($logger)
+    ->setUsername($username)
+    ->setPassword($password);
 
-$options->getImplementation()->registerListener(new Fabiang\Xmpp\EventListener\Authentication($username, $password));
+$client = new Client($options);
 
 //$client->connect();
 $client->send(new Roster);

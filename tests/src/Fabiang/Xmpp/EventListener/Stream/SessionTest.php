@@ -72,7 +72,8 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $options = new Options;
         $options->setConnection($this->connection);
         $this->object->setOptions($options);
-        $this->connection->setReady(true);
+        $this->connection->setReady(true)->setOptions($options);
+        $this->connection->connect();
     }
 
     /**
@@ -114,7 +115,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $buffer = $this->connection->getbuffer();
         $this->assertRegExp(
             '/<iq type="set" id="[^"]+"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"\/><\/iq>/',
-            $buffer[0]
+            $buffer[1]
         );
     }
 

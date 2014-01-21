@@ -40,7 +40,9 @@ use Fabiang\Xmpp\Stream\XMLStream;
 use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Fabiang\Xmpp\Event\EventManager;
 use Fabiang\Xmpp\Event\EventManagerInterface;
+use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 use Fabiang\Xmpp\Options;
+use Psr\Log\LogLevel;
 
 /**
  * Connection test double.
@@ -241,6 +243,25 @@ abstract class AbstractConnection implements ConnectionInterface
     protected function log($message, $level = LogLevel::DEBUG)
     {
         $this->getEventManager()->trigger('logger', $this, array($message, $level));
+    }
+
+    /**
+     * Check blocking event listeners.
+     *
+     * @return boolean
+     */
+    protected function checkBlockingListeners()
+    {
+        $blocking = false;
+        foreach ($this->listeners as $listerner) {
+            $instanceof = $listerner instanceof BlockingEventListenerInterface;
+            if ($instanceof && true === $listerner->isBlocking()) {
+                $this->log('Listener "' . get_class($listerner) . '" is currently blocking', LogLevel::DEBUG);
+                $blocking = true;
+            }
+        }
+
+        return $blocking;
     }
 
 }

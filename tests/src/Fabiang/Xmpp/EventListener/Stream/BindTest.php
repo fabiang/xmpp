@@ -71,7 +71,8 @@ class BindTest extends \PHPUnit_Framework_TestCase
         $options = new Options;
         $options->setConnection($this->connection);
         $this->object->setOptions($options);
-        $this->connection->setReady(true);
+        $this->connection->setReady(true)->setOptions($options);
+        $this->connection->connect();
     }
 
     /**
@@ -106,14 +107,14 @@ class BindTest extends \PHPUnit_Framework_TestCase
 
         $event   = new XMLEvent;
         $event->setParameters(array($document->firstChild->firstChild));
-        
+
         $this->object->bind($event);
 
         $this->assertTrue($this->object->isBlocking());
-        $buffer = $this->connection->getbuffer();
+        $buffer = $this->connection->getBuffer();
         $this->assertRegExp(
             '/<iq type="set" id="[^"]+"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"\/><\/iq>/',
-            $buffer[0]
+            $buffer[1]
         );
     }
     

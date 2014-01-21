@@ -38,11 +38,6 @@ namespace Fabiang\Xmpp\Connection;
 
 use Psr\Log\LogLevel;
 use Fabiang\Xmpp\Stream\SocketClient;
-use Fabiang\Xmpp\Stream\XMLStream;
-use Fabiang\Xmpp\Event\EventManager;
-use Fabiang\Xmpp\Event\EventManagerInterface;
-use Fabiang\Xmpp\EventListener\EventListenerInterface;
-use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 use Fabiang\Xmpp\Util\XML;
 use Fabiang\Xmpp\Options;
 
@@ -127,33 +122,15 @@ XML;
     }
 
     /**
-     * Check blocking event listeners.
-     *
-     * @return boolean
-     */
-    protected function checkBlockingListeners()
-    {
-        $blocking = false;
-        foreach ($this->listeners as $listerner) {
-            $instanceof = $listerner instanceof BlockingEventListenerInterface;
-            if ($instanceof && true === $listerner->isBlocking()) {
-                $this->log('Listener "' . get_class($listerner) . '" is currently blocking', LogLevel::DEBUG);
-                $blocking = true;
-            }
-        }
-
-        return $blocking;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function connect()
     {
         if (false === $this->connected) {
-            $address         = $this->getAddress();
+            $address = $this->getAddress();
             $this->getSocket()->connect();
             $this->getSocket()->setBlocking(true);
+
             $this->connected = true;
             $this->log("Connected to '{$address}'", LogLevel::DEBUG);
         }

@@ -36,11 +36,7 @@
 
 namespace Fabiang\Xmpp\Connection;
 
-use Fabiang\Xmpp\Stream\XMLStream;
-use Fabiang\Xmpp\EventListener\EventListenerInterface;
-use Psr\Log\LoggerInterface;
-use Fabiang\Xmpp\Event\EventManager;
-use Fabiang\Xmpp\Event\EventManagerInterface;
+use Fabiang\Xmpp\Util\XML;
 
 /**
  * Connection test double.
@@ -55,7 +51,7 @@ class Test extends AbstractConnection
      *
      * @var string|null
      */
-    protected $data;
+    protected $data = array();
 
     /**
      * Buffer data.
@@ -70,6 +66,10 @@ class Test extends AbstractConnection
     public function connect()
     {
         $this->connected = true;
+        $this->send(sprintf(
+            Socket::STREAM_START,
+            XML::quote($this->getOptions()->getTo())
+        ));
     }
 
     /**
@@ -77,6 +77,7 @@ class Test extends AbstractConnection
      */
     public function disconnect()
     {
+        $this->send(Socket::STREAM_END);
         $this->connected = false;
     }
 
@@ -85,10 +86,10 @@ class Test extends AbstractConnection
      */
     public function receive()
     {
-        if (null !== $this->data) {
-            $data       = $this->data;
-            $this->data = null;
-            return $data;
+        if (!empty($this->data)) {
+            $buffer = array_shift($this->data);
+            $this->getInputStream()->parse($buffer);
+            return $buffer;
         }
     }
 
@@ -98,6 +99,11 @@ class Test extends AbstractConnection
     public function send($buffer)
     {
         $this->buffer[] = $buffer;
+        $this->getOutputStream()->parse($buffer);
+
+        while ($this->checkBlockingListeners()) {
+            $this->receive();
+        }
     }
 
     /**
@@ -106,10 +112,20 @@ class Test extends AbstractConnection
      * @param string|null $data
      * @return $this
      */
-    public function setData($data = null)
+    public function setData(array $data = null)
     {
         $this->data = $data;
         return $this;
+    }
+
+    /**
+     * Return data.
+     * 
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
     }
 
     /**

@@ -1,9 +1,18 @@
 language: php
+
 php:
   - 5.3
   - 5.4
   - 5.5
+  - hhvm
+  
 before_script:
   - composer install --dev --prefer-source --no-interaction
+  
 script:
-  - phpunit -c tests
+  - ./bin/phpunit -c tests
+  - ./bin/behat --config=tests/behat.yml --format=progress
+
+matrix:
+  allow_failures:
+    - php: hhvm

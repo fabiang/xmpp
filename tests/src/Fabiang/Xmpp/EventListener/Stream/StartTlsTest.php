@@ -70,6 +70,7 @@ class StartTlsTest extends \PHPUnit_Framework_TestCase
 
         $options = new Options;
         $options->setConnection($this->connection);
+        $this->connection->setOptions($options);
         $this->object->setOptions($options);
         $this->connection->setReady(true);
     }
