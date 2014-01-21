@@ -2,18 +2,18 @@
 
 namespace Fabiang\Xmpp\Integration;
 
-use Behat\Behat\Context\BehatContext,
-    Behat\Behat\Exception\PendingException;
-use Behat\Gherkin\Node\PyStringNode,
-    Behat\Gherkin\Node\TableNode;
+use Behat\Behat\Context\BehatContext;
 use Fabiang\Xmpp\Options;
 use Fabiang\Xmpp\Client;
 use Fabiang\Xmpp\Connection\Test;
 use Fabiang\Xmpp\Connection\Socket;
 
-require_once 'PHPUnit/Framework/Assert/Functions.php';
-
-class Connection extends BehatContext
+/**
+ * Description of FeatureContext
+ *
+ * @author f.grutschus
+ */
+class FeatureContext extends BehatContext
 {
 
     /**
@@ -35,6 +35,20 @@ class Connection extends BehatContext
     protected $connection;
 
     /**
+     * Constructor.
+     *
+     * @param array $parameters
+     */
+    public function __construct(array $parameters)
+    {
+        /* @var $autoloader \Composer\Autoload\ClassLoader */
+        $autoloader = require realpath(__DIR__ . '/../../../vendor/autoload.php');
+        $autoloader->add(__NAMESPACE__, __DIR__);
+
+        $this->useContext('authentication', new AuthenticationContext);
+    }
+
+    /**
      * @Given /^Test connection adapter$/
      */
     public function testConnectionAdapter()
@@ -43,7 +57,9 @@ class Connection extends BehatContext
 
         $this->options = new Options;
         $this->options->setTo('localhost');
-        $this->options->setConnection($this->connection);
+        $this->options->setConnection($this->connection)
+            ->setUsername('aaa')
+            ->setPassword('bbb');
         $this->client  = new Client($this->options);
     }
 
@@ -57,7 +73,7 @@ class Connection extends BehatContext
             . "id='1234567890' from='localhost' version='1.0' xml:lang='en'><stream:features></stream:features>"
         ));
     }
-    
+
     /**
      * @Given /^Test response data for TLS$/
      */
@@ -97,7 +113,7 @@ class Connection extends BehatContext
     public function streamStartShouldBeSend($num = 1)
     {
         $expected = sprintf(Socket::STREAM_START, 'localhost');
-        $counts = array_count_values($this->connection->getBuffer());
+        $counts   = array_count_values($this->connection->getBuffer());
         assertEquals($num, $counts[$expected]);
     }
 
@@ -108,7 +124,7 @@ class Connection extends BehatContext
     {
         $this->connection->disconnect();
     }
-    
+
     /**
      * @Then /^Stream end should be send$/
      */
@@ -124,7 +140,7 @@ class Connection extends BehatContext
     {
         assertFalse($this->connection->isConnected());
     }
-    
+
     /**
      * @Then /^Starttls should be send$/
      */
@@ -132,13 +148,32 @@ class Connection extends BehatContext
     {
         assertContains('<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>', $this->connection->getBuffer());
     }
-    
+
     /**
-     * @Given /^server should told me to proceed$/
+     *
+     * @return Client
      */
-    public function serverShouldToldMeToProceed()
+    public function getClient()
     {
-        
+        return $this->client;
+    }
+
+    /**
+     *
+     * @return Options
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     *
+     * @return Connection
+     */
+    public function getConnection()
+    {
+        return $this->connection;
     }
 
 }
