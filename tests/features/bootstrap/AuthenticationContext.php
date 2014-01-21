@@ -25,7 +25,7 @@ class AuthenticationContext extends BehatContext
             . "id='1234567890' from='localhost' version='1.0' xml:lang='en'><stream:features></stream:features>"
         ));
     }
-    
+
     /**
      * @Then /^plain authentication element should be send$/
      */
@@ -36,7 +36,7 @@ class AuthenticationContext extends BehatContext
             $this->getConnection()->getBuffer()
         );
     }
-    
+
     /**
      * @Given /^should be authenticated$/
      */
