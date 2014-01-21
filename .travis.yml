@@ -11,7 +11,7 @@ before_script:
   
 script:
   - ./bin/phpunit -c tests
-  - ./bin/behat --config=tests/behat.yml --format=progress
+  - ./bin/behat --config=tests/behat.yml --format=progress --strict
 
 matrix:
   allow_failures:
