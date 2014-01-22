@@ -41,41 +41,32 @@ use Behat\Behat\Exception\PendingException;
 
 require_once 'PHPUnit/Framework/Assert/Functions.php';
 
-class BindContext extends BehatContext
+class SessionContext extends BehatContext
 {
 
     /**
-     * @Given /^Test response data for bind$/
+     * @Given /^Test response data for session$/
      */
-    public function testResponseDataForBind()
+    public function testResponseDataForSession()
     {
         $this->getConnection()->setData(array(
             "<?xml version='1.0'?>"
             . "<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'>",
-            "<stream:features><bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'/></stream:features>",
-            "<iq id='fabiang_xmpp_1234' type='result'><bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'>"
-            . "<jid>test@jabber.unister.de/12345678890</jid></bind></iq>"
+            "<stream:features><session xmlns='urn:ietf:params:xml:ns:xmpp-session'/></stream:features>",
+            "<iq type='result' id='fabiang_xmpp_1234'><session xmlns='urn:ietf:params:xml:ns:xmpp-session'/></iq>"
         ));
     }
 
     /**
-     * @Then /^request for binding send$/
+     * @Then /^request for session send$/
      */
-    public function requestForBindingSend()
+    public function requestForSessionSend()
     {
         $buffer = $this->getConnection()->getBuffer();
         assertRegExp(
-            '#^<iq type="set" id="fabiang_xmpp_[^"]+"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"/></iq>$#',
+            '#^<iq type="set" id="fabiang_xmpp_[^"]+"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>$#',
             $buffer[1]
         );
-    }
-
-    /**
-     * @Given /^Jid is set to options object$/
-     */
-    public function jidIsSetToOptionsObject()
-    {
-        assertSame('test@jabber.unister.de/12345678890', $this->getConnection()->getOptions()->getJid());
     }
 
     /**
