@@ -80,6 +80,7 @@ class FeatureContext extends BehatContext
         $autoloader->add(__NAMESPACE__, __DIR__);
 
         $this->useContext('authentication', new AuthenticationContext);
+        $this->useContext('bind', new BindContext);
     }
 
     /**
