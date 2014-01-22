@@ -82,6 +82,7 @@ class FeatureContext extends BehatContext
         $this->useContext('authentication', new AuthenticationContext);
         $this->useContext('bind', new BindContext);
         $this->useContext('session', new SessionContext);
+        $this->useContext('roster', new RosterContext);
     }
 
     /**
