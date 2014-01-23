@@ -113,6 +113,7 @@ class StreamTest extends \PHPUnit_Framework_TestCase
         $event->setStartTag(false);
         $this->object->streamServer($event);
         $this->assertFalse($this->object->isBlocking());
+        $this->assertFalse($this->connection->isConnected());
 
         $event->setStartTag(true);
         $this->object->stream($event);

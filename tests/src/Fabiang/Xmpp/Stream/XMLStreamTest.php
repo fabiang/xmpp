@@ -113,6 +113,38 @@ class XMLStreamTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test parsing xml if xml stream is finished.
+     *
+     * @covers Fabiang\Xmpp\Stream\XmlStream::parse
+     * @return void
+     */
+    public function testParseFinalEndTag()
+    {
+        $triggered = 0;
+
+        $this->object->getEventManager()->attach(
+            '{http://etherx.jabber.org/streams}stream',
+            function ($e) use (&$triggered) {
+                if ($e->isEndTag()) {
+                    $triggered++;
+                }
+            }
+        );
+        
+        $start = '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
+            . '<stream:stream xmlns:stream="http://etherx.jabber.org/streams" '
+            . 'xmlns="jabber:client" from="gamebox" id="b9a85bbd" xml:lang="en" version="1.0">';
+
+        $middle = '<stream:features>1234</stream:features>';
+
+        $end = '</stream:stream>';
+
+        $this->object->parse($start);
+        $this->object->parse($end);
+        $this->assertSame(1, $triggered);
+    }
+
+    /**
      * Test parsing xml.
      *
      * @covers Fabiang\Xmpp\Stream\XmlStream::parse
@@ -125,7 +157,7 @@ class XMLStreamTest extends \PHPUnit_Framework_TestCase
             . 'xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client" from="gamebox" id="7f3ceab2" '
             . 'xml:lang="en" version="1.0">';
         $this->assertInstanceOf('\DOMDocument', $this->object->parse($xml));
-        
+
         $xml = '<stream:features><starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"></starttls>'
             . '<mechanisms xmlns="urn:ietf:params:xml:ns:xmpp-sasl"><mechanism>DIGEST-MD5</mechanism>'
             . '<mechanism>PLAIN</mechanism><mechanism>ANONYMOUS</mechanism><mechanism>CRAM-MD5</mechanism>'
@@ -133,14 +165,14 @@ class XMLStreamTest extends \PHPUnit_Framework_TestCase
             . '</compression><auth xmlns="http://jabber.org/features/iq-auth"/>'
             . '<register xmlns="http://jabber.org/features/iq-register"/></stream:features>';
         $this->assertInstanceOf('\DOMDocument', $this->object->parse($xml));
-        
+
         $xml = '<proceed ';
         $this->assertInstanceOf('\DOMDocument', $this->object->parse($xml));
-        
+
         $xml = 'xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>';
-        $this->assertInstanceOf('\DOMDocument', $this->object->parse($xml));    
+        $this->assertInstanceOf('\DOMDocument', $this->object->parse($xml));
     }
-    
+
     /**
      * Test parsing invalid XML.
      *

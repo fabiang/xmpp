@@ -17,3 +17,10 @@ Feature: Connection
       When connecting
       Then Starttls should be send
       And Stream start should be send 2 times
+
+   Scenario: server closes connection
+      Given Test connection adapter
+      And Test response data for disconnect
+      When connecting
+      Then Stream end should be send
+      And should be disconnected

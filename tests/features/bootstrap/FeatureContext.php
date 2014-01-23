@@ -67,17 +67,17 @@ class FeatureContext extends BehatContext
      * @var Test
      */
     protected $connection;
-    
+
     /**
      * Catch connection exceptions.
-     * 
+     *
      * @var boolean
      */
     protected $catch = false;
-    
+
     /**
      * Catched exception.
-     * 
+     *
      * @var \Exception
      */
     public $exception;
@@ -140,7 +140,19 @@ class FeatureContext extends BehatContext
             . "id='1234567890' from='localhost' version='1.0' xml:lang='en'><stream:features></stream:features>"
         ));
     }
-    
+
+    /**
+     * @Given /^Test response data for disconnect$/
+     */
+    public function testResponseDataForDisconnect()
+    {
+        $this->connection->setData(array(
+            "<?xml version='1.0'?><stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' "
+            . "id='1234567890' from='localhost' version='1.0' xml:lang='en'>",
+            '</stream:stream>'
+        ));
+    }
+
     /**
      * @Given /^exceptions are catched when connecting$/
      */
@@ -214,6 +226,14 @@ class FeatureContext extends BehatContext
     public function starttlsShouldBeSend()
     {
         assertContains('<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>', $this->connection->getBuffer());
+    }
+
+    /**
+     * @Then /^Stream end received$/
+     */
+    public function streamEndReceived()
+    {
+        assertContains('</stream:stream>', $this->connection->getData());
     }
 
     /**
