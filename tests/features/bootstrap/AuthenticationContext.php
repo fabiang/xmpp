@@ -59,6 +59,20 @@ class AuthenticationContext extends BehatContext
             . "id='1234567890' from='localhost' version='1.0' xml:lang='en'><stream:features></stream:features>"
         ));
     }
+    
+    /**
+     * @Given /^Test response data for authentication failure$/
+     */
+    public function testResponseDataForAuthenticationFailure()
+    {
+        $this->getConnection()->setData(array(
+            "<?xml version='1.0'?><stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' "
+            . "id='1234567890' from='localhost' version='1.0' xml:lang='en'><stream:features>"
+            . "<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'><mechanism>PLAIN</mechanism></mechanisms>"
+            . "</stream:features>",
+            "<failure xmlns='urn:ietf:params:xml:ns:xmpp-sasl'><not-authorized/></failure>"
+        ));
+    }
 
     /**
      * @Then /^plain authentication element should be send$/
@@ -77,6 +91,17 @@ class AuthenticationContext extends BehatContext
     public function shouldBeAuthenticated()
     {
         assertTrue($this->getConnection()->getOptions()->isAuthenticated());
+    }
+    
+    /**
+     * @Then /^a authorization exception should be catched$/
+     */
+    public function aAuthorizationExceptionShouldBeCatched()
+    {
+        /* @var $exception \Exception */
+        $exception = $this->getMainContext()->exception;
+        assertInstanceOf('\Fabiang\Xmpp\Exception\Stream\AuthenticationErrorException', $exception);
+        assertSame('Stream Error: "not-authorized"', $exception->getMessage());
     }
 
     /**

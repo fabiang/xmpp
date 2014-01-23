@@ -67,6 +67,20 @@ class FeatureContext extends BehatContext
      * @var Test
      */
     protected $connection;
+    
+    /**
+     * Catch connection exceptions.
+     * 
+     * @var boolean
+     */
+    protected $catch = false;
+    
+    /**
+     * Catched exception.
+     * 
+     * @var \Exception
+     */
+    public $exception;
 
     /**
      * Constructor.
@@ -126,13 +140,29 @@ class FeatureContext extends BehatContext
             . "id='1234567890' from='localhost' version='1.0' xml:lang='en'><stream:features></stream:features>"
         ));
     }
+    
+    /**
+     * @Given /^exceptions are catched when connecting$/
+     */
+    public function exceptionsAreCatchedWhenConnecting()
+    {
+        $this->catch = true;
+    }
+
 
     /**
      * @When /^connecting/
      */
-    public function iConnect()
+    public function connecting()
     {
-        $this->connection->connect();
+        try {
+            $this->connection->connect();
+        } catch (\Exception $exception) {
+            $this->exception = $exception;
+            if (false === $this->catch) {
+                throw $exception;
+            }
+        }
     }
 
     /**
