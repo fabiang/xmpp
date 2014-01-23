@@ -99,14 +99,6 @@ abstract class AbstractConnection implements ConnectionInterface
     protected $ready = false;
 
     /**
-     * Disconnect when object is destroyed.
-     */
-    public function __destruct()
-    {
-        $this->disconnect();
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function getOutputStream()
