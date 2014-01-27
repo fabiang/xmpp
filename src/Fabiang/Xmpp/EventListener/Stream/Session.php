@@ -57,17 +57,25 @@ class Session extends AbstractEventListener implements BlockingEventListenerInte
     protected $blocking = false;
 
     /**
+     * Generated id.
+     *
+     * @var string
+     */
+    protected $id;
+
+    /**
      * {@inheritDoc}
      */
     public function attachEvents()
     {
         $input = $this->getConnection()->getInputStream()->getEventManager();
         $input->attach('{urn:ietf:params:xml:ns:xmpp-session}session', array($this, 'session'));
+        $input->attach('{http://etherx.jabber.org/streams}iq', array($this, 'iq'));
     }
 
     /**
      * Handle session event.
-     * 
+     *
      * @param XMLEvent $event
      * @return void
      */
@@ -82,9 +90,24 @@ class Session extends AbstractEventListener implements BlockingEventListenerInte
                 $this->blocking = true;
                 $this->getConnection()->send(sprintf(
                     '<iq type="set" id="%s"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>',
-                    XML::generateId()
+                    $this->getId()
                 ));
-            } else {
+            }
+        }
+    }
+
+    /**
+     * Handle iq event.
+     *
+     * @param XMLEvent $event
+     * @retrun void
+     */
+    public function iq(XMLEvent $event)
+    {
+        if ($event->isEndTag()) {
+            /* @var $element \DOMDocument */
+            $element = $event->getParameter(0);
+            if ($this->getId() === $element->getAttribute('id')) {
                 $this->blocking = false;
             }
         }
@@ -96,6 +119,32 @@ class Session extends AbstractEventListener implements BlockingEventListenerInte
     public function isBlocking()
     {
         return $this->blocking;
+    }
+
+    /**
+     * Get generated id.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        if (null === $this->id) {
+            $this->id = XML::generateId();
+        }
+
+        return $this->id;
+    }
+
+    /**
+     * Set generated id.
+     *
+     * @param string $id
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = (string) $id;
+        return $this;
     }
 
 }

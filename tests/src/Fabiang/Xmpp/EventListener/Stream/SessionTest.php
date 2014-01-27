@@ -88,7 +88,8 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(
             array(
                 '*'                                            => array(),
-                '{urn:ietf:params:xml:ns:xmpp-session}session' => array(array($this->object, 'session'))
+                '{urn:ietf:params:xml:ns:xmpp-session}session' => array(array($this->object, 'session')),
+                '{http://etherx.jabber.org/streams}iq'         => array(array($this->object, 'iq'))
             ),
             $this->connection->getInputStream()->getEventManager()->getEventList()
         );
@@ -123,11 +124,14 @@ class SessionTest extends \PHPUnit_Framework_TestCase
      * Test session response.
      *
      * @covers Fabiang\Xmpp\EventListener\Stream\Session::session
+     * @covers Fabiang\Xmpp\EventListener\Stream\Session::iq
      * @depends testSessionAsFeatureElement
      * @return void
      */
     public function testSessionResponse()
     {
+        $this->object->setId('1234');
+
         $document = new \DOMDocument;
         $document->loadXML('<features><session/></features>');
 
@@ -139,14 +143,28 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->object->isBlocking());
         
         $document = new \DOMDocument;
-        $document->loadXML('<iq><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>');
+        $document->loadXML('<iq id="1234"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>');
 
         $event   = new XMLEvent;
         $event->setParameters(array($document->firstChild));
 
-        $this->object->session($event);
+        $this->object->iq($event);
 
         $this->assertFalse($this->object->isBlocking());
+    }
+
+    /**
+     * Test setting and getting id.
+     * 
+     * @covers Fabiang\Xmpp\EventListener\Stream\Session::setId
+     * @covers Fabiang\Xmpp\EventListener\Stream\Session::getId
+     * @return void
+     */
+    public function testSetAndGetId()
+    {
+        $this->assertRegExp('#^fabiang_xmpp_.+$#', $this->object->getId());
+        $id = 'test';
+        $this->assertSame($id, $this->object->setId($id)->getId());
     }
 
 }

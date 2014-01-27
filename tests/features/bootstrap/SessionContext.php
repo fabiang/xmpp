@@ -38,11 +38,18 @@ namespace Fabiang\Xmpp\Integration;
 
 use Behat\Behat\Context\BehatContext;
 use Behat\Behat\Exception\PendingException;
+use Fabiang\Xmpp\EventListener\Stream\Session;
 
 require_once 'PHPUnit/Framework/Assert/Functions.php';
 
 class SessionContext extends BehatContext
 {
+    
+    /**
+     *
+     * @var Session
+     */
+    protected $listener;
 
     /**
      * @Given /^Test response data for session$/
@@ -56,6 +63,33 @@ class SessionContext extends BehatContext
             "<iq type='result' id='fabiang_xmpp_1234'><session xmlns='urn:ietf:params:xml:ns:xmpp-session'/></iq>"
         ));
     }
+    
+    /**
+     * @Given /^Test response data for empty session$/
+     */
+    public function testResponseDataForEmptySession()
+    {
+        $this->getConnection()->setData(array(
+            "<?xml version='1.0'?>"
+            . "<stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'>",
+            "<stream:features><session xmlns='urn:ietf:params:xml:ns:xmpp-session'/></stream:features>",
+            "<iq type='result' id='fabiang_xmpp_1234'/>"
+        ));
+    }
+    
+    /**
+     * @Given /^manipulating id$/
+     */
+    public function manipulatingId()
+    {
+        $listeners = $this->getConnection()->getInputStream()->getEventManager()->getEventList();
+        $listener = array_filter($listeners['{http://etherx.jabber.org/streams}iq'], function ($listener) {
+            return ($listener[0] instanceof Session);
+        });
+
+        $this->listener = $listener[0][0];
+        $this->listener->setId('fabiang_xmpp_1234');
+    }
 
     /**
      * @Then /^request for session send$/
@@ -67,6 +101,14 @@ class SessionContext extends BehatContext
             '#^<iq type="set" id="fabiang_xmpp_[^"]+"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>$#',
             $buffer[1]
         );
+    }
+    
+    /**
+     * @Then /^session listener is not blocking$/
+     */
+    public function sessionListenerIsNotBlocking()
+    {
+        assertFalse($this->listener->isBlocking());
     }
 
     /**
