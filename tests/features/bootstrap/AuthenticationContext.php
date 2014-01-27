@@ -147,7 +147,7 @@ class AuthenticationContext extends BehatContext
     public function digestMdResponseSend()
     {
         $buffer = $this->getConnection()->getBuffer();
-        assertRegExp('#^<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">[\w]+</response>$#', $buffer[2]);
+        assertRegExp('#^<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">[\w=]+</response>$#', $buffer[2]);
     }
 
     /**
