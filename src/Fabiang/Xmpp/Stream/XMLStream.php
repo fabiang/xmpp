@@ -169,12 +169,12 @@ class XMLStream implements EventManagerAwareInterface
 
         return $this->document;
     }
-    
+
     /**
      * Clear document.
-     * 
+     *
      * Method resets the parser instance if <?xml is found. Overwise it clears the DOM document.
-     * 
+     *
      * @return void
      */
     protected function clearDocument($source)
@@ -218,16 +218,27 @@ class XMLStream implements EventManagerAwareInterface
         }
 
         $attributesNodes = $this->createAttributeNodes($attribs);
-        $namespaceURI    = null;
         $namespaceAttrib = false;
-        if (null !== $prefix) {
-            $namespaceURI = $this->namespacePrefixes[$prefix];
+
+        // current namespace
+        $namespaceURI     = null;
+        // namespace of the element
+        $namespaceElement = null;
+
+        if (array_key_exists('xmlns', $attribs)) {
+            $namespaceURI = $attribs['xmlns'];
         } else {
-            if (array_key_exists('xmlns', $attribs)) {
-                $namespaceURI    = $attribs['xmlns'];
-                $namespaceAttrib = true;
-            }
+            $namespaceURI = $this->namespaces[$this->depth - 1];
         }
+
+        if (null !== $prefix) {
+            $namespaceElement = $this->namespacePrefixes[$prefix];
+        } else {
+            $namespaceAttrib  = true;
+            $namespaceElement = $namespaceURI;
+        }
+
+        $this->namespaces[$this->depth] = $namespaceURI;
 
         // workaround for multiple xmlns defined, since we did have parent element inserted into the dom tree yet
         if (true === $namespaceAttrib) {
@@ -238,22 +249,17 @@ class XMLStream implements EventManagerAwareInterface
                 $elementNameFull = $prefix . static::NAMESPACE_SEPARATOR . $elementName;
             }
 
-            $element = $this->document->createElementNS($namespaceURI, $elementNameFull);
+            $element = $this->document->createElementNS($namespaceElement, $elementNameFull);
         }
 
         foreach ($attributesNodes as $attributeNode) {
             $element->setAttributeNode($attributeNode);
         }
 
-        if (null === $namespaceURI) {
-            $namespaceURI = $this->namespaces[$this->depth - 1];
-        }
-
-        $this->namespaces[$this->depth] = $namespaceURI;
-        $this->elements[$this->depth]   = $element;
+        $this->elements[$this->depth] = $element;
         $this->depth++;
 
-        $event = '{' . $namespaceURI . '}' . $elementName;
+        $event = '{' . $namespaceElement . '}' . $elementName;
         $this->cacheEvent($event, true, array($element));
     }
 
@@ -378,10 +384,10 @@ class XMLStream implements EventManagerAwareInterface
         $this->namespacePrefixes = array();
         $this->elements          = array();
     }
-    
+
     /**
      * Get XML parser resource.
-     * 
+     *
      * @return resource
      */
     public function getParser()

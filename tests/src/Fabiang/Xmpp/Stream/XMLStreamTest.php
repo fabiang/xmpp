@@ -135,8 +135,6 @@ class XMLStreamTest extends \PHPUnit_Framework_TestCase
             . '<stream:stream xmlns:stream="http://etherx.jabber.org/streams" '
             . 'xmlns="jabber:client" from="gamebox" id="b9a85bbd" xml:lang="en" version="1.0">';
 
-        $middle = '<stream:features>1234</stream:features>';
-
         $end = '</stream:stream>';
 
         $this->object->parse($start);
@@ -171,6 +169,43 @@ class XMLStreamTest extends \PHPUnit_Framework_TestCase
 
         $xml = 'xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>';
         $this->assertInstanceOf('\DOMDocument', $this->object->parse($xml));
+    }
+
+    /**
+     * Test parsing with namespaces.
+     * 
+     * @covers Fabiang\Xmpp\Stream\XmlStream::parse
+     * @return void
+     */
+    public function testParseNamespaces()
+    {
+        $events = array();
+        $this->object->getEventManager()->attach('*', function ($e) use (&$events) { $events[] = $e->getName(); });
+        
+        $xml = <<<'XML'
+<?xml version="1.0" encoding="UTF-8"?>
+<stream:stream xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client">
+    <stream:features></stream:features>
+    <iq>test</iq>
+    <iq xmlns="jabber:client">testtwo</iq>
+</stream:stream>
+XML;
+
+        $this->object->parse($xml);
+
+        $this->assertSame(
+            array(
+                '{http://etherx.jabber.org/streams}stream',
+                '{http://etherx.jabber.org/streams}features',
+                '{http://etherx.jabber.org/streams}features',
+                '{jabber:client}iq',
+                '{jabber:client}iq',
+                '{jabber:client}iq',
+                '{jabber:client}iq',
+                '{http://etherx.jabber.org/streams}stream',
+            ),
+            $events
+        );
     }
 
     /**
