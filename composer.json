@@ -36,12 +36,13 @@
     "archive": {
         "exclude": [
             ".gitignore",
+            ".gitattributes",
+            ".scrutinizer.yml",
+            ".travis.yml",
             "/tests",
             "/docs",
             "/bin",
-            "/example.php",
-            "/.scrutinizer.yml",
-            "/.travis.yml"
+            "/example.php"
         ]
     }
 }
