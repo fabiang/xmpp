@@ -38,6 +38,7 @@ namespace Fabiang\Xmpp\EventListener\Stream\Authentication;
 
 use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\Event\XMLEvent;
+use Fabiang\Xmpp\Util\XML;
 
 /**
  * Handler for "digest md5" authentication mechanism.
@@ -55,12 +56,25 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
     protected $blocking = false;
 
     /**
+     *
+     * @var string
+     */
+    protected $username;
+
+    /**
+     *
+     * @var string
+     */
+    protected $password;
+
+    /**
      * {@inheritDoc}
      */
     public function attachEvents()
     {
         $input = $this->getConnection()->getInputStream()->getEventManager();
         $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}challenge', array($this, 'challenge'));
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}success', array($this, 'success'));
 
         $output = $this->getConnection()->getOutputStream()->getEventManager();
         $output->attach('{urn:ietf:params:xml:ns:xmpp-sasl}auth', array($this, 'auth'));
@@ -70,7 +84,8 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
      * {@inheritDoc}
      */
     public function authenticate($username, $password)
-    {
+    {       
+        $this->setUsername($username)->setPassword($password);
         $auth = '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="DIGEST-MD5"/>';
         $this->getConnection()->send($auth);
     }
@@ -95,9 +110,68 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
     {
         if (false === $event->isStartTag()) {
             list($element) = $event->getParameters();
-            $challenge      = $element->nodeValue;
+
+            $challenge = XML::base64Decode($element->nodeValue);
+            
+            if ($challenge) {
+                $matches = array();
+
+                preg_match_all('#(\w+)\=(?:"([^"]+)"|([^,]+))#', $challenge, $matches);
+                list(, $variables, $quoted, $unquoted) = $matches;
+                // filter empty strings; preserve keys
+                $quoted   = array_filter($quoted);
+                $unquoted = array_filter($unquoted);
+                // replace "unquoted" values into "quoted" array and combine variables array with it
+                $values = array_combine($variables, array_replace($quoted, $unquoted));
+
+                $values['cnonce'] = uniqid(mt_rand(), false);
+                $values['nc']     = '00000001';
+                $values['qop']    = 'auth';
+
+                if (!isset($values['digest-uri'])) {
+                    $values['digest-uri'] = 'xmpp/' . $this->getOptions()->getTo();
+                }
+
+                $a1 = sprintf('%s:%s:%s', $this->getUsername(), $values['realm'], $this->getPassword());
+
+                if ('md5-sess' === $values['algorithm']) {
+                    $a1 = pack('H32', md5($a1)) . ':' . $values['nonce'] . ':' . $values['cnonce'];
+                }
+
+                $a2 = "AUTHENTICATE:" . $values['digest-uri'];
+
+                $password = md5($a1) . ':' . $values['nonce'] . ':' . $values['nc'] . ':'
+                    . $values['cnonce'] . ':' . $values['qop'] . ':' . md5($a2);
+                $password = md5($password);
+
+                $response = sprintf(
+                    'username="%s",realm="%s",nonce="%s",cnonce="%s",nc=%s,qop=%s,digest-uri="%s",response=%s,charset=utf-8',
+                    $this->getUsername(),
+                    $values['realm'],
+                    $values['nonce'],
+                    $values['cnonce'],
+                    $values['nc'],
+                    $values['qop'],
+                    $values['digest-uri'],
+                    $password
+                );
+
+                $this->getConnection()->send(
+                    '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">' . XML::base64Encode($response) . '</response>'
+                );
+            }
             $this->blocking = false;
         }
+    }
+
+    /**
+     * Handle success event.
+     * 
+     * @return void
+     */
+    public function success()
+    {
+        $this->blocking = false;
     }
 
     /**
@@ -106,6 +180,28 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
     public function isBlocking()
     {
         return $this->blocking;
+    }
+
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    public function setUsername($username)
+    {
+        $this->username = $username;
+        return $this;
+    }
+
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    public function setPassword($password)
+    {
+        $this->password = $password;
+        return $this;
     }
 
 }

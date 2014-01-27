@@ -70,7 +70,7 @@ class Session extends AbstractEventListener implements BlockingEventListenerInte
     {
         $input = $this->getConnection()->getInputStream()->getEventManager();
         $input->attach('{urn:ietf:params:xml:ns:xmpp-session}session', array($this, 'session'));
-        $input->attach('{http://etherx.jabber.org/streams}iq', array($this, 'iq'));
+        $input->attach('{jabber:client}iq', array($this, 'iq'));
     }
 
     /**

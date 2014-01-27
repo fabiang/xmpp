@@ -15,3 +15,9 @@ Feature: Authentication
       And exceptions are catched when connecting
       When connecting
       Then a authorization exception should be catched
+
+   Scenario: digest-md5 authentication
+      Given Test connection adapter
+      And Test response data for digest-md5 auth
+      When connecting
+      Then digest-md5 authentication element should be send

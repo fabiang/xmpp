@@ -83,7 +83,7 @@ class SessionContext extends BehatContext
     public function manipulatingId()
     {
         $listeners = $this->getConnection()->getInputStream()->getEventManager()->getEventList();
-        $listener = array_filter($listeners['{http://etherx.jabber.org/streams}iq'], function ($listener) {
+        $listener = array_filter($listeners['{jabber:client}iq'], function ($listener) {
             return ($listener[0] instanceof Session);
         });
 

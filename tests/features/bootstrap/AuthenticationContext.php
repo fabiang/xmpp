@@ -38,6 +38,7 @@ namespace Fabiang\Xmpp\Integration;
 
 use Behat\Behat\Context\BehatContext;
 use Behat\Behat\Exception\PendingException;
+use Fabiang\Xmpp\Util\XML;
 
 require_once 'PHPUnit/Framework/Assert/Functions.php';
 
@@ -73,6 +74,31 @@ class AuthenticationContext extends BehatContext
             "<failure xmlns='urn:ietf:params:xml:ns:xmpp-sasl'><not-authorized/></failure>"
         ));
     }
+    
+    /**
+     * @Given /^Test response data for digest-md5 auth$/
+     */
+    public function testResponseDataForDigestMdAuth()
+    {
+        $this->getConnection()->setData(array(
+            "<?xml version='1.0'?><stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' "
+            . "id='1234567890' from='localhost' version='1.0' xml:lang='en'><stream:features>"
+            . "<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'><mechanism>DIGEST-MD5</mechanism></mechanisms>"
+            . "</stream:features>",
+            '<challenge xmlns="urn:ietf:params:xml:ns:xmpp-sasl">'
+            . XML::base64Encode(
+                'realm="localhost",nonce="abcdefghijklmnopqrstuvw",'
+                . 'qop="auth",charset=utf-8,algorithm=md5-sess'
+            )
+            . '</challenge>',
+            '<success xmlns="urn:ietf:params:xml:ns:xmpp-sasl">'
+            . XML::base64Encode('rspauth=7fb0ac7ac1ff501a330a76e89a0f1633')
+            . '</success>',
+            "<?xml version='1.0'?><stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' "
+            . "id='1234567890' from='localhost' version='1.0' xml:lang='en'><stream:features></stream:features>"
+        ));
+    }
+
 
     /**
      * @Then /^plain authentication element should be send$/
@@ -84,6 +110,18 @@ class AuthenticationContext extends BehatContext
             $this->getConnection()->getBuffer()
         );
     }
+    
+    /**
+     * @Then /^digest-md(\d+) authentication element should be send$/
+     */
+    public function digestMdAuthenticationElementShouldBeSend($arg1)
+    {
+        assertContains(
+            '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="DIGIST-MD5"/>',
+            $this->getConnection()->getBuffer()
+        );
+    }
+
 
     /**
      * @Given /^should be authenticated$/

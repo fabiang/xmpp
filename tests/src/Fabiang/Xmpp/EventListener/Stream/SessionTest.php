@@ -89,7 +89,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
             array(
                 '*'                                            => array(),
                 '{urn:ietf:params:xml:ns:xmpp-session}session' => array(array($this->object, 'session')),
-                '{http://etherx.jabber.org/streams}iq'         => array(array($this->object, 'iq'))
+                '{jabber:client}iq'                            => array(array($this->object, 'iq'))
             ),
             $this->connection->getInputStream()->getEventManager()->getEventList()
         );

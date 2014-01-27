@@ -34,6 +34,18 @@
  * @link      http://github.com/fabiang/dependency-composer
  */
 
+$autoloaderFile = __DIR__ . '/../vendor/autoload.php';
+
+if (!file_exists($autoloaderFile)) {
+    die(
+        'You need to set up the project dependencies using the following commands:' . PHP_EOL .
+        'wget http://getcomposer.org/composer.phar' . PHP_EOL .
+        'php composer.phar install' . PHP_EOL
+    );
+}
+
 /* @var $autoloader \Composer\Autoload\ClassLoader */
-$autoloader = require __DIR__ . '/../vendor/autoload.php';
+$autoloader = require $autoloaderFile;
 $autoloader->add('Fabiang\\Xmpp\\', __DIR__ . '/src/');
+
+unset($autoloaderFile, $autoloader);

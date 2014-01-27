@@ -72,4 +72,27 @@ class XML
         return static::quote('fabiang_xmpp_' . uniqid());
     }
 
+    /**
+     * Encode a string with Base64 and quote it.
+     * 
+     * @param string $data
+     * @param string $encoding
+     * @return string
+     */
+    public static function base64Encode($data, $encoding = 'UTF-8')
+    {
+        return static::quote(base64_encode($data), $encoding);
+    }
+
+    /**
+     * Decode a Base64 encoded string.
+     * 
+     * @param string $data
+     * @return string
+     */
+    public static function base64Decode($data)
+    {
+        return base64_decode($data);
+    }
+
 }
