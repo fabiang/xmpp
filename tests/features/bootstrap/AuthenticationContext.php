@@ -60,7 +60,7 @@ class AuthenticationContext extends BehatContext
             . "id='1234567890' from='localhost' version='1.0' xml:lang='en'><stream:features></stream:features>"
         ));
     }
-    
+
     /**
      * @Given /^Test response data for authentication failure$/
      */
@@ -74,7 +74,7 @@ class AuthenticationContext extends BehatContext
             "<failure xmlns='urn:ietf:params:xml:ns:xmpp-sasl'><not-authorized/></failure>"
         ));
     }
-    
+
     /**
      * @Given /^Test response data for digest-md5 auth$/
      */
@@ -82,7 +82,8 @@ class AuthenticationContext extends BehatContext
     {
         $this->getConnection()->setData(array(
             "<?xml version='1.0'?><stream:stream xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' "
-            . "id='1234567890' from='localhost' version='1.0' xml:lang='en'><stream:features>"
+            . "id='1234567890' from='localhost' version='1.0' xml:lang='en'>",
+            "<stream:features>"
             . "<mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'><mechanism>DIGEST-MD5</mechanism></mechanisms>"
             . "</stream:features>",
             '<challenge xmlns="urn:ietf:params:xml:ns:xmpp-sasl">'
@@ -110,16 +111,14 @@ class AuthenticationContext extends BehatContext
             $this->getConnection()->getBuffer()
         );
     }
-    
+
     /**
-     * @Then /^digest-md(\d+) authentication element should be send$/
+     * @Then /^digest-md5 authentication element should be send$/
      */
-    public function digestMdAuthenticationElementShouldBeSend($arg1)
+    public function digestMdAuthenticationElementShouldBeSend()
     {
-        assertContains(
-            '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="DIGIST-MD5"/>',
-            $this->getConnection()->getBuffer()
-        );
+        $buffer = $this->getConnection()->getBuffer();
+        assertContains('<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="DIGEST-MD5"/>', $buffer[1]);
     }
 
 
@@ -130,7 +129,7 @@ class AuthenticationContext extends BehatContext
     {
         assertTrue($this->getConnection()->getOptions()->isAuthenticated());
     }
-    
+
     /**
      * @Then /^a authorization exception should be catched$/
      */
@@ -140,6 +139,15 @@ class AuthenticationContext extends BehatContext
         $exception = $this->getMainContext()->exception;
         assertInstanceOf('\Fabiang\Xmpp\Exception\Stream\AuthenticationErrorException', $exception);
         assertSame('Stream Error: "not-authorized"', $exception->getMessage());
+    }
+
+    /**
+     * @Then /^digest-md5 response send$/
+     */
+    public function digestMdResponseSend()
+    {
+        $buffer = $this->getConnection()->getBuffer();
+        assertRegExp('#^<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">[\w]+</response>$#', $buffer[2]);
     }
 
     /**

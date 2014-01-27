@@ -21,3 +21,4 @@ Feature: Authentication
       And Test response data for digest-md5 auth
       When connecting
       Then digest-md5 authentication element should be send
+      And digest-md5 response send
