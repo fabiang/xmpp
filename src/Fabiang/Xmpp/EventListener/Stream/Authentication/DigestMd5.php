@@ -39,6 +39,7 @@ namespace Fabiang\Xmpp\EventListener\Stream\Authentication;
 use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\Util\XML;
+use Fabiang\Xmpp\Exception\Stream\AuthenticationErrorException;
 
 /**
  * Handler for "digest md5" authentication mechanism.
@@ -84,7 +85,7 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
      * {@inheritDoc}
      */
     public function authenticate($username, $password)
-    {       
+    {
         $this->setUsername($username)->setPassword($password);
         $auth = '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="DIGEST-MD5"/>';
         $this->getConnection()->send($auth);
@@ -108,65 +109,96 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
      */
     public function challenge(XMLEvent $event)
     {
-        if (false === $event->isStartTag()) {
+        if ($event->isEndTag()) {
             list($element) = $event->getParameters();
 
             $challenge = XML::base64Decode($element->nodeValue);
-            
-            if ($challenge) {
-                $matches = array();
+            $values    = $this->parseCallenge($challenge);
 
-                preg_match_all('#(\w+)\=(?:"([^"]+)"|([^,]+))#', $challenge, $matches);
-                list(, $variables, $quoted, $unquoted) = $matches;
-                // filter empty strings; preserve keys
-                $quoted   = array_filter($quoted);
-                $unquoted = array_filter($unquoted);
-                // replace "unquoted" values into "quoted" array and combine variables array with it
-                $values = array_combine($variables, array_replace($quoted, $unquoted));
-
-                $values['cnonce'] = uniqid(mt_rand(), false);
-                $values['nc']     = '00000001';
-                $values['qop']    = 'auth';
-
-                if (!isset($values['digest-uri'])) {
-                    $values['digest-uri'] = 'xmpp/' . $this->getOptions()->getTo();
-                }
-
-                $a1 = sprintf('%s:%s:%s', $this->getUsername(), $values['realm'], $this->getPassword());
-
-                if ('md5-sess' === $values['algorithm']) {
-                    $a1 = pack('H32', md5($a1)) . ':' . $values['nonce'] . ':' . $values['cnonce'];
-                }
-
-                $a2 = "AUTHENTICATE:" . $values['digest-uri'];
-
-                $password = md5($a1) . ':' . $values['nonce'] . ':' . $values['nc'] . ':'
-                    . $values['cnonce'] . ':' . $values['qop'] . ':' . md5($a2);
-                $password = md5($password);
-
-                $response = sprintf(
-                    'username="%s",realm="%s",nonce="%s",cnonce="%s",nc=%s,qop=%s,digest-uri="%s",response=%s,charset=utf-8',
-                    $this->getUsername(),
-                    $values['realm'],
-                    $values['nonce'],
-                    $values['cnonce'],
-                    $values['nc'],
-                    $values['qop'],
-                    $values['digest-uri'],
-                    $password
-                );
-
-                $this->getConnection()->send(
-                    '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">' . XML::base64Encode($response) . '</response>'
-                );
+            if (isset($values['nonce'])) {
+                $send = '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">'
+                    . $this->response($values) . '</response>';
+            } elseif (isset($values['rspauth'])) {
+                $send = '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl"/>';
+            } else {
+                throw new AuthenticationErrorException("Error when receiving challenge: \"$challenge\"");
             }
-            $this->blocking = false;
+
+            $this->getConnection()->send($send);
         }
     }
 
     /**
+     * Generate response data.
+     *
+     * @param type $values
+     */
+    protected function response($values)
+    {
+        $values['cnonce'] = uniqid(mt_rand(), false);
+        $values['nc']     = '00000001';
+        $values['qop']    = 'auth';
+
+        if (!isset($values['realm'])) {
+            $values['realm'] = $this->getOptions()->getTo();
+        }
+
+        if (!isset($values['digest-uri'])) {
+            $values['digest-uri'] = 'xmpp/' . $this->getOptions()->getTo();
+        }
+
+        $a1 = sprintf('%s:%s:%s', $this->getUsername(), $values['realm'], $this->getPassword());
+
+        if ('md5-sess' === $values['algorithm']) {
+            $a1 = pack('H32', md5($a1)) . ':' . $values['nonce'] . ':' . $values['cnonce'];
+        }
+
+        $a2 = "AUTHENTICATE:" . $values['digest-uri'];
+
+        $password = md5($a1) . ':' . $values['nonce'] . ':' . $values['nc'] . ':'
+            . $values['cnonce'] . ':' . $values['qop'] . ':' . md5($a2);
+        $password = md5($password);
+
+        $response = sprintf(
+            'username="%s",realm="%s",nonce="%s",cnonce="%s",nc=%s,qop=%s,digest-uri="%s",response=%s,charset=utf-8',
+            $this->getUsername(),
+            $values['realm'],
+            $values['nonce'],
+            $values['cnonce'],
+            $values['nc'],
+            $values['qop'],
+            $values['digest-uri'],
+            $password
+        );
+
+        return XML::base64Encode($response);
+    }
+
+    /**
+     * Parse challenge string and return its values as array.
+     *
+     * @param string $challenge
+     * @return array
+     */
+    protected function parseCallenge($challenge)
+    {
+        if (!$challenge) {
+            return array();
+        }
+
+        $matches = array();
+        preg_match_all('#(\w+)\=(?:"([^"]+)"|([^,]+))#', $challenge, $matches);
+        list(, $variables, $quoted, $unquoted) = $matches;
+        // filter empty strings; preserve keys
+        $quoted   = array_filter($quoted);
+        $unquoted = array_filter($unquoted);
+        // replace "unquoted" values into "quoted" array and combine variables array with it
+        return array_combine($variables, array_replace($quoted, $unquoted));
+    }
+
+    /**
      * Handle success event.
-     * 
+     *
      * @return void
      */
     public function success()

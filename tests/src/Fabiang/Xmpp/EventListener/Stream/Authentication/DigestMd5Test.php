@@ -78,7 +78,7 @@ class DigestMd5Test extends \PHPUnit_Framework_TestCase
 
     /**
      * Test attaching events.
-     * 
+     *
      * @covers Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5::attachEvents
      * @return void
      */
@@ -93,7 +93,7 @@ class DigestMd5Test extends \PHPUnit_Framework_TestCase
             ),
             $this->connection->getInputStream()->getEventManager()->getEventList()
         );
-        
+
         $this->assertSame(
             array(
                 '*'                                      => array(),
@@ -107,6 +107,10 @@ class DigestMd5Test extends \PHPUnit_Framework_TestCase
      * Test authentication.
      *
      * @covers Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5::authenticate
+     * @covers Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5::setUsername
+     * @covers Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5::getUsername
+     * @covers Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5::setPassword
+     * @covers Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5::getPassword
      * @return void
      */
     public function testAuthenticate()
@@ -136,8 +140,10 @@ class DigestMd5Test extends \PHPUnit_Framework_TestCase
 
     /**
      * Test parsing challenge and sending response.
-     * 
+     *
      * @covers Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5::challenge
+     * @covers Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5::response
+     * @covers Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5::parseCallenge
      * @return void
      */
     public function testChallenge()
@@ -175,8 +181,49 @@ class DigestMd5Test extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test sending a rspauth challenge.
+     *
+     * @covers Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5::challenge
+     * @return void
+     */
+    public function testChallengeRspauth()
+    {
+        $document = new \DOMDocument;
+        $document->loadXML(
+            '<challenge xmlns="urn:ietf:params:xml:ns:xmpp-sasl">'
+            . XML::base64Encode('rspauth=1234567890') . '</challenge>'
+        );
+
+        $event = new XMLEvent;
+        $event->setParameters(array($document->documentElement));
+        $this->object->challenge($event);
+
+        $buffer = $this->connection->getBuffer();
+        $response = $buffer[0];
+        $this->assertSame('<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl"/>', $response);
+    }
+
+    /**
+     * Test sending an empty challenge.
+     *
+     * @covers Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5::challenge
+     * @expectedException Fabiang\Xmpp\Exception\Stream\AuthenticationErrorException
+     * @expectedExceptionMessage Error when receiving challenge: ""
+     * @return void
+     */
+    public function testChallengeEmpty()
+    {
+        $document = new \DOMDocument;
+        $document->loadXML('<challenge xmlns="urn:ietf:params:xml:ns:xmpp-sasl"></challenge>');
+
+        $event = new XMLEvent;
+        $event->setParameters(array($document->documentElement));
+        $this->object->challenge($event);
+    }
+
+    /**
      * Test handling success event.
-     * 
+     *
      * @covers Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5::success
      * @covers Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5::isBlocking
      * @return void

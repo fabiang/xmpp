@@ -92,6 +92,8 @@ class AuthenticationContext extends BehatContext
                 . 'qop="auth",charset=utf-8,algorithm=md5-sess'
             )
             . '</challenge>',
+            '<challenge xmlns="urn:ietf:params:xml:ns:xmpp-sasl">'
+            . XML::base64Encode('rspauth=1234567890') . '</challenge>',
             '<success xmlns="urn:ietf:params:xml:ns:xmpp-sasl">'
             . XML::base64Encode('rspauth=7fb0ac7ac1ff501a330a76e89a0f1633')
             . '</success>',
@@ -148,6 +150,15 @@ class AuthenticationContext extends BehatContext
     {
         $buffer = $this->getConnection()->getBuffer();
         assertRegExp('#^<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">[\w=]+</response>$#', $buffer[2]);
+    }
+
+    /**
+     * @Then /^empty digest-md5 response send$/
+     */
+    public function emptyDigestMdResponseSend()
+    {
+        $buffer = $this->getConnection()->getBuffer();
+        assertRegExp('<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl"/>', $buffer[3]);
     }
 
     /**

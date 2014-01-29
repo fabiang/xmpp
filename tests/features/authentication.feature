@@ -22,3 +22,4 @@ Feature: Authentication
       When connecting
       Then digest-md5 authentication element should be send
       And digest-md5 response send
+      And empty digest-md5 response send
