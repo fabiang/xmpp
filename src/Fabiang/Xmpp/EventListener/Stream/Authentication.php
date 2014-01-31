@@ -128,9 +128,9 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
         $authenticationClass = null;
 
         $authenticationClasses = $this->getOptions()->getAuthenticationClasses();
-        foreach ($this->mechanisms as $machanism) {
-            if (array_key_exists($machanism, $authenticationClasses)) {
-                $authenticationClass = $authenticationClasses[$machanism];
+        foreach ($this->mechanisms as $mechanism) {
+            if (array_key_exists($mechanism, $authenticationClasses)) {
+                $authenticationClass = $authenticationClasses[$mechanism];
                 break;
             }
         }
@@ -142,7 +142,8 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
         $authentication = new $authenticationClass;
 
         if (!($authentication instanceof AuthenticationInterface)) {
-            $message = 'Authentication class "' . get_class($authentication) . '" is no AuthenticationInterface';
+            $message = 'Authentication class "' . get_class($authentication)
+                . '" is no instanceof  AuthenticationInterface';
             throw new RuntimeException($message);
         }
 

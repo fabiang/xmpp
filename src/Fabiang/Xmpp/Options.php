@@ -109,19 +109,7 @@ class Options
      *
      * @var array
      */
-    protected $groups = array();
-
-    /**
-     *
-     * @var array
-     */
     protected $users = array();
-
-    /**
-     *
-     * @var array
-     */
-    protected $channels = array();
 
     /**
      * Authentication methods.
@@ -131,6 +119,15 @@ class Options
     protected $authenticationClasses = array(
         'digest-md5' => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\DigestMd5',
         'plain'      => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Plain'
+    );
+
+    /**
+     * Compression classes.
+     * 
+     * @var array
+     */
+    protected $compressionClasses = array(
+        'zlib' => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Compression\\Zlib'
     );
 
     /**
@@ -353,28 +350,6 @@ class Options
     }
 
     /**
-     * Get groups.
-     *
-     * @return array
-     */
-    public function getGroups()
-    {
-        return $this->groups;
-    }
-
-    /**
-     * Set groups.
-     *
-     * @param array $groups Group list
-     * @return $this
-     */
-    public function setGroups(array $groups)
-    {
-        $this->groups = $groups;
-        return $this;
-    }
-
-    /**
      * Get users.
      *
      * @return Protocol\User\User[]
@@ -397,28 +372,6 @@ class Options
     }
 
     /**
-     * Get channels.
-     *
-     * @return array
-     */
-    public function getChannels()
-    {
-        return $this->channels;
-    }
-
-    /**
-     * Set channels.
-     *
-     * @param array $channels
-     * @return $this
-     */
-    public function setChannels(array $channels)
-    {
-        $this->channels = $channels;
-        return $this;
-    }
-
-    /**
      * Get authentication classes.
      *
      * @return array
@@ -431,11 +384,33 @@ class Options
     /**
      *
      * @param array $authenticationClasses Authentication classes
-     * @return \Fabiang\Xmpp\EventListener\Stream\Authentication
+     * @return $this
      */
     public function setAuthenticationClasses(array $authenticationClasses)
     {
         $this->authenticationClasses = $authenticationClasses;
+        return $this;
+    }
+
+    /**
+     * Get compression classes.
+     * 
+     * @return array
+     */
+    public function getCompressionClasses()
+    {
+        return $this->compressionClasses;
+    }
+
+    /**
+     * Set compression classes.
+     * 
+     * @param array $compressionClasses
+     * @return $this
+     */
+    public function setCompressionClasses(array $compressionClasses)
+    {
+        $this->compressionClasses = $compressionClasses;
         return $this;
     }
 
