@@ -194,19 +194,6 @@ class OptionsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test setting and getting groups.
-     *
-     * @covers Fabiang\Xmpp\Options::getGroups
-     * @covers Fabiang\Xmpp\Options::setGroups
-     * @return void
-     */
-    public function testSetAndGetGroups()
-    {
-        $groups = array(1, 2, 3);
-        $this->assertSame($groups, $this->object->setGroups($groups)->getGroups());
-    }
-
-    /**
      * Test setting and getting users.
      *
      * @covers Fabiang\Xmpp\Options::getUsers
@@ -217,17 +204,6 @@ class OptionsTest extends \PHPUnit_Framework_TestCase
     {
         $users = array(1, 2, 3);
         $this->assertSame($users, $this->object->setUsers($users)->getUsers());
-    }
-
-    /**
-     * @covers Fabiang\Xmpp\Options::getChannels
-     * @covers Fabiang\Xmpp\Options::setChannels
-     * @return void
-     */
-    public function testSetAndGetChannels()
-    {
-        $channels = array(1, 2, 3);
-        $this->assertSame($channels, $this->object->setChannels($channels)->getChannels());
     }
     
     /**

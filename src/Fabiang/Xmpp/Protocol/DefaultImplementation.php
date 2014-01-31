@@ -43,6 +43,7 @@ use Fabiang\Xmpp\Event\EventManager;
 use Fabiang\Xmpp\EventListener\Stream\Stream;
 use Fabiang\Xmpp\EventListener\Stream\StreamError;
 use Fabiang\Xmpp\EventListener\Stream\StartTls;
+use Fabiang\Xmpp\EventListener\Stream\Compression;
 use Fabiang\Xmpp\EventListener\Stream\Authentication;
 use Fabiang\Xmpp\EventListener\Stream\Bind;
 use Fabiang\Xmpp\EventListener\Stream\Session;
@@ -77,6 +78,7 @@ class DefaultImplementation implements ImplementationInterface
     {
         $this->registerListener(new Stream);
         $this->registerListener(new StreamError);
+        $this->registerListener(new Compression);
         $this->registerListener(new StartTls);
         $this->registerListener(new Authentication);
         $this->registerListener(new Bind);
