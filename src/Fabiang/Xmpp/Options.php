@@ -122,15 +122,6 @@ class Options
     );
 
     /**
-     * Compression classes.
-     * 
-     * @var array
-     */
-    protected $compressionClasses = array(
-        'zlib' => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Compression\\Zlib'
-    );
-
-    /**
      * Constructor.
      *
      * @param string $address Server address
@@ -389,28 +380,6 @@ class Options
     public function setAuthenticationClasses(array $authenticationClasses)
     {
         $this->authenticationClasses = $authenticationClasses;
-        return $this;
-    }
-
-    /**
-     * Get compression classes.
-     * 
-     * @return array
-     */
-    public function getCompressionClasses()
-    {
-        return $this->compressionClasses;
-    }
-
-    /**
-     * Set compression classes.
-     * 
-     * @param array $compressionClasses
-     * @return $this
-     */
-    public function setCompressionClasses(array $compressionClasses)
-    {
-        $this->compressionClasses = $compressionClasses;
         return $this;
     }
 
