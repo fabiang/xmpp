@@ -81,7 +81,7 @@ class EventManager implements EventManagerInterface
     /**
      * {@inheritDoc}
      */
-    public function attach($event, /* callback */$callback)
+    public function attach($event, $callback)
     {
         if (!is_callable($callback, true)) {
             throw new InvalidArgumentException(
