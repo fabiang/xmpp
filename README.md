@@ -78,6 +78,20 @@ After all you should disconnect:
 
     $client->disconnect();
 
+## DEVELOPING
+
+If you like this library and you want to contribute, make sure the unit-tests and integration tests are running.
+Composer will help you to install the right version of PHPUnit and [Behat](http://behat.org/).
+
+    composer install --dev
+
+After that:
+
+    ./bin/phpunit -c tests
+    ./bin/behat --config=tests/behat.yml --strict
+
+New features should allways tested with Behat.
+
 ## TODO
     
 - Better integration of channels
