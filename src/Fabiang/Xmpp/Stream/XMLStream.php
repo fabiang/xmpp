@@ -40,6 +40,7 @@ use Fabiang\Xmpp\Event\EventManagerAwareInterface;
 use Fabiang\Xmpp\Event\EventManagerInterface;
 use Fabiang\Xmpp\Event\EventManager;
 use Fabiang\Xmpp\Event\XMLEvent;
+use Fabiang\Xmpp\Event\XMLEventInterface;
 use Fabiang\Xmpp\Exception\XMLParserException;
 
 /**
@@ -207,8 +208,10 @@ class XMLStream implements EventManagerAwareInterface
      * @param attribs  $attribs Element attributes
      * @return void
      */
-    protected function startXml($parser, $name, $attribs)
+    protected function startXml()
     {
+        list (, $name, $attribs) = func_get_args();
+
         $elementData = explode(static::NAMESPACE_SEPARATOR, $name, 2);
         $elementName = $elementData[0];
         $prefix      = null;
@@ -221,16 +224,13 @@ class XMLStream implements EventManagerAwareInterface
         $namespaceAttrib = false;
 
         // current namespace
-        $namespaceURI     = null;
-        // namespace of the element
-        $namespaceElement = null;
-
         if (array_key_exists('xmlns', $attribs)) {
             $namespaceURI = $attribs['xmlns'];
         } else {
             $namespaceURI = $this->namespaces[$this->depth - 1];
         }
 
+        // namespace of the element
         if (null !== $prefix) {
             $namespaceElement = $this->namespacePrefixes[$prefix];
         } else {
@@ -326,8 +326,9 @@ class XMLStream implements EventManagerAwareInterface
      * @param string   $data   Element data
      * @return void
      */
-    protected function dataXml($parser, $data)
+    protected function dataXml()
     {
+        $data = func_get_arg(1);
         if (isset($this->elements[$this->depth - 1])) {
             $element = $this->elements[$this->depth - 1];
             $element->appendChild($this->document->createTextNode($data));
@@ -420,7 +421,7 @@ class XMLStream implements EventManagerAwareInterface
     /**
      * Get event object.
      *
-     * @return XMLEvent
+     * @return XMLEventInterface
      */
     public function getEventObject()
     {
@@ -430,10 +431,10 @@ class XMLStream implements EventManagerAwareInterface
     /**
      * Set event object.
      *
-     * @param \Fabiang\Xmpp\Event\XMLEvent $eventObject
+     * @param XMLEventInterface $eventObject
      * @return $this
      */
-    public function setEventObject(XMLEvent $eventObject)
+    public function setEventObject(XMLEventInterface $eventObject)
     {
         $this->eventObject = $eventObject;
         return $this;

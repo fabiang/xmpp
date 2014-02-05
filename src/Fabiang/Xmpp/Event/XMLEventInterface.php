@@ -34,108 +34,27 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Connection;
-
-use Fabiang\Xmpp\Util\XML;
+namespace Fabiang\Xmpp\Event;
 
 /**
- * Connection test double.
+ * INterface for xml events.
  *
- * @package Xmpp\Connection
+ * @package Xmpp\Event
  */
-class Test extends AbstractConnection
+interface XMLEventInterface extends EventInterface
 {
 
     /**
-     * Data for next receive().
+     * Is event triggered by a start tag.
      *
-     * @var array
+     * @return boolean
      */
-    protected $data = array();
+    public function isStartTag();
 
     /**
-     * Buffer data.
+     * Was event triggered by end tag of an element?
      *
-     * @var array
+     * @return boolean
      */
-    protected $buffer = array();
-
-    /**
-     * {@inheritDoc}
-     */
-    public function connect()
-    {
-        $this->connected = true;
-        $this->send(sprintf(
-            Socket::STREAM_START,
-            XML::quote($this->getOptions()->getTo())
-        ));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function disconnect()
-    {
-        $this->send(Socket::STREAM_END);
-        $this->connected = false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function receive()
-    {
-        if (!empty($this->data)) {
-            $buffer = array_shift($this->data);
-            $this->getInputStream()->parse($buffer);
-            return $buffer;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function send($buffer)
-    {
-        $this->buffer[] = $buffer;
-        $this->getOutputStream()->parse($buffer);
-
-        while ($this->checkBlockingListeners()) {
-            $this->receive();
-        }
-    }
-
-    /**
-     * Set data for next receive().
-     *
-     * @param string|null $data
-     * @return $this
-     */
-    public function setData(array $data = null)
-    {
-        $this->data = $data;
-        return $this;
-    }
-
-    /**
-     * Return data.
-     * 
-     * @return array
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    /**
-     * Get buffer data.
-     *
-     * @return array
-     */
-    public function getBuffer()
-    {
-        return $this->buffer;
-    }
-
+    public function isEndTag();
 }

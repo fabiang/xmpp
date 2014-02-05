@@ -131,7 +131,7 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
     /**
      * Generate response data.
      *
-     * @param type $values
+     * @param array $values
      */
     protected function response($values)
     {

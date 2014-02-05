@@ -41,7 +41,7 @@ namespace Fabiang\Xmpp\Event;
  *
  * @package Xmpp\Event
  */
-class XMLEvent extends Event implements EventInterface
+class XMLEvent extends Event implements XMLEventInterface
 {
 
     /**
@@ -52,9 +52,7 @@ class XMLEvent extends Event implements EventInterface
     protected $startTag = false;
 
     /**
-     * Is event triggered by a start tag.
-     *
-     * @return boolean
+     * {@inheritDoc}
      */
     public function isStartTag()
     {
@@ -74,9 +72,7 @@ class XMLEvent extends Event implements EventInterface
     }
 
     /**
-     * Was event triggered by end tag of an element?
-     *
-     * @return boolean
+     * {@inheritDoc}
      */
     public function isEndTag()
     {

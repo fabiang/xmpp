@@ -180,7 +180,9 @@ class Options
     public function setAddress($address)
     {
         $this->address = (string) $address;
-        $this->setTo(parse_url($address, PHP_URL_HOST));
+        if (false !== ($host = parse_url($address, PHP_URL_HOST))) {
+            $this->setTo($host);
+        }
         return $this;
     }
 

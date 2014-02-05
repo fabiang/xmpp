@@ -46,7 +46,7 @@ use Fabiang\Xmpp\EventListener\Stream\StartTls;
 use Fabiang\Xmpp\EventListener\Stream\Authentication;
 use Fabiang\Xmpp\EventListener\Stream\Bind;
 use Fabiang\Xmpp\EventListener\Stream\Session;
-use Fabiang\Xmpp\EventListener\Stream\Roster;
+use Fabiang\Xmpp\EventListener\Stream\Roster as RosterListener;
 
 /**
  * Default Protocol implementation.
@@ -62,7 +62,7 @@ class DefaultImplementation implements ImplementationInterface
      * @var Options
      */
     protected $options;
-    
+
     /**
      * Eventmanager.
      *
@@ -81,16 +81,16 @@ class DefaultImplementation implements ImplementationInterface
         $this->registerListener(new Authentication);
         $this->registerListener(new Bind);
         $this->registerListener(new Session);
-        $this->registerListener(new Roster);
+        $this->registerListener(new RosterListener);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public function registerListener(EventListenerInterface $eventListener)
     {
         $connection = $this->getOptions()->getConnection();
-        
+
         $eventListener->setEventManager($this->getEventManager())
             ->setOptions($this->getOptions())
             ->attachEvents();
@@ -114,7 +114,7 @@ class DefaultImplementation implements ImplementationInterface
         $this->options = $options;
         return $this;
     }
-    
+
     /**
      * {@inheritDoc}
      */
