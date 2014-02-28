@@ -1,11 +1,11 @@
 # CHANGELOG
 
-## 0.3.0 (2013-02-05)
+## 0.3.0 (2014-02-05)
 
 - [MINOR]: Digest-MD5 authentication wasn't working
 - [PATCH]: various code optimizations
 
-## 0.2.0 (2013-01-27)
+## 0.2.0 (2014-01-27)
 
 - [MINOR]: Added support for DIGEST-MD5 authentication
 - [PATCH]: Fixed a bug in xml parser, which triggered wrong events
