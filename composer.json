@@ -1,6 +1,6 @@
 {
     "name": "fabiang/xmpp",
-    "description": "Library for XMPP protocol connections (Jabber)",
+    "description": "Library for XMPP protocol (Jabber) connections",
     "license": "BSD-2-Clause",
     "homepage": "https://github.com/fabiang/xmpp",
     "keywords": ["jabber", "xmpp"],
