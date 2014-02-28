@@ -112,6 +112,13 @@ class Options
     protected $users = array();
 
     /**
+     * Timeout for connection.
+     *
+     * @var integer
+     */
+    protected $timeout = 30;
+
+    /**
      * Authentication methods.
      *
      * @var array
@@ -382,6 +389,28 @@ class Options
     public function setAuthenticationClasses(array $authenticationClasses)
     {
         $this->authenticationClasses = $authenticationClasses;
+        return $this;
+    }
+
+    /**
+     * Get timeout for connection.
+     *
+     * @return integer
+     */
+    public function getTimeout()
+    {
+        return $this->timeout;
+    }
+
+    /**
+     * Set timeout for connection.
+     *
+     * @param integer $timeout Seconds
+     * @return \Fabiang\Xmpp\Options
+     */
+    public function setTimeout($timeout)
+    {
+        $this->timeout = (int) $timeout;
         return $this;
     }
 

@@ -88,9 +88,10 @@ class SocketClient
             $flags = STREAM_CLIENT_CONNECT;
         }
 
-        $resource = stream_socket_client($this->address, $errno, $errstr, $timeout, $flags);
+        $resource = @stream_socket_client($this->address, $errno, $errstr, $timeout, $flags);
 
         $this->assertSuccess($resource, $errno, $errstr);
+        stream_set_timeout($resource, $timeout);
         $this->resource = $resource;
     }
 
@@ -163,12 +164,12 @@ class SocketClient
 
         return stream_socket_enable_crypto($this->resource, $enable, $cryptoType);
     }
-    
+
     /**
      * Append filter to socket stream.
-     * 
+     *
      * Method returns stream filter resource.
-     * 
+     *
      * @param string  $filter    Filter name
      * @param integer $readWrite Read-write flag
      * @param mixed   $params    Optional parameters for stream filter
@@ -187,7 +188,7 @@ class SocketClient
 
     /**
      * Assert that a command was successful.
-     * 
+     *
      * @param mixed   $value
      * @param integer $errno
      * @param string  $errstr

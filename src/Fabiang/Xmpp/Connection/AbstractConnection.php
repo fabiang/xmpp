@@ -42,6 +42,7 @@ use Fabiang\Xmpp\Event\EventManager;
 use Fabiang\Xmpp\Event\EventManagerInterface;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 use Fabiang\Xmpp\Options;
+use Fabiang\Xmpp\Exception\TimeoutException;
 use Psr\Log\LogLevel;
 
 /**
@@ -97,6 +98,13 @@ abstract class AbstractConnection implements ConnectionInterface
      * @var boolean
      */
     protected $ready = false;
+
+    /**
+     * Timestamp of last response data received.
+     *
+     * @var integer
+     */
+    private $lastResponse;
 
     /**
      * {@inheritDoc}
@@ -262,6 +270,29 @@ abstract class AbstractConnection implements ConnectionInterface
         }
 
         return $blocking;
+    }
+
+    /**
+     * Check for timeout.
+     *
+     * @param string $buffer Function required current received buffer
+     * @throws \Fabiang\Xmpp\Exception\TimeoutException
+     */
+    protected function checkTimeout($buffer)
+    {
+        if (!empty($buffer)) {
+            $this->lastResponse = time();
+            return;
+        }
+
+        if (null === $this->lastResponse) {
+            $this->lastResponse = time();
+        }
+
+        $timeout = $this->getOptions()->getTimeout();
+        if (time() > $this->lastResponse + $timeout) {
+            throw new TimeoutException('Timeout after "' . $timeout . '" seconds');
+        }
     }
 
 }

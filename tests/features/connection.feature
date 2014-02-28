@@ -24,3 +24,17 @@ Feature: Connection
       When connecting
       Then Stream end should be send
       And should be disconnected
+
+   Scenario: a timeout is reached when connecting
+      Given Socket connection adapter with address tcp://localhost:1234
+      And timeout is set to 1 seconds
+      And exceptions are catched when connecting
+      When connecting
+      Then socket exception should have been thrown
+
+   Scenario: a timeout is reached while connected
+      Given  Test connection adapter
+      And timeout is set to 1 seconds
+      And exceptions are catched when connecting
+      When connecting
+      Then timeout exception should have been thrown

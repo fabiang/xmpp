@@ -115,6 +115,28 @@ class FeatureContext extends BehatContext
     }
 
     /**
+     * @Given /^Socket connection adapter with address (.+)$/
+     */
+    public function socketConnectionAdapterWithAddressTcpLocalhost($address)
+    {
+        $mock = new \Fabiang\Xmpp\Stream\SocketClient($address);
+
+        $this->connection = new Socket($mock);
+
+        $this->options = new Options;
+        $this->options->setConnection($this->connection);
+        $this->client  = new Client($this->options);
+    }
+
+    /**
+     * @Given /^URL is (.+)$/
+     */
+    public function urlIsTcpUnknowenTld($address)
+    {
+        $this->connection->getOptions()->setAddress($address);
+    }
+
+    /**
      * @Given /^Test response data for non-TLS$/
      */
     public function testResponseDataForNonTls()
@@ -161,6 +183,13 @@ class FeatureContext extends BehatContext
         $this->catch = true;
     }
 
+    /**
+     * @Given /^timeout is set to (\d+) seconds$/
+     */
+    public function timeoutIsSetToSeconds($timeout)
+    {
+        $this->getConnection()->getOptions()->setTimeout($timeout);
+    }
 
     /**
      * @When /^connecting/
@@ -194,6 +223,22 @@ class FeatureContext extends BehatContext
         $expected = sprintf(Socket::STREAM_START, 'localhost');
         $counts   = array_count_values($this->connection->getBuffer());
         assertEquals($num, $counts[$expected]);
+    }
+
+    /**
+     * @Then /^timeout exception should have been thrown$/
+     */
+    public function timeoutExceptionShouldHaveThrown()
+    {
+        assertInstanceOf('\\Fabiang\\Xmpp\\Exception\\TimeoutException', $this->exception);
+    }
+
+    /**
+     * @Then /^socket exception should have been thrown$/
+     */
+    public function socketExceptionShouldHaveBeenThrown()
+    {
+        assertInstanceOf('\\Fabiang\\Xmpp\\Exception\\SocketException', $this->exception);
     }
 
     /**

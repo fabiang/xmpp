@@ -59,10 +59,10 @@ class OptionsTest extends \PHPUnit_Framework_TestCase
     {
         $this->object = new Options;
     }
-    
+
     /**
      * Test passing addess via constructor.
-     * 
+     *
      * @covers Fabiang\Xmpp\Options::__construct
      * @return void
      */
@@ -205,7 +205,7 @@ class OptionsTest extends \PHPUnit_Framework_TestCase
         $users = array(1, 2, 3);
         $this->assertSame($users, $this->object->setUsers($users)->getUsers());
     }
-    
+
     /**
      * @covers Fabiang\Xmpp\Options::getAuthenticationClasses
      * @covers Fabiang\Xmpp\Options::setAuthenticationClasses
@@ -215,6 +215,18 @@ class OptionsTest extends \PHPUnit_Framework_TestCase
     {
         $classes = array('plain' => '\stdClass');
         $this->assertSame($classes, $this->object->setAuthenticationClasses($classes)->getAuthenticationClasses());
+    }
+
+    /**
+     * Test setting and getting timeout.
+     *
+     * @covers Fabiang\Xmpp\Options::setTimeout
+     * @covers Fabiang\Xmpp\Options::getTimeout
+     * @return void
+     */
+    public function testSetAndGetTimeout()
+    {
+        $this->assertSame(10, $this->object->setTimeout('10')->getTimeout());
     }
 
 }

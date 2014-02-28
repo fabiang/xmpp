@@ -100,6 +100,8 @@ XML;
             $this->getInputStream()->parse($buffer);
             return $buffer;
         }
+
+        $this->checkTimeout($buffer);
     }
 
     /**
@@ -128,7 +130,7 @@ XML;
     {
         if (false === $this->connected) {
             $address = $this->getAddress();
-            $this->getSocket()->connect();
+            $this->getSocket()->connect($this->getOptions()->getTimeout());
             $this->getSocket()->setBlocking(true);
 
             $this->connected = true;

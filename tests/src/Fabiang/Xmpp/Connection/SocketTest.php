@@ -272,5 +272,24 @@ class SocketTest extends \PHPUnit_Framework_TestCase
         $eventManager = new EventManager;
         $this->assertSame($eventManager, $this->object->setEventManager($eventManager)->getEventManager());
     }
+    
+    /**
+     * Check timeout when not receiving input.
+     * 
+     * @covers Fabiang\Xmpp\Connection\Socket::receive
+     * @covers Fabiang\Xmpp\Connection\Socket::checkTimeout
+     * @expectedException \Fabiang\Xmpp\Exception\TimeoutException
+     * @expectedExceptionMessage Timeout after "1" seconds
+     * @medium
+     * @return void
+     */
+    public function testReceiveWithTimeout()
+    {
+        $this->object->getOptions()->setTimeout(1);
+        $this->object->connect();
+        $this->object->receive();
+        sleep(2);
+        $this->object->receive();
+    }
 
 }

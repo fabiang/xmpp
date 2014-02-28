@@ -91,6 +91,8 @@ class Test extends AbstractConnection
             $this->getInputStream()->parse($buffer);
             return $buffer;
         }
+
+        $this->checkTimeout($this->data);
     }
 
     /**
@@ -120,7 +122,7 @@ class Test extends AbstractConnection
 
     /**
      * Return data.
-     * 
+     *
      * @return array
      */
     public function getData()

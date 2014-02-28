@@ -44,7 +44,7 @@ require_once 'PHPUnit/Framework/Assert/Functions.php';
 
 class SessionContext extends BehatContext
 {
-    
+
     /**
      *
      * @var Session
@@ -63,7 +63,7 @@ class SessionContext extends BehatContext
             "<iq type='result' id='fabiang_xmpp_1234'><session xmlns='urn:ietf:params:xml:ns:xmpp-session'/></iq>"
         ));
     }
-    
+
     /**
      * @Given /^Test response data for empty session$/
      */
@@ -76,14 +76,14 @@ class SessionContext extends BehatContext
             "<iq type='result' id='fabiang_xmpp_1234'/>"
         ));
     }
-    
+
     /**
      * @Given /^manipulating id$/
      */
     public function manipulatingId()
     {
         $listeners = $this->getConnection()->getInputStream()->getEventManager()->getEventList();
-        $listener = array_filter($listeners['{jabber:client}iq'], function ($listener) {
+        $listener  = array_filter($listeners['{jabber:client}iq'], function ($listener) {
             return ($listener[0] instanceof Session);
         });
 
@@ -102,7 +102,7 @@ class SessionContext extends BehatContext
             $buffer[1]
         );
     }
-    
+
     /**
      * @Then /^session listener is not blocking$/
      */

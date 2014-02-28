@@ -129,5 +129,23 @@ class TestTest extends \PHPUnit_Framework_TestCase
         $this->object->connect();
         $this->assertContains(sprintf(Socket::STREAM_START, 'test'), $this->object->getBuffer());
     }
+    
+    /**
+     * Check timeout when not receiving input.
+     * 
+     * @covers Fabiang\Xmpp\Connection\Test::checkTimeout
+     * @expectedException \Fabiang\Xmpp\Exception\TimeoutException
+     * @expectedExceptionMessage Timeout after "1" seconds
+     * @medium
+     * @return void
+     */
+    public function testReceiveWithTimeout()
+    {
+        $this->object->getOptions()->setTimeout(1);
+        $this->object->connect();
+        $this->object->receive();
+        sleep(2);
+        $this->object->receive();
+    }
 
 }
