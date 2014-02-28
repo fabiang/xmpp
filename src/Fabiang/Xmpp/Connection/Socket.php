@@ -59,7 +59,7 @@ XML;
     /**
      * Socket.
      *
-     * @var Socket
+     * @var SocketClient
      */
     protected $socket;
 
@@ -167,7 +167,7 @@ XML;
     /**
      * Return socket instance.
      *
-     * @return StreamSocket
+     * @return SocketClient
      */
     public function getSocket()
     {

@@ -49,7 +49,7 @@ interface SocketConnectionInterface
     /**
      * Set socket instance.
      *
-     * @param \Socket\Raw\Socket $socket
+     * @param SocketClient $socket
      * @return $this
      */
     public function setSocket(SocketClient $socket);
