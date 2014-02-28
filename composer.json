@@ -20,7 +20,7 @@
     "require-dev": {
         "monolog/monolog": "*",
         "phpunit/phpunit": "~3.7",
-        "behat/behat": "2.4.*@stable"
+        "behat/behat": "2.5.*@stable"
     },
     "suggest": {
         "monolog/monolog": "Allows more advanced logging of the application flow"
