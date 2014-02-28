@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.4.0 (2014-02-28)
+
+- [MINOR]: Added a timeout to connection
+
 ## 0.3.0 (2014-02-05)
 
 - [MINOR]: Digest-MD5 authentication wasn't working
