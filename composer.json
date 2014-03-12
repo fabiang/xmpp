@@ -19,7 +19,7 @@
     },
     "require-dev": {
         "monolog/monolog": "*",
-        "phpunit/phpunit": "~3.7",
+        "phpunit/phpunit": "~4.0",
         "behat/behat": "2.5.*@stable"
     },
     "suggest": {
