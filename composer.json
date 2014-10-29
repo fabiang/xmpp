@@ -12,18 +12,27 @@
             "role": "developer"
         }
     ],
-    "autoload": {"psr-0": {"Fabiang\\Xmpp\\": "src/"}},
+    "autoload": {
+        "psr-0": {
+            "Fabiang\\Xmpp\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "files": [
+            "vendor/phpunit/phpunit/src/Framework/Assert/Functions.php"
+        ]
+    },
     "require": {
         "php": ">=5.3",
-        "psr/log": "*"
+        "psr/log": "~1.0"
     },
     "require-dev": {
-        "monolog/monolog": "*",
-        "phpunit/phpunit": "~4.0",
-        "behat/behat": "2.5.*@stable"
+        "monolog/monolog": "~1.11",
+        "phpunit/phpunit": "~4.3",
+        "behat/behat": "~2.5"
     },
     "suggest": {
-        "monolog/monolog": "Allows more advanced logging of the application flow"
+        "psr/log-implementation": "Allows more advanced logging of the xmpp connection"
     },
     "config": {
         "bin-dir": "bin/"
