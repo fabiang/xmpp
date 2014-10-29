@@ -1,4 +1,7 @@
-# fabiang/xmpp [![Build Status](https://travis-ci.org/fabiang/xmpp.png?branch=master)](https://travis-ci.org/fabiang/xmpp) [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/fabiang/xmpp/badges/quality-score.png?s=2605ad2bc987ff8501b8f749addff43ec1ac7098)](https://scrutinizer-ci.com/g/fabiang/xmpp/) [![Code Coverage](https://scrutinizer-ci.com/g/fabiang/xmpp/badges/coverage.png?s=cec78be78925c90569743c3265f7fe7d1fa1f2cd)](https://scrutinizer-ci.com/g/fabiang/xmpp/) [![Dependency Status](https://gemnasium.com/fabiang/xmpp.png)](https://gemnasium.com/fabiang/xmpp)
+# fabiang/xmpp
+
+[![Latest Stable Version](https://poser.pugx.org/fabiang/xmpp/v/stable.svg)](https://packagist.org/packages/fabiang/xmpp) [![Total Downloads](https://poser.pugx.org/fabiang/xmpp/downloads.svg)](https://packagist.org/packages/fabiang/xmpp) [![Latest Unstable Version](https://poser.pugx.org/fabiang/xmpp/v/unstable.svg)](https://packagist.org/packages/fabiang/xmpp) [![License](https://poser.pugx.org/fabiang/xmpp/license.svg)](https://packagist.org/packages/fabiang/xmpp)  
+[![Build Status](https://travis-ci.org/fabiang/xmpp.png?branch=master)](https://travis-ci.org/fabiang/xmpp) [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/fabiang/xmpp/badges/quality-score.png?s=2605ad2bc987ff8501b8f749addff43ec1ac7098)](https://scrutinizer-ci.com/g/fabiang/xmpp/) [![Code Coverage](https://scrutinizer-ci.com/g/fabiang/xmpp/badges/coverage.png?s=cec78be78925c90569743c3265f7fe7d1fa1f2cd)](https://scrutinizer-ci.com/g/fabiang/xmpp/) [![Dependency Status](https://gemnasium.com/fabiang/xmpp.png)](https://gemnasium.com/fabiang/xmpp)
 
 Library for XMPP protocol connections (Jabber) for PHP.
 
