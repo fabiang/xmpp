@@ -11,76 +11,84 @@ Library for XMPP protocol connections (Jabber) for PHP.
 - psr/log
 - psr/log-implementation - like monolog/monolog for logging (optional)
 
-## LICENCE
-
-BSD-2-Clause. See the [LICENCE](LICENCE.md).
-
 ## INSTALLATION
 
 New to Composer? Read the [introduction](https://getcomposer.org/doc/00-intro.md#introduction). Add the following to your composer file:
 
-    {
-        "require": {
-            "fabiang/xmpp": "*"
-        }
+```json
+{
+    "require": {
+        "fabiang/xmpp": "*"
     }
+}
+```
 
 ## DOCUMENTATION
 
 This library uses an object to hold options:
 
-    use Fabiang\Xmpp\Options;
-    $options = new Options($address);
-    $options->setUsername($username)
-        ->setPassword($password);
+```php
+use Fabiang\Xmpp\Options;
+$options = new Options($address);
+$options->setUsername($username)
+    ->setPassword($password);
+```
 
 The server address must be in the format `tcp://myjabber.com:5222`.  
 If the server supports TLS the connection will automatically be encrypted.
 
 You can also pass a PSR-2-compatible object to the options object:
 
-    $options->setLogger($logger)
+```php
+$options->setLogger($logger)
+```
 
 The client manages the connection to the Jabber server and requires the options object:
 
-    use Fabiang\Xmpp\Client;
-    $client = new Client($options);
-    // optional connect manually
-    $client->connect();
+```php
+use Fabiang\Xmpp\Client;
+$client = new Client($options);
+// optional connect manually
+$client->connect();
+```
 
 For sending data you just need to pass a object that implements `Fabiang\Xmpp\Protocol\ProtocolImplementationInterface`:
 
-    use Fabiang\Xmpp\Protocol\Roster;
-    use Fabiang\Xmpp\Protocol\Presence;
-    use Fabiang\Xmpp\Protocol\Message;
+```php
+use Fabiang\Xmpp\Protocol\Roster;
+use Fabiang\Xmpp\Protocol\Presence;
+use Fabiang\Xmpp\Protocol\Message;
 
-    // fetch roster list; users and their groups
-    $client->send(new Roster);
-    // set status to online
-    $client->send(new Presence);
+// fetch roster list; users and their groups
+$client->send(new Roster);
+// set status to online
+$client->send(new Presence);
 
-    // send a message to another user
-    $message = new Message;
-    $message->setMessage('test')
-        ->setTo('nickname@myjabber.com')
-    $client->send($message);
+// send a message to another user
+$message = new Message;
+$message->setMessage('test')
+    ->setTo('nickname@myjabber.com')
+$client->send($message);
 
-    // join a channel
-    $channel = new Presence;
-    $channel->setTo('channelname@conference.myjabber.com')
-        ->setNickName('mynick');
-    $client->send($channel);
+// join a channel
+$channel = new Presence;
+$channel->setTo('channelname@conference.myjabber.com')
+    ->setNickName('mynick');
+$client->send($channel);
 
-    // send a message to the above channel
-    $message = new Message;
-    $message->setMessage('test')
-        ->setTo('channelname@conference.myjabber.com')
-        ->setType(Message::TYPE_GROUPCHAT);
-    $client->send($message);
+// send a message to the above channel
+$message = new Message;
+$message->setMessage('test')
+    ->setTo('channelname@conference.myjabber.com')
+    ->setType(Message::TYPE_GROUPCHAT);
+$client->send($message);
+```
 
 After all you should disconnect:
 
-    $client->disconnect();
+```php
+$client->disconnect();
+```
 
 ## DEVELOPING
 
@@ -95,6 +103,10 @@ After that:
     ./bin/behat --config=tests/behat.yml --strict
 
 New features should allways tested with Behat.
+
+## LICENSE
+
+BSD-2-Clause. See the [LICENSE](LICENSE.md).
 
 ## TODO
     
