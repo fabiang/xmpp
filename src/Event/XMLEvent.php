@@ -60,10 +60,7 @@ class XMLEvent extends Event implements XMLEventInterface
     }
 
     /**
-     * Set if event triggered by a start tag.
-     *
-     * @param boolean $startTag Flag
-     * @return $this
+     * {@inheritDoc}
      */
     public function setStartTag($startTag)
     {

@@ -61,7 +61,7 @@ abstract class AbstractConnection implements ConnectionInterface
 
     /**
      *
-     * @var \XMLStream
+     * @var XMLStream
      */
     protected $inputStream;
 

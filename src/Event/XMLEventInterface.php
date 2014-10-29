@@ -52,6 +52,14 @@ interface XMLEventInterface extends EventInterface
     public function isStartTag();
 
     /**
+     * Set if event triggered by a start tag.
+     *
+     * @param boolean $startTag Flag
+     * @return $this
+     */
+    public function setStartTag($startTag);
+
+    /**
      * Was event triggered by end tag of an element?
      *
      * @return boolean

@@ -111,7 +111,7 @@ class XMLStream implements EventManagerAwareInterface
     /**
      * Event object.
      *
-     * @var XMLEvent
+     * @var XMLEventInterface
      */
     protected $eventObject;
 

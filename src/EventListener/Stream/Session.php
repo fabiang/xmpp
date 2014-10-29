@@ -82,7 +82,7 @@ class Session extends AbstractEventListener implements BlockingEventListenerInte
     public function session(XMLEvent $event)
     {
         if ($event->isEndTag()) {
-            /* @var $element \DOMDocument */
+            /* @var $element \DOMElement */
             $element = $event->getParameter(0);
 
             // bind element occured in <features>
@@ -105,7 +105,7 @@ class Session extends AbstractEventListener implements BlockingEventListenerInte
     public function iq(XMLEvent $event)
     {
         if ($event->isEndTag()) {
-            /* @var $element \DOMDocument */
+            /* @var $element \DOMElement */
             $element = $event->getParameter(0);
             if ($this->getId() === $element->getAttribute('id')) {
                 $this->blocking = false;
