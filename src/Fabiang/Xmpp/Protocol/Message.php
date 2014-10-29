@@ -94,7 +94,7 @@ class Message implements ProtocolImplementationInterface
      */
     public function toString()
     {
-        return XML::quoteMessage((
+        return XML::quoteMessage(
             '<message type="%s" id="%s" to="%s"><body>%s</body></message>',
             $this->getType(),
             XML::generateId(),
