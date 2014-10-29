@@ -94,12 +94,12 @@ class Message implements ProtocolImplementationInterface
      */
     public function toString()
     {
-        return sprintf(
+        return XML::quoteMessage((
             '<message type="%s" id="%s" to="%s"><body>%s</body></message>',
             $this->getType(),
             XML::generateId(),
             $this->getTo(),
-            XML::quoteMessage($this->getMessage())
+            $this->getMessage()
         );
     }
 
