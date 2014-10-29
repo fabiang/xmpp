@@ -48,13 +48,13 @@
 
     <testsuites>
         <testsuite name="Xmpp">
-            <directory>src/Fabiang/Xmpp</directory>
+            <directory>src/</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist>
-            <directory>../src/Fabiang/Xmpp</directory>
+            <directory>../src/</directory>
         </whitelist>
     </filter>
 
