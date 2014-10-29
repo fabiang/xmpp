@@ -1,19 +1,20 @@
 language: php
 
 php:
+  - 5.3.3
   - 5.3
   - 5.4
   - 5.5
   - 5.6
   - hhvm
-  
+
 install:
   - composer install --dev --no-interaction
-  
+
 script:
   - ./bin/phpunit -c tests --coverage-clover=coverage.clover
   - ./bin/behat --config=tests/behat.yml --format=progress --strict
-  
+
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
