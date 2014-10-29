@@ -175,5 +175,4 @@ class Client implements EventManagerAwareInterface
     {
         return $this->options;
     }
-
 }

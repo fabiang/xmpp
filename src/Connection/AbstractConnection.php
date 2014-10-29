@@ -294,5 +294,4 @@ abstract class AbstractConnection implements ConnectionInterface
             throw new TimeoutException('Timeout after "' . $timeout . '" seconds');
         }
     }
-
 }

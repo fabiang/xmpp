@@ -235,5 +235,4 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
         $this->password = $password;
         return $this;
     }
-
 }

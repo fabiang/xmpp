@@ -40,7 +40,7 @@ use Fabiang\Xmpp\Exception\InvalidArgumentException;
 
 /**
  * Event manager.
- * 
+ *
  * The EventManager holds and triggers events.
  *
  * @package Xmpp\Event
@@ -157,5 +157,4 @@ class EventManager implements EventManagerInterface
     {
         return $this->events;
     }
-
 }

@@ -100,5 +100,4 @@ class StreamErrorException extends RuntimeException
         $this->content = (string) $content;
         return $this;
     }
-
 }

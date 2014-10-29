@@ -108,5 +108,4 @@ class StartTls extends AbstractEventListener implements BlockingEventListenerInt
     {
         return $this->blocking;
     }
-
 }

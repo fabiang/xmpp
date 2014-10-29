@@ -121,5 +121,4 @@ class User
         $this->groups[] = (string) $group;
         return $this;
     }
-
 }

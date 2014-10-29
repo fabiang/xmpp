@@ -112,5 +112,4 @@ class Bind extends AbstractEventListener implements BlockingEventListenerInterfa
     {
         return $this->blocking;
     }
-
 }

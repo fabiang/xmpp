@@ -65,5 +65,4 @@ class Plain extends AbstractEventListener implements AuthenticationInterface
             '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="PLAIN">' . $authString . '</auth>'
         );
     }
-
 }

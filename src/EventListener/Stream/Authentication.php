@@ -207,5 +207,4 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
     {
         return $this->getOptions()->isAuthenticated();
     }
-
 }

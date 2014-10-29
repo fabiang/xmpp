@@ -182,5 +182,4 @@ XML;
         $this->socket = $socket;
         return $this;
     }
-
 }

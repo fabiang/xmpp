@@ -210,5 +210,4 @@ class SocketClient
     {
         return $this->resource;
     }
-
 }

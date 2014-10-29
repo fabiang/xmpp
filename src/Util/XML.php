@@ -125,5 +125,4 @@ class XML
     {
         return base64_decode($data);
     }
-
 }

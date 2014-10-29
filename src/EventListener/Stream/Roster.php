@@ -152,5 +152,4 @@ class Roster extends AbstractEventListener implements BlockingEventListenerInter
     {
         return $this->blocking;
     }
-
 }

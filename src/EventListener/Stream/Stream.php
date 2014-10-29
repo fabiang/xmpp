@@ -93,7 +93,7 @@ class Stream extends AbstractEventListener implements BlockingEventListenerInter
     {
         if (false === $event->isStartTag()) {
             $this->blocking = false;
-            
+
             if ($this->getConnection()->isConnected()) {
                 $this->getConnection()->disconnect();
             }
@@ -118,5 +118,4 @@ class Stream extends AbstractEventListener implements BlockingEventListenerInter
     {
         return $this->blocking;
     }
-
 }

@@ -149,18 +149,17 @@ class Event implements EventInterface
     public function getParameter($index)
     {
         $parameters = $this->getParameters();
-        
+
         if (!is_int($index)) {
             throw new InvalidArgumentException(
                 'Argument #1 of "' . __CLASS__ . '::' . __METHOD__ . '" must be an integer'
             );
         }
-        
+
         if (!array_key_exists($index, $parameters)) {
             throw new OutOfRangeException("The offset $index is out of range.");
         }
-        
+
         return $parameters[$index];
     }
-
 }

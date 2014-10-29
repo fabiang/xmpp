@@ -170,5 +170,4 @@ class Message implements ProtocolImplementationInterface
         $this->message = (string) $message;
         return $this;
     }
-
 }

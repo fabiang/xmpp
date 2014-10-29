@@ -146,5 +146,4 @@ class Session extends AbstractEventListener implements BlockingEventListenerInte
         $this->id = (string) $id;
         return $this;
     }
-
 }

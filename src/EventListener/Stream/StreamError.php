@@ -71,5 +71,4 @@ class StreamError extends AbstractEventListener
             throw StreamErrorException::createFromEvent($event);
         }
     }
-
 }

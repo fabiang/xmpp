@@ -75,5 +75,4 @@ class XMLEvent extends Event implements XMLEventInterface
     {
         return !$this->isStartTag();
     }
-
 }

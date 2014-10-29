@@ -135,5 +135,4 @@ class DefaultImplementation implements ImplementationInterface
         $this->events = $events;
         return $this;
     }
-
 }

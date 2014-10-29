@@ -54,17 +54,17 @@ abstract class AbstractEventListener implements EventListenerInterface
      * @var Options
      */
     protected $options;
-    
+
     /**
      * Eventmanager.
      *
      * @var EventManagerInterface
      */
     protected $events;
-   
+
     /**
      * Get connection.
-     * 
+     *
      * @return ConnectionInterface
      */
     protected function getConnection()
@@ -92,7 +92,7 @@ abstract class AbstractEventListener implements EventListenerInterface
         $this->events = $events;
         return $this;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -109,6 +109,4 @@ abstract class AbstractEventListener implements EventListenerInterface
         $this->options = $options;
         return $this;
     }
-
-
 }

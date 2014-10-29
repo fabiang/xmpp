@@ -139,5 +139,4 @@ class Test extends AbstractConnection
     {
         return $this->buffer;
     }
-
 }

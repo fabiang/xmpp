@@ -413,5 +413,4 @@ class Options
         $this->timeout = (int) $timeout;
         return $this;
     }
-
 }

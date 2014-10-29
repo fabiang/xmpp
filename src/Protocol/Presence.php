@@ -131,10 +131,10 @@ class Presence implements ProtocolImplementationInterface
      * @var string
      */
     protected $nickname;
-    
+
     /**
      * Constructor.
-     * 
+     *
      * @param integer $priority
      * @param string $to
      * @param string $nickname
@@ -223,5 +223,4 @@ class Presence implements ProtocolImplementationInterface
         $this->priority = (int) $priority;
         return $this;
     }
-
 }

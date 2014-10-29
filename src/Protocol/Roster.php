@@ -53,5 +53,4 @@ class Roster implements ProtocolImplementationInterface
     {
         return '<iq type="get" id="' . XML::generateId() . '"><query xmlns="jabber:iq:roster"/></iq>';
     }
-
 }

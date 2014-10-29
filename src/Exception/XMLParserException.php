@@ -59,7 +59,7 @@ class XMLParserException extends RuntimeException
                 . __METHOD__ . '" must be a resource returned by "xml_parser_create"';
             throw new InvalidArgumentException($message);
         }
-        
+
         $code   = xml_get_error_code($parser);
         $error  = xml_error_string($code);
         $line   = xml_get_current_line_number($parser);
@@ -70,5 +70,4 @@ class XMLParserException extends RuntimeException
             $code
         );
     }
-
 }
