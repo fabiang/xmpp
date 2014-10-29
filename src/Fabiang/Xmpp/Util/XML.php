@@ -85,7 +85,9 @@ class XML
         return vsprintf(
             $message,
             array_map(
-                function ($var) use ($class) { return $class::quote($var); },
+                function ($var) use ($class) {
+                    return $class::quote($var);
+                },
                 $variables
             )
         );
