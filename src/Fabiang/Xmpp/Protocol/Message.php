@@ -99,7 +99,7 @@ class Message implements ProtocolImplementationInterface
             $this->getType(),
             XML::generateId(),
             $this->getTo(),
-            $this->getMessage()
+            htmlspecialchars($this->getMessage(), ENT_XML1, 'UTF-8');
         );
     }
 
