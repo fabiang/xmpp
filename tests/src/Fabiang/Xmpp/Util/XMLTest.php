@@ -54,4 +54,12 @@ class XMLTest extends \PHPUnit_Framework_TestCase
             XML::quoteMessage('<foo lt="%s" gt="%s", amp="%s" quot="%s">', '<', '>', '&', '"')
         );
     }
+
+    /**
+     * @covers ::quoteMessage
+     */
+    public function testQuoteMessageNoVariables()
+    {
+        $this->assertSame('<foo>', XML::quoteMessage('<foo>'));
+    }
 }
