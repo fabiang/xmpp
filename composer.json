@@ -17,6 +17,11 @@
             "Fabiang\\Xmpp\\": "src/"
         }
     },
+    "autoload-dev": {
+        "files": [
+            "vendor/phpunit/phpunit/src/Framework/Assert/Functions.php"
+        ]
+    },
     "require": {
         "php": ">=5.3",
         "psr/log": "~1.0"

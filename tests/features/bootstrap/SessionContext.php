@@ -40,8 +40,6 @@ use Behat\Behat\Context\BehatContext;
 use Behat\Behat\Exception\PendingException;
 use Fabiang\Xmpp\EventListener\Stream\Session;
 
-require_once 'PHPUnit/Framework/Assert/Functions.php';
-
 class SessionContext extends BehatContext
 {
 

@@ -39,11 +39,9 @@ namespace Fabiang\Xmpp\Integration;
 use Behat\Behat\Context\BehatContext;
 use Behat\Behat\Exception\PendingException;
 
-require_once 'PHPUnit/Framework/Assert/Functions.php';
-
 class RosterContext extends BehatContext
 {
-    
+
     /**
      * @Given /^Test response data for roster request$/
      */
@@ -73,7 +71,7 @@ class RosterContext extends BehatContext
             '<iq type="get" id="fabiang_xmpp_1234"><query xmlns="jabber:iq:roster"/></iq>'
         );
     }
-    
+
     /**
      * @Then /^options object should contain roster data$/
      */
@@ -88,7 +86,7 @@ class RosterContext extends BehatContext
         assertSame('both', $user->getSubscription());
         assertSame(array('MyGroup', 'MyOtherGroup'), $user->getGroups());
     }
-    
+
     /**
      *
      * @return \Fabiang\Xmpp\Connection\Test
