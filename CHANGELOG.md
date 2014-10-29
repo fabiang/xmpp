@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.5.0 (2014-10-29)
+
+- [MINOR]: Messages get now quoted
+- [MINOR]: Classes are now autoloaded with PSR-4
+- [PATCH]: Cleanups
+
 ## 0.4.0 (2014-02-28)
 
 - [MINOR]: Added a timeout to connection
