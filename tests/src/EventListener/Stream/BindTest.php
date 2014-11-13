@@ -113,7 +113,7 @@ class BindTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->object->isBlocking());
         $buffer = $this->connection->getBuffer();
         $this->assertRegExp(
-            '/<iq type="set" id="[^"]+"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"\/><\/iq>/',
+            '#<iq type="set" id="[^"]+"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"/></iq>#',
             $buffer[1]
         );
     }

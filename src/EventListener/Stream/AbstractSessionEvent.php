@@ -36,9 +36,8 @@
 
 namespace Fabiang\Xmpp\EventListener\Stream;
 
-use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\EventListener\AbstractEventListener;
-use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
+use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\Util\XML;
 
 /**
@@ -46,61 +45,62 @@ use Fabiang\Xmpp\Util\XML;
  *
  * @package Xmpp\EventListener
  */
-class Bind extends AbstractSessionEvent implements BlockingEventListenerInterface
+abstract class AbstractSessionEvent extends AbstractEventListener
 {
 
     /**
-     * Listener is blocking.
+     * Generated id.
      *
-     * @var boolean
+     * @var string
      */
-    protected $blocking = false;
+    protected $id;
 
     /**
-     * {@inheritDoc}
-     */
-    public function attachEvents()
-    {
-        $input = $this->getInputEventManager();
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-bind}bind', array($this, 'bindFeatures'));
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-bind}jid', array($this, 'jid'));
-    }
-
-    /**
-     * Handle XML events for "bind".
+     * Handle session event.
      *
      * @param XMLEvent $event
      * @return void
      */
-    public function bindFeatures(XMLEvent $event)
+    protected function respondeToFeatures(XMLEvent $event, $data)
     {
-        $this->respondeToFeatures(
-            $event,
-            '<iq type="set" id="%s"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"/></iq>'
-        );
+        if ($event->isEndTag()) {
+            /* @var $element \DOMElement */
+            $element = $event->getParameter(0);
+
+            // bind element occured in <features>
+            if ('features' === $element->parentNode->localName) {
+                $this->blocking = true;
+                $this->getConnection()->send(sprintf(
+                    $data,
+                    $this->getId()
+                ));
+            }
+        }
     }
 
     /**
-     * Handle jid.
+     * Get generated id.
      *
-     * @param XMLEvent $event
-     * @return void
+     * @return string
      */
-    public function jid(XMLEvent $event)
+    public function getId()
     {
-        /* @var $element \DOMDocument */
-        $element = $event->getParameter(0);
+        if (null === $this->id) {
+            $this->id = XML::generateId();
+        }
 
-        $jid = $element->nodeValue;
-        $this->getOptions()->setJid($jid);
-        $this->blocking = false;
+        return $this->id;
     }
 
     /**
-     * {@inheritDoc}
+     * Set generated id.
+     *
+     * @param string $id
+     * @return $this
      */
-    public function isBlocking()
+    public function setId($id)
     {
-        return $this->blocking;
+        $this->id = (string) $id;
+        return $this;
     }
 }

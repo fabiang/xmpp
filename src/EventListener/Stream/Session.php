@@ -46,7 +46,7 @@ use Fabiang\Xmpp\Util\XML;
  *
  * @package Xmpp\EventListener
  */
-class Session extends AbstractEventListener implements BlockingEventListenerInterface
+class Session extends AbstractSessionEvent implements BlockingEventListenerInterface
 {
 
     /**
@@ -81,19 +81,10 @@ class Session extends AbstractEventListener implements BlockingEventListenerInte
      */
     public function sessionStart(XMLEvent $event)
     {
-        if ($event->isEndTag()) {
-            /* @var $element \DOMElement */
-            $element = $event->getParameter(0);
-
-            // bind element occured in <features>
-            if ('features' === $element->parentNode->localName) {
-                $this->blocking = true;
-                $this->getConnection()->send(sprintf(
-                    '<iq type="set" id="%s"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>',
-                    $this->getId()
-                ));
-            }
-        }
+        $this->respondeToFeatures(
+            $event,
+            '<iq type="set" id="%s"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>'
+        );
     }
 
     /**

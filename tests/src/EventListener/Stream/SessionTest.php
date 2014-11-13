@@ -115,7 +115,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->object->isBlocking());
         $buffer = $this->connection->getbuffer();
         $this->assertRegExp(
-            '/<iq type="set" id="[^"]+"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"\/><\/iq>/',
+            '#<iq type="set" id="[^"]+"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>#',
             $buffer[1]
         );
     }
