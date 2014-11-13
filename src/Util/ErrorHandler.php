@@ -36,6 +36,7 @@
 
 namespace Fabiang\Xmpp\Util;
 
+use Fabiang\Xmpp\Exception\InvalidArgumentException;
 use Fabiang\Xmpp\Exception\ErrorException;
 
 /**
@@ -47,20 +48,53 @@ class ErrorHandler
 {
 
     /**
-     * Enable error handler
+     * Method to be called.
+     *
+     * @var callable
      */
-    public static function enable()
+    protected $method;
+
+    /**
+     * Arguments for method.
+     *
+     * @var array
+     */
+    protected $arguments = array();
+
+    public function __construct($method)
     {
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-            throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
-        });
+        if (!is_callable($method)) {
+            throw new InvalidArgumentException('Argument 1 of "' . __METHOD__ . '" must be a callable');
+        }
+
+        $arguments = func_get_args();
+        array_shift($arguments);
+
+        $this->method    = $method;
+        $this->arguments = $arguments;
     }
 
     /**
-     * Disable error handler
+     * Execute a function and handle all types of errors.
+     *
+     * @param string $file
+     * @param int    $line
+     * @return mixed
+     * @throws ErrorException
      */
-    public static function disable()
+    public function execute($file, $line)
     {
+        set_error_handler(function ($errno, $errstr) use ($file, $line) {
+            throw new ErrorException($errstr, 0, $errno, $file, $line);
+        });
+
+        try {
+            return call_user_func_array($this->method, $this->arguments);
+        } catch (ErrorException $exception) {
+            restore_error_handler();
+            throw $exception;
+        }
+
         restore_error_handler();
     }
 }

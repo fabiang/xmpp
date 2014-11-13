@@ -89,11 +89,10 @@ class SocketClient
             $flags = STREAM_CLIENT_CONNECT;
         }
 
-        ErrorHandler::enable();
-        $resource = stream_socket_client($this->address, $errno, $errstr, $timeout, $flags);
-        ErrorHandler::disable();
+        // call stream_socket_client with custom error handler enabled
+        $handler = new ErrorHandler('stream_socket_client', $this->address, null, null, $timeout, $flags);
+        $resource = $handler->execute(__FILE__, __LINE__);
 
-        $this->assertSuccess($resource, $errno, $errstr);
         stream_set_timeout($resource, $timeout);
         $this->resource = $resource;
     }
@@ -205,21 +204,6 @@ class SocketClient
         }
 
         return $filter;
-    }
-
-    /**
-     * Assert that a command was successful.
-     *
-     * @param mixed   $value
-     * @param integer $errno
-     * @param string  $errstr
-     * @throws SocketException
-     */
-    protected function assertSuccess($value, $errno, $errstr)
-    {
-        if (!$value) {
-            throw new SocketException($errstr, $errno);
-        }
     }
 
     /**
