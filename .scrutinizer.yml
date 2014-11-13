@@ -2,19 +2,19 @@ imports:
     - php
     
 filter:
-    excluded_paths: [vendor/*, tests/*, bin/*]
+    excluded_paths: [vendor/*, tests/*, bin/*, example.php]
     
 tools:
     php_code_sniffer:
         config:
             standard: PSR2
         filter:
-            paths: [src/*, tests/*, bin/*]
+            paths: [src/*, tests/*, bin/*, example.php]
     php_sim: true
     php_cpd: false
     php_loc:
         enabled: true
-        excluded_dirs: [bin, tests, vendor]
+        excluded_dirs: [bin, tests, vendor, example.php]
     php_hhvm: true
     php_mess_detector:
         enabled: true
@@ -22,11 +22,11 @@ tools:
             paths: [src/*]
     php_pdepend:
         enabled: true
-        excluded_dirs: [tests, vendor, bin]
+        excluded_dirs: [tests, vendor, bin, example.php]
     php_analyzer: true
     php_analyzer:
         filter:
-            paths: ["src/*", "test/*"]
+            paths: ["src/*", "test/*", "example.php"]
     sensiolabs_security_checker: true
     php_changetracking: true
     external_code_coverage:

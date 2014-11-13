@@ -41,6 +41,7 @@ use Fabiang\Xmpp\Options;
 use Fabiang\Xmpp\Client;
 use Fabiang\Xmpp\Connection\Test;
 use Fabiang\Xmpp\Connection\Socket;
+use Fabiang\Xmpp\Stream\SocketClient;
 
 /**
  * Description of FeatureContext
@@ -119,7 +120,7 @@ class FeatureContext extends BehatContext
      */
     public function socketConnectionAdapterWithAddressTcpLocalhost($address)
     {
-        $mock = new \Fabiang\Xmpp\Stream\SocketClient($address);
+        $mock = new SocketClient($address);
 
         $this->connection = new Socket($mock);
 

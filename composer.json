@@ -34,9 +34,6 @@
     "suggest": {
         "psr/log-implementation": "Allows more advanced logging of the xmpp connection"
     },
-    "config": {
-        "bin-dir": "bin/"
-    },
     "extra": {
         "branch-alias": {
             "dev-master": "1.0.x-dev"

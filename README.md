@@ -99,8 +99,8 @@ Composer will help you to install the right version of PHPUnit and [Behat](http:
 
 After that:
 
-    ./bin/phpunit -c tests
-    ./bin/behat --config=tests/behat.yml --strict
+    ./vendor/bin/phpunit -c tests
+    ./vendor/bin/behat --config=tests/behat.yml --strict
 
 New features should allways tested with Behat.
 
