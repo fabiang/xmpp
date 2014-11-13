@@ -38,6 +38,7 @@ namespace Fabiang\Xmpp\Stream;
 
 use Fabiang\Xmpp\Exception\InvalidArgumentException;
 use Fabiang\Xmpp\Exception\SocketException;
+use Fabiang\Xmpp\Util\ErrorHandler;
 
 /**
  * Stream functions wrapper class.
@@ -88,7 +89,9 @@ class SocketClient
             $flags = STREAM_CLIENT_CONNECT;
         }
 
-        $resource = @stream_socket_client($this->address, $errno, $errstr, $timeout, $flags);
+        ErrorHandler::enable();
+        $resource = stream_socket_client($this->address, $errno, $errstr, $timeout, $flags);
+        ErrorHandler::disable();
 
         $this->assertSuccess($resource, $errno, $errstr);
         stream_set_timeout($resource, $timeout);

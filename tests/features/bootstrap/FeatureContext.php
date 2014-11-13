@@ -239,7 +239,7 @@ class FeatureContext extends BehatContext
      */
     public function socketExceptionShouldHaveBeenThrown()
     {
-        assertInstanceOf('\\Fabiang\\Xmpp\\Exception\\SocketException', $this->exception);
+        assertInstanceOf('\\Fabiang\\Xmpp\\Exception\\ErrorException', $this->exception);
     }
 
     /**
