@@ -48,13 +48,6 @@ class Session extends AbstractSessionEvent implements BlockingEventListenerInter
 {
 
     /**
-     * Generated id.
-     *
-     * @var string
-     */
-    protected $id;
-
-    /**
      * {@inheritDoc}
      */
     public function attachEvents()
