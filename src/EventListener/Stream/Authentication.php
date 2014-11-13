@@ -175,9 +175,10 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
         if (false === $event->isStartTag()) {
             $this->getOptions()->setAuthenticated(true);
             $this->blocking = false;
+            $connection = $this->getConnection();
 
-            $this->getConnection()->resetStreams();
-            $this->getConnection()->connect();
+            $connection->resetStreams();
+            $connection->connect();
         }
     }
 

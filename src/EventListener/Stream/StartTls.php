@@ -75,9 +75,10 @@ class StartTls extends AbstractEventListener implements BlockingEventListenerInt
     public function starttlsEvent(XMLEvent $event)
     {
         if (false === $event->isStartTag()) {
+            $connection = $this->getConnection();
             $this->blocking = true;
-            $this->getConnection()->setReady(false);
-            $this->getConnection()->send('<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>');
+            $connection->setReady(false);
+            $connection->send('<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>');
         }
     }
 
