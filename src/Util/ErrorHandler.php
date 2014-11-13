@@ -89,12 +89,12 @@ class ErrorHandler
         });
 
         try {
-            return call_user_func_array($this->method, $this->arguments);
+            $value = call_user_func_array($this->method, $this->arguments);
+            restore_error_handler();
+            return $value;
         } catch (ErrorException $exception) {
             restore_error_handler();
             throw $exception;
         }
-
-        restore_error_handler();
     }
 }

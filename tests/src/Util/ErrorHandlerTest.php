@@ -59,6 +59,16 @@ class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::__construct
+     * @covers ::execute
+     */
+    public function testExecuteSuccess()
+    {
+        $object = new ErrorHandler('trim', ' test');
+        $this->assertSame('test', $object->execute('0', 1));
+    }
+
+    /**
+     * @covers ::__construct
      * @expectedException \Fabiang\Xmpp\Exception\InvalidArgumentException
      * @expectedExceptionMessage Argument 1 of "Fabiang\Xmpp\Util\ErrorHandler::__construct" must be a callable
      */
