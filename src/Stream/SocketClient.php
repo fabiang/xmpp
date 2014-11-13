@@ -90,7 +90,14 @@ class SocketClient
         }
 
         // call stream_socket_client with custom error handler enabled
-        $handler = new ErrorHandler('stream_socket_client', $this->address, null, null, $timeout, $flags);
+        $handler = new ErrorHandler(
+            function ($address, $timeout, $flags) {
+                return stream_socket_client($address, $errno, $errstr, $timeout, $flags);
+            },
+            $this->address,
+            $timeout,
+            $flags
+        );
         $resource = $handler->execute(__FILE__, __LINE__);
 
         stream_set_timeout($resource, $timeout);
