@@ -47,20 +47,19 @@ use Fabiang\Xmpp\Event\EventManagerAwareInterface;
  */
 interface ImplementationInterface extends OptionsAwareInterface, EventManagerAwareInterface
 {
-    
+
     /**
      * Register listeners that implement xmpp protocol.
-     * 
+     *
      * @return void
      */
     public function register();
-    
+
     /**
      * Register a listener.
-     * 
+     *
      * @param EventListenerInterface $eventListener Event listener
      * @return $this
      */
     public function registerListener(EventListenerInterface $eventListener);
-    
 }

@@ -134,7 +134,7 @@ class XMLStream implements EventManagerAwareInterface
             $eventObject = new XMLEvent();
         }
 
-        $this->setEventObject($eventObject);
+        $this->eventObject = $eventObject;
     }
 
     /**
@@ -357,7 +357,8 @@ class XMLStream implements EventManagerAwareInterface
     {
         foreach ($this->eventCache as $event) {
             list($event, $startTag, $param) = $event;
-            $this->getEventManager()->getEventObject()->setStartTag($startTag);
+            $this->eventObject->setStartTag($startTag);
+            $this->getEventManager()->setEventObject($this->eventObject);
             $this->getEventManager()->trigger($event, $this, $param);
         }
     }

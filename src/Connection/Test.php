@@ -92,7 +92,7 @@ class Test extends AbstractConnection
             return $buffer;
         }
 
-        $this->checkTimeout($this->data);
+        $this->checkTimeout(implode('', $this->data));
     }
 
     /**
