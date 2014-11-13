@@ -88,7 +88,7 @@ class SocketClient
             $flags = STREAM_CLIENT_CONNECT;
         }
 
-        $resource = @stream_socket_client($this->address, $errno, $errstr, $timeout, $flags);
+        $resource = stream_socket_client($this->address, $errno, $errstr, $timeout, $flags);
 
         $this->assertSuccess($resource, $errno, $errstr);
         stream_set_timeout($resource, $timeout);

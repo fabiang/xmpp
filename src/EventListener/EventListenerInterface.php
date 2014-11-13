@@ -36,7 +36,6 @@
 
 namespace Fabiang\Xmpp\EventListener;
 
-use Fabiang\Xmpp\Connection\ConnectionInterface;
 use Fabiang\Xmpp\Event\EventManagerAwareInterface;
 use Fabiang\Xmpp\OptionsAwareInterface;
 

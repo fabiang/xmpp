@@ -30,7 +30,7 @@ $options->setLogger($logger)
 
 $client = new Client($options);
 
-//$client->connect();
+$client->connect();
 $client->send(new Roster);
 $client->send(new Presence);
 $client->send(new Message);
