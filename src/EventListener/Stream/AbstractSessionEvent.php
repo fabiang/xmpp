@@ -56,6 +56,13 @@ abstract class AbstractSessionEvent extends AbstractEventListener
     protected $id;
 
     /**
+     * Listener is blocking.
+     *
+     * @var boolean
+     */
+    protected $blocking = false;
+
+    /**
      * Handle session event.
      *
      * @param XMLEvent $event
@@ -76,6 +83,14 @@ abstract class AbstractSessionEvent extends AbstractEventListener
                 ));
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isBlocking()
+    {
+        return $this->blocking;
     }
 
     /**

@@ -36,10 +36,8 @@
 
 namespace Fabiang\Xmpp\EventListener\Stream;
 
-use Fabiang\Xmpp\Event\XMLEvent;
-use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
-use Fabiang\Xmpp\Util\XML;
+use Fabiang\Xmpp\Event\XMLEvent;
 
 /**
  * Listener
@@ -48,13 +46,6 @@ use Fabiang\Xmpp\Util\XML;
  */
 class Session extends AbstractSessionEvent implements BlockingEventListenerInterface
 {
-
-    /**
-     * Listener is blocking.
-     *
-     * @var boolean
-     */
-    protected $blocking = false;
 
     /**
      * Generated id.
@@ -102,39 +93,5 @@ class Session extends AbstractSessionEvent implements BlockingEventListenerInter
                 $this->blocking = false;
             }
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isBlocking()
-    {
-        return $this->blocking;
-    }
-
-    /**
-     * Get generated id.
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        if (null === $this->id) {
-            $this->id = XML::generateId();
-        }
-
-        return $this->id;
-    }
-
-    /**
-     * Set generated id.
-     *
-     * @param string $id
-     * @return $this
-     */
-    public function setId($id)
-    {
-        $this->id = (string) $id;
-        return $this;
     }
 }

@@ -36,10 +36,8 @@
 
 namespace Fabiang\Xmpp\EventListener\Stream;
 
-use Fabiang\Xmpp\Event\XMLEvent;
-use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
-use Fabiang\Xmpp\Util\XML;
+use Fabiang\Xmpp\Event\XMLEvent;
 
 /**
  * Listener
@@ -48,13 +46,6 @@ use Fabiang\Xmpp\Util\XML;
  */
 class Bind extends AbstractSessionEvent implements BlockingEventListenerInterface
 {
-
-    /**
-     * Listener is blocking.
-     *
-     * @var boolean
-     */
-    protected $blocking = false;
 
     /**
      * {@inheritDoc}
@@ -94,13 +85,5 @@ class Bind extends AbstractSessionEvent implements BlockingEventListenerInterfac
         $jid = $element->nodeValue;
         $this->getOptions()->setJid($jid);
         $this->blocking = false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isBlocking()
-    {
-        return $this->blocking;
     }
 }
