@@ -37,7 +37,6 @@
 namespace Fabiang\Xmpp\Stream;
 
 use Fabiang\Xmpp\Exception\InvalidArgumentException;
-use Fabiang\Xmpp\Exception\SocketException;
 use Fabiang\Xmpp\Util\ErrorHandler;
 
 /**
@@ -182,7 +181,8 @@ class SocketClient
     public function crypto($enable, $cryptoType = null)
     {
         if (false === $enable) {
-            return @stream_socket_enable_crypto($this->resource, false);
+            $handler = new ErrorHandler('stream_socket_enable_crypto', $this->resource, false);
+            return $handler->execute(__FILE__, __LINE__);
         }
 
         if (null === $cryptoType) {
