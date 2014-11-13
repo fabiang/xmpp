@@ -2,7 +2,7 @@
 
 ## 0.6.0 (2014-11-13)
 
-- [MINOR]: Library now tries to reconnect via TLS if connection with TCP failed
+- [MINOR] [Issue #3](https://github.com/fabiang/xmpp/issues/3): Library now tries to reconnect via TLS if connection with TCP failed
 - [PATCH]: Reducing output for blocking listeners.
 
 ## 0.5.0 (2014-10-29)
