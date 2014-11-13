@@ -40,6 +40,7 @@ use Psr\Log\LogLevel;
 use Fabiang\Xmpp\Stream\SocketClient;
 use Fabiang\Xmpp\Util\XML;
 use Fabiang\Xmpp\Options;
+use Fabiang\Xmpp\Exception\TimeoutException;
 
 /**
  * Connection to a socket stream.
@@ -62,6 +63,13 @@ XML;
      * @var SocketClient
      */
     protected $socket;
+
+    /**
+     * Did we received any data yet?
+     *
+     * @var bool
+     */
+    private $receivedAnyData = false;
 
     /**
      * Constructor set default socket instance if no socket was given.
@@ -95,13 +103,48 @@ XML;
         $buffer = $this->getSocket()->read(static::DEFAULT_LENGTH);
 
         if ($buffer) {
+            $this->receivedAnyData = true;
             $address = $this->getAddress();
             $this->log("Received buffer '$buffer' from '{$address}'", LogLevel::DEBUG);
             $this->getInputStream()->parse($buffer);
             return $buffer;
         }
 
-        $this->checkTimeout($buffer);
+        try {
+            $this->checkTimeout($buffer);
+        } catch (TimeoutException $exception) {
+            $this->reconnectTls($exception);
+        }
+    }
+
+    /**
+     * Try to reconnect via TLS.
+     *
+     * @param TimeoutException $exception
+     * @return null
+     * @throws TimeoutException
+     */
+    private function reconnectTls(TimeoutException $exception)
+    {
+        // check if we didn't receive any data
+        // if not we re-try to connect via TLS
+        if (false === $this->receivedAnyData) {
+            $matches = array();
+            $previousAddress = $this->getOptions()->getAddress();
+            // only reconnect via tls if we've used tcp before.
+            if (preg_match('#tcp://(?<address>.+)#', $previousAddress, $matches)) {
+                $this->log('Connecting via TCP failed, now trying to connect via TLS');
+
+                $address = 'tls://' . $matches['address'];
+                $this->connected = false;
+                $this->getOptions()->setAddress($address);
+                $this->getSocket()->reconnect($address);
+                $this->connect();
+                return;
+            }
+        }
+
+        throw $exception;
     }
 
     /**

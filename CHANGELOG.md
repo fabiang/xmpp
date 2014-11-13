@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 0.6.0 (2014-11-13)
+
+- [MINOR]: Library now tries to reconnect via TLS if connection with TCP failed
+- [PATCH]: Reducing output for blocking listeners.
+
 ## 0.5.0 (2014-10-29)
 
 - [MINOR]: Messages get now quoted

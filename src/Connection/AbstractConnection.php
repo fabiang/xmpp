@@ -107,6 +107,15 @@ abstract class AbstractConnection implements ConnectionInterface
     private $lastResponse;
 
     /**
+     * Last blocking event listener.
+     *
+     * Cached to reduce debug output a bit.
+     *
+     * @var BlockingEventListenerInterface
+     */
+    private $lastBlockingListener;
+
+    /**
      * {@inheritDoc}
      */
     public function getOutputStream()
@@ -261,10 +270,14 @@ abstract class AbstractConnection implements ConnectionInterface
     protected function checkBlockingListeners()
     {
         $blocking = false;
-        foreach ($this->listeners as $listerner) {
-            $instanceof = $listerner instanceof BlockingEventListenerInterface;
-            if ($instanceof && true === $listerner->isBlocking()) {
-                $this->log('Listener "' . get_class($listerner) . '" is currently blocking', LogLevel::DEBUG);
+        foreach ($this->listeners as $listener) {
+            $instanceof = $listener instanceof BlockingEventListenerInterface;
+            if ($instanceof && true === $listener->isBlocking()) {
+                // cache the last blocking listener. Reducing output.
+                if ($this->lastBlockingListener !== $listener) {
+                    $this->log('Listener "' . get_class($listener) . '" is currently blocking', LogLevel::DEBUG);
+                    $this->lastBlockingListener = $listener;
+                }
                 $blocking = true;
             }
         }
@@ -290,8 +303,9 @@ abstract class AbstractConnection implements ConnectionInterface
         }
 
         $timeout = $this->getOptions()->getTimeout();
-        if (time() > $this->lastResponse + $timeout) {
-            throw new TimeoutException('Timeout after "' . $timeout . '" seconds');
+
+        if (time() >= $this->lastResponse + $timeout) {
+            throw new TimeoutException('Connection lost after ' . $timeout . ' seconds');
         }
     }
 }

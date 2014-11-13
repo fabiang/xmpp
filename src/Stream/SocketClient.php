@@ -96,6 +96,24 @@ class SocketClient
     }
 
     /**
+     * Reconnect and optionally use different address.
+     *
+     * @param string  $address
+     * @param integer $timeout
+     * @param bool    $persistent
+     */
+    public function reconnect($address = null, $timeout = 30, $persistent = false)
+    {
+        $this->close();
+
+        if (null !== $this->address) {
+            $this->address = $address;
+        }
+
+        $this->connect($timeout, $persistent);
+    }
+
+    /**
      * Close stream.
      *
      * @return void
@@ -209,5 +227,15 @@ class SocketClient
     public function getResource()
     {
         return $this->resource;
+    }
+
+    /**
+     * Return address.
+     *
+     * @return string
+     */
+    public function getAddress()
+    {
+        return $this->address;
     }
 }
