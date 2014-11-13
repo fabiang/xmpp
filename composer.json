@@ -20,7 +20,10 @@
     "autoload-dev": {
         "files": [
             "vendor/phpunit/phpunit/src/Framework/Assert/Functions.php"
-        ]
+        ],
+        "psr-4": {
+            "Fabiang\\Xmpp\\": "tests/src/"
+        }
     },
     "require": {
         "php": ">=5.3.3",
