@@ -92,7 +92,7 @@ class StreamTest extends \PHPUnit_Framework_TestCase
     /**
      * Test starting client stream.
      *
-     * @covers Fabiang\Xmpp\EventListener\Stream\Stream::stream
+     * @covers Fabiang\Xmpp\EventListener\Stream\Stream::streamStart
      * @covers Fabiang\Xmpp\EventListener\Stream\Stream::streamServer
      * @covers Fabiang\Xmpp\EventListener\Stream\Stream::features
      * @covers Fabiang\Xmpp\EventListener\Stream\Stream::isBlocking
@@ -107,7 +107,7 @@ class StreamTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($this->object->isBlocking());
         $event->setStartTag(true);
-        $this->object->stream($event);
+        $this->object->streamStart($event);
         $this->assertTrue($this->object->isBlocking());
 
         $event->setStartTag(false);
@@ -116,7 +116,7 @@ class StreamTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->connection->isConnected());
 
         $event->setStartTag(true);
-        $this->object->stream($event);
+        $this->object->streamStart($event);
         $event->setStartTag(false);
         $this->object->features();
         $this->assertFalse($this->object->isBlocking());

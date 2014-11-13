@@ -63,7 +63,7 @@ class Stream extends AbstractEventListener implements BlockingEventListenerInter
         $this->getConnection()
             ->getOutputStream()
             ->getEventManager()
-            ->attach('{http://etherx.jabber.org/streams}stream', array($this, 'stream'));
+            ->attach('{http://etherx.jabber.org/streams}stream', array($this, 'streamStart'));
 
         $input = $this->getConnection()->getInputStream()->getEventManager();
         $input->attach('{http://etherx.jabber.org/streams}stream', array($this, 'streamServer'));
@@ -76,7 +76,7 @@ class Stream extends AbstractEventListener implements BlockingEventListenerInter
      * @param XMLEvent $event XMLEvent
      * @return void
      */
-    public function stream(XMLEvent $event)
+    public function streamStart(XMLEvent $event)
     {
         if (true === $event->isStartTag()) {
             $this->blocking = true;

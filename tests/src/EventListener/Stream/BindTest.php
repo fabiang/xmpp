@@ -87,7 +87,7 @@ class BindTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(
             array(
                 '*'                                      => array(),
-                '{urn:ietf:params:xml:ns:xmpp-bind}bind' => array(array($this->object, 'bind')),
+                '{urn:ietf:params:xml:ns:xmpp-bind}bind' => array(array($this->object, 'bindFeatures')),
                 '{urn:ietf:params:xml:ns:xmpp-bind}jid'  => array(array($this->object, 'jid'))
             ),
             $this->connection->getInputStream()->getEventManager()->getEventList()
@@ -97,7 +97,7 @@ class BindTest extends \PHPUnit_Framework_TestCase
     /**
      * Test handling bind event.
      *
-     * @covers Fabiang\Xmpp\EventListener\Stream\Bind::bind
+     * @covers Fabiang\Xmpp\EventListener\Stream\Bind::bindFeatures
      * @return void
      */
     public function testBind()
@@ -108,7 +108,7 @@ class BindTest extends \PHPUnit_Framework_TestCase
         $event   = new XMLEvent;
         $event->setParameters(array($document->firstChild->firstChild));
 
-        $this->object->bind($event);
+        $this->object->bindFeatures($event);
 
         $this->assertTrue($this->object->isBlocking());
         $buffer = $this->connection->getBuffer();
@@ -117,7 +117,7 @@ class BindTest extends \PHPUnit_Framework_TestCase
             $buffer[1]
         );
     }
-    
+
     /**
      * Test handling jid event.
      *
@@ -132,9 +132,9 @@ class BindTest extends \PHPUnit_Framework_TestCase
 
         $event   = new XMLEvent;
         $event->setParameters(array($document->firstChild->firstChild->firstChild));
-        
+
         $this->object->jid($event);
-        
+
         $this->assertFalse($this->object->isBlocking());
         $this->assertSame('nicejid', $this->object->getOptions()->getJid());
     }

@@ -88,7 +88,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(
             array(
                 '*'                                            => array(),
-                '{urn:ietf:params:xml:ns:xmpp-session}session' => array(array($this->object, 'session')),
+                '{urn:ietf:params:xml:ns:xmpp-session}session' => array(array($this->object, 'sessionStart')),
                 '{jabber:client}iq'                            => array(array($this->object, 'iq'))
             ),
             $this->connection->getInputStream()->getEventManager()->getEventList()
@@ -98,7 +98,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     /**
      * Test event when session is part of features element.
      *
-     * @covers Fabiang\Xmpp\EventListener\Stream\Session::session
+     * @covers Fabiang\Xmpp\EventListener\Stream\Session::sessionStart
      * @covers Fabiang\Xmpp\EventListener\Stream\Session::isBlocking
      * @return void
      */
@@ -110,7 +110,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $event   = new XMLEvent;
         $event->setParameters(array($document->firstChild->firstChild));
 
-        $this->object->session($event);
+        $this->object->sessionStart($event);
 
         $this->assertTrue($this->object->isBlocking());
         $buffer = $this->connection->getbuffer();
@@ -123,7 +123,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
     /**
      * Test session response.
      *
-     * @covers Fabiang\Xmpp\EventListener\Stream\Session::session
+     * @covers Fabiang\Xmpp\EventListener\Stream\Session::sessionStart
      * @covers Fabiang\Xmpp\EventListener\Stream\Session::iq
      * @depends testSessionAsFeatureElement
      * @return void
@@ -138,10 +138,10 @@ class SessionTest extends \PHPUnit_Framework_TestCase
         $event   = new XMLEvent;
         $event->setParameters(array($document->firstChild->firstChild));
 
-        $this->object->session($event);
-        
+        $this->object->sessionStart($event);
+
         $this->assertTrue($this->object->isBlocking());
-        
+
         $document = new \DOMDocument;
         $document->loadXML('<iq id="1234"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>');
 
@@ -155,7 +155,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test setting and getting id.
-     * 
+     *
      * @covers Fabiang\Xmpp\EventListener\Stream\Session::setId
      * @covers Fabiang\Xmpp\EventListener\Stream\Session::getId
      * @return void

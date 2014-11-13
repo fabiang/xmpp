@@ -87,7 +87,7 @@ class StartTlsTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(
             array(
                 '*'                                         => array(),
-                '{urn:ietf:params:xml:ns:xmpp-tls}starttls' => array(array($this->object, 'starttls')),
+                '{urn:ietf:params:xml:ns:xmpp-tls}starttls' => array(array($this->object, 'starttlsEvent')),
                 '{urn:ietf:params:xml:ns:xmpp-tls}proceed'  => array(array($this->object, 'proceed'))
             ),
             $this->connection->getInputStream()->getEventManager()->getEventList()
@@ -97,7 +97,7 @@ class StartTlsTest extends \PHPUnit_Framework_TestCase
     /**
      * Test starttls event.
      *
-     * @covers Fabiang\Xmpp\EventListener\Stream\StartTls::starttls
+     * @covers Fabiang\Xmpp\EventListener\Stream\StartTls::starttlsEvent
      * @covers Fabiang\Xmpp\EventListener\Stream\StartTls::isBlocking
      * @return void
      */
@@ -111,7 +111,7 @@ class StartTlsTest extends \PHPUnit_Framework_TestCase
 
         $connection = $this->object->getOptions()->getConnection();
 
-        $this->object->starttls($event);
+        $this->object->starttlsEvent($event);
         $this->assertTrue($this->object->isBlocking());
         $this->assertFalse($connection->isReady());
         $this->assertContains('<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>', $connection->getBuffer());

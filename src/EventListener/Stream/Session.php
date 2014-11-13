@@ -69,7 +69,7 @@ class Session extends AbstractEventListener implements BlockingEventListenerInte
     public function attachEvents()
     {
         $input = $this->getConnection()->getInputStream()->getEventManager();
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-session}session', array($this, 'session'));
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-session}session', array($this, 'sessionStart'));
         $input->attach('{jabber:client}iq', array($this, 'iq'));
     }
 
@@ -79,7 +79,7 @@ class Session extends AbstractEventListener implements BlockingEventListenerInte
      * @param XMLEvent $event
      * @return void
      */
-    public function session(XMLEvent $event)
+    public function sessionStart(XMLEvent $event)
     {
         if ($event->isEndTag()) {
             /* @var $element \DOMElement */
