@@ -12,12 +12,13 @@ install:
   - composer install --dev --no-interaction
 
 script:
-  - ./vendor/bin/phpunit -c tests --coverage-clover=coverage.clover
+  - ./vendor/bin/phpunit -c tests --coverage-clover=build/logs/clover.xml
   - ./vendor/bin/behat --config=tests/behat.yml --format=progress --strict
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+  - php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
+  - php vendor/bin/coveralls -v
 
 matrix:
   fast_finish: true
