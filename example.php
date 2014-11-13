@@ -15,7 +15,7 @@ use Fabiang\Xmpp\Protocol\Message;
 $logger = new Logger('xmpp');
 $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
 
-$hostname       = 'jabber.unister.de';
+$hostname       = 'localhost';
 $port           = 5222;
 $connectionType = 'tcp';
 $address        = "$connectionType://$hostname:$port";

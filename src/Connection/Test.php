@@ -86,13 +86,14 @@ class Test extends AbstractConnection
      */
     public function receive()
     {
+        $buffer = null;
         if (!empty($this->data)) {
             $buffer = array_shift($this->data);
             $this->getInputStream()->parse($buffer);
-            return $buffer;
         }
 
-        $this->checkTimeout(implode('', $this->data));
+        $this->checkTimeout($buffer);
+        return $buffer;
     }
 
     /**

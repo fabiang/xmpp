@@ -53,7 +53,7 @@ class StreamError extends AbstractEventListener
      */
     public function attachEvents()
     {
-        $this->getConnection()->getInputStream()->getEventManager()->attach(
+        $this->getInputEventManager()->attach(
             '{http://etherx.jabber.org/streams}error',
             array($this, 'error')
         );

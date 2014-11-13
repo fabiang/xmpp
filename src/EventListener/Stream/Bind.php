@@ -61,7 +61,7 @@ class Bind extends AbstractEventListener implements BlockingEventListenerInterfa
      */
     public function attachEvents()
     {
-        $input = $this->getConnection()->getInputStream()->getEventManager();
+        $input = $this->getInputEventManager();
         $input->attach('{urn:ietf:params:xml:ns:xmpp-bind}bind', array($this, 'bindFeatures'));
         $input->attach('{urn:ietf:params:xml:ns:xmpp-bind}jid', array($this, 'jid'));
     }

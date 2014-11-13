@@ -62,4 +62,38 @@ class XMLTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertSame('<foo>', XML::quoteMessage('<foo>'));
     }
+
+    /**
+     * @covers ::quote
+     */
+    public function testQuote()
+    {
+        $this->assertSame('&lt;foo&gt;', XML::quote('<foo>'));
+    }
+
+    /**
+     * @covers ::quote
+     * @requires PHP 5.4
+     */
+    public function testQuoteAsXML()
+    {
+        $this->assertSame('&apos;', XML::quote("'"));
+    }
+
+    /**
+     * @covers ::generateId
+     */
+    public function testGenerateId()
+    {
+        $this->assertStringStartsWith('fabiang_xmpp_', XML::generateId());
+    }
+
+    /**
+     * @covers ::base64Encode
+     * @covers ::base64Decode
+     */
+    public function testBase64()
+    {
+        $this->assertSame('test', XML::base64Decode(XML::base64Encode('test')));
+    }
 }

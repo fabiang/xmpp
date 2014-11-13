@@ -60,7 +60,7 @@ abstract class AbstractEventListener implements EventListenerInterface
      *
      * @var EventManagerInterface
      */
-    protected $events;
+    protected $eventManager;
 
     /**
      * Get connection.
@@ -73,23 +73,43 @@ abstract class AbstractEventListener implements EventListenerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Get event manager for XML input.
+     *
+     * @return EventManager
      */
-    public function getEventManager()
+    protected function getInputEventManager()
     {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
+        return $this->getConnection()->getInputStream()->getEventManager();
+    }
 
-        return $this->events;
+    /**
+     * Get event manager for XML output.
+     *
+     * @return EventManager
+     */
+    protected function getOutputEventManager()
+    {
+        return $this->getConnection()->getOutputStream()->getEventManager();
     }
 
     /**
      * {@inheritDoc}
      */
-    public function setEventManager(EventManagerInterface $events)
+    public function getEventManager()
     {
-        $this->events = $events;
+        if (null === $this->eventManager) {
+            $this->setEventManager(new EventManager());
+        }
+
+        return $this->eventManager;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setEventManager(EventManagerInterface $eventManager)
+    {
+        $this->eventManager = $eventManager;
         return $this;
     }
 

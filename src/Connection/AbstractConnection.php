@@ -289,7 +289,7 @@ abstract class AbstractConnection implements ConnectionInterface
      * Check for timeout.
      *
      * @param string $buffer Function required current received buffer
-     * @throws \Fabiang\Xmpp\Exception\TimeoutException
+     * @throws TimeoutException
      */
     protected function checkTimeout($buffer)
     {

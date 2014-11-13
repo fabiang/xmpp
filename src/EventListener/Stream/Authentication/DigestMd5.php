@@ -73,11 +73,11 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
      */
     public function attachEvents()
     {
-        $input = $this->getConnection()->getInputStream()->getEventManager();
+        $input = $this->getInputEventManager();
         $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}challenge', array($this, 'challenge'));
         $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}success', array($this, 'success'));
 
-        $output = $this->getConnection()->getOutputStream()->getEventManager();
+        $output = $this->getOutputEventManager();
         $output->attach('{urn:ietf:params:xml:ns:xmpp-sasl}auth', array($this, 'auth'));
     }
 

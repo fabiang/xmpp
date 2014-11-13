@@ -153,7 +153,7 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
     /**
      * Authentication failed.
      *
-     * @param \Fabiang\Xmpp\Event\XMLEvent $event
+     * @param XMLEvent $event
      * @throws StreamErrorException
      */
     public function failure(XMLEvent $event)
@@ -167,7 +167,7 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
     /**
      * Authentication successful.
      *
-     * @param \Fabiang\Xmpp\Event\XMLEvent $event
+     * @param XMLEvent $event
      * @return void
      */
     public function success(XMLEvent $event)
