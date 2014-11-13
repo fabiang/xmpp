@@ -12,8 +12,8 @@ install:
   - composer install --dev --no-interaction
 
 script:
-  - ./bin/phpunit -c tests --coverage-clover=coverage.clover
-  - ./bin/behat --config=tests/behat.yml --format=progress --strict
+  - ./vendor/bin/phpunit -c tests --coverage-clover=coverage.clover
+  - ./vendor/bin/behat --config=tests/behat.yml --format=progress --strict
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
