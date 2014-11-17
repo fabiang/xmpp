@@ -75,7 +75,7 @@ class EventManager implements EventManagerInterface
             $eventObject = new Event;
         }
 
-        $this->setEventObject($eventObject);
+        $this->eventObject = $eventObject;
     }
 
     /**

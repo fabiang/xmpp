@@ -58,7 +58,7 @@ class Client implements EventManagerAwareInterface
      *
      * @var EventManagerInterface
      */
-    protected $events;
+    protected $eventManager;
 
     /**
      * Options.
@@ -68,18 +68,31 @@ class Client implements EventManagerAwareInterface
     protected $options;
 
     /**
+     * @var ConnectionInterface
+     */
+    protected $connection;
+
+    /**
      * Constructor.
      *
-     * @param Options $options Client options
+     * @param Options               $options      Client options
+     * @param EventManagerInterface $eventManager Event manager
      */
-    public function __construct(Options $options)
+    public function __construct(Options $options, EventManagerInterface $eventManager = null)
     {
-        $this->options = $options;
-
         // create default connection
-        if (null === $options->getConnection()) {
-            $options->setConnection(Socket::factory($options));
+        if (null !== $options->getConnection()) {
+            $connection = $options->getConnection();
+        } else {
+            $connection = Socket::factory($options);
         }
+        $this->options    = $options;
+        $this->connection = $connection;
+
+        if (null === $eventManager) {
+            $eventManager = new EventManager();
+        }
+        $this->eventManager = $eventManager;
 
         $this->setupImplementation();
     }
@@ -91,13 +104,12 @@ class Client implements EventManagerAwareInterface
      */
     protected function setupImplementation()
     {
-        $this->getConnection()->setEventManager($this->getEventManager());
-        $this->getConnection()->setOptions($this->getOptions());
-        $options = $this->getOptions();
+        $this->connection->setEventManager($this->eventManager);
+        $this->connection->setOptions($this->options);
 
-        $implementation = $options->getImplementation();
-        $implementation->setEventManager($this->getEventManager());
-        $implementation->setOptions($options);
+        $implementation = $this->options->getImplementation();
+        $implementation->setEventManager($this->eventManager);
+        $implementation->setOptions($this->options);
         $implementation->register();
 
         $implementation->registerListener(new Logger());
@@ -110,7 +122,7 @@ class Client implements EventManagerAwareInterface
      */
     public function connect()
     {
-        $this->getConnection()->connect();
+        $this->connection->connect();
     }
 
     /**
@@ -120,7 +132,7 @@ class Client implements EventManagerAwareInterface
      */
     public function disconnect()
     {
-        $this->getConnection()->disconnect();
+        $this->connection->disconnect();
     }
 
     /**
@@ -132,17 +144,7 @@ class Client implements EventManagerAwareInterface
     public function send(ProtocolImplementationInterface $interface)
     {
         $data = $interface->toString();
-        $this->getConnection()->send($data);
-    }
-
-    /**
-     * Get connection.
-     *
-     * @return ConnectionInterface
-     */
-    protected function getConnection()
-    {
-        return $this->getOptions()->getConnection();
+        $this->connection->send($data);
     }
 
     /**
@@ -150,19 +152,15 @@ class Client implements EventManagerAwareInterface
      */
     public function getEventManager()
     {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-
-        return $this->events;
+        return $this->eventManager;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function setEventManager(EventManagerInterface $events)
+    public function setEventManager(EventManagerInterface $eventManager)
     {
-        $this->events = $events;
+        $this->eventManager = $eventManager;
         return $this;
     }
 
@@ -174,5 +172,13 @@ class Client implements EventManagerAwareInterface
     public function getOptions()
     {
         return $this->options;
+    }
+
+    /**
+     * @return ConnectionInterface
+     */
+    public function getConnection()
+    {
+        return $this->connection;
     }
 }
