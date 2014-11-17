@@ -193,27 +193,6 @@ class SocketClient
     }
 
     /**
-     * Append filter to socket stream.
-     *
-     * Method returns stream filter resource.
-     *
-     * @param string  $filter    Filter name
-     * @param integer $readWrite Read-write flag
-     * @param mixed   $params    Optional parameters for stream filter
-     * @return resource
-     */
-    public function appendFilter($filter, $readWrite = null, $params = null)
-    {
-        if (null !== $params) {
-            $filter = stream_filter_append($this->resource, $filter, $readWrite, $params);
-        } else {
-            $filter = stream_filter_append($this->resource, $filter, $readWrite);
-        }
-
-        return $filter;
-    }
-
-    /**
      * Get socket stream.
      *
      * @return resource
