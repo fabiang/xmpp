@@ -82,6 +82,13 @@ class SessionTest extends \PHPUnit_Framework_TestCase
      * Test attaching events.
      *
      * @covers ::attachEvents
+     * @uses Fabiang\Xmpp\EventListener\AbstractEventListener
+     * @uses Fabiang\Xmpp\Connection\AbstractConnection
+     * @uses Fabiang\Xmpp\Event\EventManager
+     * @uses Fabiang\Xmpp\Options
+     * @uses Fabiang\Xmpp\Stream\XMLStream
+     * @uses Fabiang\Xmpp\Event\XMLEvent
+     * @uses Fabiang\Xmpp\Util\XML
      * @return void
      */
     public function testAttachEvents()
@@ -103,6 +110,15 @@ class SessionTest extends \PHPUnit_Framework_TestCase
      * @covers ::sessionStart
      * @covers ::isBlocking
      * @covers ::respondeToFeatures
+     * @uses Fabiang\Xmpp\EventListener\AbstractEventListener
+     * @uses Fabiang\Xmpp\Connection\AbstractConnection
+     * @uses Fabiang\Xmpp\Event\EventManager
+     * @uses Fabiang\Xmpp\Options
+     * @uses Fabiang\Xmpp\Stream\XMLStream
+     * @uses Fabiang\Xmpp\Event\XMLEvent
+     * @uses Fabiang\Xmpp\Util\XML
+     * @uses Fabiang\Xmpp\Event\Event
+     * @uses Fabiang\Xmpp\EventListener\Stream\AbstractSessionEvent
      * @return void
      */
     public function testSessionAsFeatureElement()
@@ -128,6 +144,15 @@ class SessionTest extends \PHPUnit_Framework_TestCase
      *
      * @covers ::sessionStart
      * @covers ::iq
+     * @uses Fabiang\Xmpp\EventListener\AbstractEventListener
+     * @uses Fabiang\Xmpp\Connection\AbstractConnection
+     * @uses Fabiang\Xmpp\Event\EventManager
+     * @uses Fabiang\Xmpp\Options
+     * @uses Fabiang\Xmpp\Stream\XMLStream
+     * @uses Fabiang\Xmpp\Event\Event
+     * @uses Fabiang\Xmpp\EventListener\Stream\AbstractSessionEvent
+     * @uses Fabiang\Xmpp\Event\XMLEvent
+     * @uses Fabiang\Xmpp\Util\XML
      * @depends testSessionAsFeatureElement
      * @return void
      */
@@ -161,6 +186,13 @@ class SessionTest extends \PHPUnit_Framework_TestCase
      *
      * @covers ::setId
      * @covers ::getId
+     * @uses Fabiang\Xmpp\EventListener\AbstractEventListener
+     * @uses Fabiang\Xmpp\Connection\AbstractConnection
+     * @uses Fabiang\Xmpp\Event\EventManager
+     * @uses Fabiang\Xmpp\Options
+     * @uses Fabiang\Xmpp\Stream\XMLStream
+     * @uses Fabiang\Xmpp\Event\XMLEvent
+     * @uses Fabiang\Xmpp\Util\XML
      * @return void
      */
     public function testSetAndGetId()

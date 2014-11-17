@@ -81,6 +81,13 @@ class BindTest extends \PHPUnit_Framework_TestCase
      * Test attaching events.
      *
      * @covers ::attachEvents
+     * @uses Fabiang\Xmpp\EventListener\AbstractEventListener
+     * @uses Fabiang\Xmpp\Connection\AbstractConnection
+     * @uses Fabiang\Xmpp\Event\EventManager
+     * @uses Fabiang\Xmpp\Options
+     * @uses Fabiang\Xmpp\Stream\XMLStream
+     * @uses Fabiang\Xmpp\Event\XMLEvent
+     * @uses Fabiang\Xmpp\Util\XML
      * @return void
      */
     public function testAttachEvents()
@@ -100,6 +107,15 @@ class BindTest extends \PHPUnit_Framework_TestCase
      * Test handling bind event.
      *
      * @covers ::bindFeatures
+     * @uses Fabiang\Xmpp\EventListener\AbstractEventListener
+     * @uses Fabiang\Xmpp\Connection\AbstractConnection
+     * @uses Fabiang\Xmpp\Event\EventManager
+     * @uses Fabiang\Xmpp\Options
+     * @uses Fabiang\Xmpp\Stream\XMLStream
+     * @uses Fabiang\Xmpp\EventListener\Stream\AbstractSessionEvent
+     * @uses Fabiang\Xmpp\Event\Event
+     * @uses Fabiang\Xmpp\Event\XMLEvent
+     * @uses Fabiang\Xmpp\Util\XML
      * @return void
      */
     public function testBind()
@@ -124,6 +140,15 @@ class BindTest extends \PHPUnit_Framework_TestCase
      * Test handling jid event.
      *
      * @covers ::jid
+     * @uses Fabiang\Xmpp\EventListener\AbstractEventListener
+     * @uses Fabiang\Xmpp\Connection\AbstractConnection
+     * @uses Fabiang\Xmpp\Event\EventManager
+     * @uses Fabiang\Xmpp\Options
+     * @uses Fabiang\Xmpp\Stream\XMLStream
+     * @uses Fabiang\Xmpp\Event\Event
+     * @uses Fabiang\Xmpp\Event\XMLEvent
+     * @uses Fabiang\Xmpp\Util\XML
+     * @uses Fabiang\Xmpp\EventListener\Stream\AbstractSessionEvent
      * @depends testBind
      * @return void
      */

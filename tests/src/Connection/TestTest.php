@@ -38,7 +38,6 @@ class TestTest extends \PHPUnit_Framework_TestCase
     /**
      * Test connect.
      *
-     * @covers ::connect
      * @return void
      */
     public function testConnect()
@@ -54,7 +53,6 @@ class TestTest extends \PHPUnit_Framework_TestCase
     /**
      * Test disconnect.
      *
-     * @covers ::disconnect
      * @return void
      */
     public function testDisconnect()
@@ -69,7 +67,6 @@ class TestTest extends \PHPUnit_Framework_TestCase
     /**
      * Test receiving data.
      *
-     * @covers ::receive
      * @return void
      */
     public function testReceive()
@@ -87,8 +84,6 @@ class TestTest extends \PHPUnit_Framework_TestCase
     /**
      * Test sending data.
      *
-     * @covers ::send
-     * @covers ::getBuffer
      * @return void
      */
     public function testSend()
@@ -102,8 +97,6 @@ class TestTest extends \PHPUnit_Framework_TestCase
     /**
      * Test setting and getting data.
      *
-     * @covers ::setData
-     * @covers ::getData
      * @return void
      */
     public function testSetAndGetData()
@@ -112,9 +105,6 @@ class TestTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     *
-     *
-     * @covers ::checkBlockingListeners
      * @return void
      */
     public function testBlockingListener()
@@ -147,7 +137,6 @@ class TestTest extends \PHPUnit_Framework_TestCase
     /**
      * Check timeout when not receiving input.
      *
-     * @covers ::checkTimeout
      * @expectedException \Fabiang\Xmpp\Exception\TimeoutException
      * @expectedExceptionMessage Connection lost after 0 seconds
      * @medium
@@ -166,10 +155,6 @@ class TestTest extends \PHPUnit_Framework_TestCase
         $this->object->receive();
     }
 
-    /**
-     * @covers ::isReady
-     * @covers ::setReady
-     */
     public function testSetAndIsReady()
     {
         $this->assertFalse($this->object->isReady());
@@ -177,10 +162,6 @@ class TestTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->object->isReady());
     }
 
-    /**
-     * @covers ::setOptions
-     * @covers ::getOptions
-     */
     public function testSetAndGetOptions()
     {
         $options = new Options;

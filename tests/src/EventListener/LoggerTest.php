@@ -85,6 +85,8 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
      * @covers ::event
      * @covers ::getOptions
      * @covers ::setOptions
+     * @uses Fabiang\Xmpp\Event\Event
+     * @uses Fabiang\Xmpp\Options
      * @return void
      */
     public function testEvent()
@@ -97,6 +99,9 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::attachEvents
+     * @uses Fabiang\Xmpp\EventListener\AbstractEventListener
+     * @uses Fabiang\Xmpp\Event\EventManager
+     * @uses Fabiang\Xmpp\Options
      * @retrun void
      */
     public function testAttachEvents()
@@ -112,6 +117,9 @@ class LoggerTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::getEventManager
      * @covers ::setEventManager
+     * @uses Fabiang\Xmpp\EventListener\AbstractEventListener
+     * @uses Fabiang\Xmpp\Event\EventManager
+     * @uses Fabiang\Xmpp\Options
      */
     public function testSetAndGetEventManager()
     {

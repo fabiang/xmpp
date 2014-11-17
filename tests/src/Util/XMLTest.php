@@ -46,6 +46,7 @@ class XMLTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::quoteMessage
+     * @uses Fabiang\Xmpp\Util\XML::quote
      */
     public function testQuoteMessage()
     {
@@ -57,6 +58,7 @@ class XMLTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::quoteMessage
+     * @uses Fabiang\Xmpp\Util\XML::quote
      */
     public function testQuoteMessageNoVariables()
     {
@@ -65,6 +67,7 @@ class XMLTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::quote
+     * @uses Fabiang\Xmpp\Util\XML::quote
      */
     public function testQuote()
     {
@@ -73,6 +76,7 @@ class XMLTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::quote
+     * @uses Fabiang\Xmpp\Util\XML::quote
      * @requires PHP 5.4
      */
     public function testQuoteAsXML()
@@ -82,6 +86,7 @@ class XMLTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @covers ::generateId
+     * @uses Fabiang\Xmpp\Util\XML::quote
      */
     public function testGenerateId()
     {
@@ -91,6 +96,7 @@ class XMLTest extends \PHPUnit_Framework_TestCase
     /**
      * @covers ::base64Encode
      * @covers ::base64Decode
+     * @uses Fabiang\Xmpp\Util\XML::quote
      */
     public function testBase64()
     {

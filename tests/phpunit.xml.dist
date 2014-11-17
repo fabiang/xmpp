@@ -43,7 +43,7 @@
     convertNoticesToExceptions="true"
     convertWarningsToExceptions="true"
     forceCoversAnnotation="true"
-    strict="false"
+    strict="true"
     verbose="true">
 
     <testsuites>

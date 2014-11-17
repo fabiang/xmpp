@@ -82,6 +82,11 @@ class StreamTest extends \PHPUnit_Framework_TestCase
      * @covers ::getInputEventManager
      * @covers ::getOutputEventManager
      * @covers ::getConnection
+     * @uses Fabiang\Xmpp\EventListener\AbstractEventListener
+     * @uses Fabiang\Xmpp\Connection\AbstractConnection
+     * @uses Fabiang\Xmpp\Event\EventManager
+     * @uses Fabiang\Xmpp\Options
+     * @uses Fabiang\Xmpp\Stream\XMLStream
      * @return void
      */
     public function testAttachEvents()
@@ -101,6 +106,11 @@ class StreamTest extends \PHPUnit_Framework_TestCase
      * @covers ::streamServer
      * @covers ::features
      * @covers ::isBlocking
+     * @uses Fabiang\Xmpp\EventListener\AbstractEventListener
+     * @uses Fabiang\Xmpp\Connection\AbstractConnection
+     * @uses Fabiang\Xmpp\Event\Event
+     * @uses Fabiang\Xmpp\Options
+     * @uses Fabiang\Xmpp\Event\XMLEvent
      * @return void
      */
     public function testEvents()
