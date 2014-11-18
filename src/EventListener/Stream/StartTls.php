@@ -70,13 +70,13 @@ class StartTls extends AbstractEventListener implements BlockingEventListenerInt
      * Send start tls command.
      *
      * @param XMLEvent $event XMLEvent object
-     * @return void
      */
     public function starttlsEvent(XMLEvent $event)
     {
         if (false === $event->isStartTag()) {
-            $connection = $this->getConnection();
             $this->blocking = true;
+
+            $connection = $this->getConnection();
             $connection->setReady(false);
             $connection->send('<starttls xmlns="urn:ietf:params:xml:ns:xmpp-tls"/>');
         }

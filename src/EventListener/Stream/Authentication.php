@@ -168,17 +168,17 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
      * Authentication successful.
      *
      * @param XMLEvent $event
-     * @return void
      */
     public function success(XMLEvent $event)
     {
         if (false === $event->isStartTag()) {
-            $this->getOptions()->setAuthenticated(true);
             $this->blocking = false;
-            $connection = $this->getConnection();
 
+            $connection = $this->getConnection();
             $connection->resetStreams();
             $connection->connect();
+
+            $this->getOptions()->setAuthenticated(true);
         }
     }
 
