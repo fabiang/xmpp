@@ -352,4 +352,26 @@ XML;
         $this->assertSame($eventManager, $this->object->setEventManager($eventManager)->getEventManager());
     }
 
+    /**
+     * @covers ::parse
+     * @uses Fabiang\Xmpp\Event\Event
+     * @uses Fabiang\Xmpp\Event\XMLEvent
+     * @uses Fabiang\Xmpp\Event\EventManager
+     * @uses Fabiang\Xmpp\Stream\XmlStream::__construct
+     * @uses Fabiang\Xmpp\Stream\XmlStream::clearDocument
+     * @uses Fabiang\Xmpp\Stream\XmlStream::startXml
+     * @uses Fabiang\Xmpp\Stream\XmlStream::endXml
+     * @uses Fabiang\Xmpp\Stream\XmlStream::createAttributeNodes
+     * @uses Fabiang\Xmpp\Stream\XmlStream::cacheEvent
+     * @uses Fabiang\Xmpp\Stream\XmlStream::trigger
+     * @uses Fabiang\Xmpp\Stream\XmlStream::reset
+     * @uses Fabiang\Xmpp\Stream\XmlStream::getEventManager
+     * @uses Fabiang\Xmpp\Stream\XmlStream::setEventManager
+     * @uses Fabiang\Xmpp\Stream\XmlStream::getEventObject
+     */
+    public function testParseCutted()
+    {
+        $this->assertInstanceOf('DOMDocument', $this->object->parse('<'));
+        $this->assertInstanceOf('DOMDocument', $this->object->parse('features xmlns="test"></features>'));
+    }
 }

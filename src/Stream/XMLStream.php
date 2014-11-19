@@ -183,7 +183,7 @@ class XMLStream implements EventManagerAwareInterface
         $documentElement = $this->document->documentElement;
 
         // collect xml declaration
-        if ('<?xml' === substr($source, 0, 5) || null === $documentElement) {
+        if ('<?xml' === substr($source, 0, 5)) {
             $this->reset();
 
             $matches = array();
@@ -191,7 +191,7 @@ class XMLStream implements EventManagerAwareInterface
                 $this->encoding = $matches[2];
                 xml_parser_set_option($this->parser, XML_OPTION_TARGET_ENCODING, $this->encoding);
             }
-        } else {
+        } elseif (null !== $documentElement) {
             // clean the document
             /* @var $childNode \DOMNode */
             while ($documentElement->hasChildNodes()) {

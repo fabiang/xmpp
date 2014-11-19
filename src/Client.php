@@ -85,6 +85,7 @@ class Client implements EventManagerAwareInterface
             $connection = $options->getConnection();
         } else {
             $connection = Socket::factory($options);
+            $options->setConnection($connection);
         }
         $this->options    = $options;
         $this->connection = $connection;
