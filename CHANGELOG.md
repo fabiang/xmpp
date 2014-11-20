@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.6.1 (2014-11-20)
+
+- [PATCH] [Issue #4](https://github.com/fabiang/xmpp/issues/4):  Incomplete buffer response
+
 ## 0.6.0 (2014-11-13)
 
 - [MINOR] [Issue #3](https://github.com/fabiang/xmpp/issues/3): Library now tries to reconnect via TLS if connection with TCP failed
