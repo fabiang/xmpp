@@ -43,7 +43,6 @@ namespace Fabiang\Xmpp;
  */
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var Client
      */
@@ -241,13 +240,19 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($this->options, $this->object->getOptions());
     }
 
+    /**
+     * Test setter Option Connection in Client constructor
+     *
+     * @covers ::__construct
+     * @uses Fabiang\Xmpp\Client::__construct
+     * @uses Fabiang\Xmpp\Client::getOptions
+     * @uses Fabiang\Xmpp\Client::setUpImplementation
+     * @uses Fabiang\Xmpp\Options::getConnection
+     */
     public function testOptionsConnection()
     {
         $options = new Options();
-        $client = $this->getMock(
-            '\Fabiang\Xmpp\Client',
-            ['setupImplementation'],
-            [$options]);
+        $client = $this->getMock('\Fabiang\Xmpp\Client', array('setupImplement'), array($options));
 
         $optionsAssert = $client->getOptions();
         $this->assertInstanceOf('Fabiang\Xmpp\Connection\ConnectionInterface', $optionsAssert->getConnection());
