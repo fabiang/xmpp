@@ -240,4 +240,16 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertSame($this->options, $this->object->getOptions());
     }
+
+    public function testOptionsConnection()
+    {
+        $options = new Options();
+        $client = $this->getMock(
+            '\Fabiang\Xmpp\Client',
+            ['setupImplementation'],
+            [$options]);
+
+        $optionsAssert = $client->getOptions();
+        $this->assertInstanceOf('Fabiang\Xmpp\Connection\ConnectionInterface', $optionsAssert->getConnection());
+    }
 }
