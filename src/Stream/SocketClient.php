@@ -63,20 +63,30 @@ class SocketClient
      */
     protected $address;
 
+
+    /**
+     * Options used to create a stream context
+     * @see http://php.net/manual/en/function.stream-context-create.php
+     *
+     * @var array
+     */
+    protected $options;
+
     /**
      * Constructor takes address as argument.
      *
      * @param string $address
      */
-    public function __construct($address)
+    public function __construct($address, $options = null)
     {
         $this->address = $address;
+        $this->options = $options;
     }
 
     /**
      * Connect.
      *
-     * @param integer $timeout    Timeout for connection
+     * @param integer $timeout Timeout for connection
      * @param boolean $persistent Persitent connection
      * @return void
      */
@@ -91,7 +101,8 @@ class SocketClient
         // call stream_socket_client with custom error handler enabled
         $handler = new ErrorHandler(
             function ($address, $timeout, $flags) {
-                return stream_socket_client($address, $errno, $errstr, $timeout, $flags);
+                $context = stream_context_create($this->options);
+                return stream_socket_client($address, $errno, $errstr, $timeout, $flags, $context);
             },
             $this->address,
             $timeout,
@@ -106,9 +117,9 @@ class SocketClient
     /**
      * Reconnect and optionally use different address.
      *
-     * @param string  $address
+     * @param string $address
      * @param integer $timeout
-     * @param bool    $persistent
+     * @param bool $persistent
      */
     public function reconnect($address = null, $timeout = 30, $persistent = false)
     {
@@ -139,7 +150,7 @@ class SocketClient
      */
     public function setBlocking($flag = true)
     {
-        stream_set_blocking($this->resource, (int) $flag);
+        stream_set_blocking($this->resource, (int)$flag);
         return $this;
     }
 
@@ -157,7 +168,7 @@ class SocketClient
     /**
      * Write to stream.
      *
-     * @param string  $string String
+     * @param string $string String
      * @param integer $length Limit
      * @return void
      */
@@ -173,7 +184,7 @@ class SocketClient
     /**
      * Enable/disable cryptography on stream.
      *
-     * @param boolean $enable     Flag
+     * @param boolean $enable Flag
      * @param integer $cryptoType One of the STREAM_CRYPTO_METHOD_* constants.
      * @return void
      * @throws InvalidArgumentException
