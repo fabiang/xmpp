@@ -101,7 +101,7 @@ class SocketClient
         // call stream_socket_client with custom error handler enabled
         $handler = new ErrorHandler(
             function ($address, $timeout, $flags) {
-                $context = stream_context_create($this->options);
+                $context = (null != $this->options) ? stream_context_create($this->options) : null;
                 return stream_socket_client($address, $errno, $errstr, $timeout, $flags, $context);
             },
             $this->address,
