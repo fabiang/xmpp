@@ -128,6 +128,15 @@ class Options
         'plain'      => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Plain'
     );
 
+
+    /**
+     * Options used to create a stream context
+     *
+     * @var array
+     */
+    protected $contextOptions = array();
+
+
     /**
      * Constructor.
      *
@@ -423,6 +432,28 @@ class Options
     public function setTimeout($timeout)
     {
         $this->timeout = (int) $timeout;
+        return $this;
+    }
+
+    /**
+     * Get context options for connection
+     *
+     * @return array
+     */
+    public function getContextOptions()
+    {
+        return $this->contextOptions;
+    }
+
+    /**
+     *  Set context options for connection
+     *
+     * @param array $contextOptions
+     * @return \Fabiang\Xmpp\Options
+     */
+    public function setContextOptions($contextOptions)
+    {
+        $this->contextOptions = (array) $contextOptions;
         return $this;
     }
 }
