@@ -101,6 +101,12 @@ class Options
 
     /**
      *
+     * @var string
+     */
+    protected $sid;
+
+    /**
+     *
      * @var boolean
      */
     protected $authenticated = false;
@@ -324,6 +330,28 @@ class Options
     public function setJid($jid)
     {
         $this->jid = (string) $jid;
+        return $this;
+    }
+
+    /**
+     * Get users jid.
+     *
+     * @return string
+     */
+    public function getSid()
+    {
+        return $this->sid;
+    }
+
+    /**
+     * Set users jid.
+     *
+     * @param string $jid
+     * @return $this
+     */
+    public function setSid($sid)
+    {
+        $this->sid = (string) $sid;
         return $this;
     }
 

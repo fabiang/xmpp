@@ -47,6 +47,8 @@ use Fabiang\Xmpp\EventListener\Stream\Authentication;
 use Fabiang\Xmpp\EventListener\Stream\Bind;
 use Fabiang\Xmpp\EventListener\Stream\Session;
 use Fabiang\Xmpp\EventListener\Stream\Roster as RosterListener;
+use Fabiang\Xmpp\EventListener\Stream\Register as RegisterListener;
+use Fabiang\Xmpp\EventListener\Stream\BlockedUsers as BlockedUsersListener;
 
 /**
  * Default Protocol implementation.
@@ -82,6 +84,8 @@ class DefaultImplementation implements ImplementationInterface
         $this->registerListener(new Bind);
         $this->registerListener(new Session);
         $this->registerListener(new RosterListener);
+        $this->registerListener(new RegisterListener);
+        $this->registerListener(new BlockedUsersListener);
     }
 
     /**
