@@ -290,6 +290,18 @@ class Options
     }
 
     /**
+     * Get resource.
+     *
+     * @return string
+     */
+    public function getResource()
+    {
+        $username = $this->getUsername();
+        $username = explode('/', $username);
+        return isset($username[1]) ? $username[1] : '';
+    }
+
+    /**
      * Get password.
      *
      * @return string

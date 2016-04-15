@@ -67,7 +67,7 @@ class Bind extends AbstractSessionEvent implements BlockingEventListenerInterfac
     {
         $this->respondeToFeatures(
             $event,
-            '<iq type="set" id="%s"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"/></iq>'
+            '<iq type="set" id="%s"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"><resource>%s</resource></bind></iq>'
         );
     }
 
