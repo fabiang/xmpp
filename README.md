@@ -102,7 +102,7 @@ After that:
     ./vendor/bin/phpunit -c tests
     ./vendor/bin/behat --config=tests/behat.yml --strict
 
-New features should allways tested with Behat.
+New features should always tested with Behat.
 
 ## LICENSE
 
@@ -112,5 +112,5 @@ BSD-2-Clause. See the [LICENSE](LICENSE.md).
     
 - Better integration of channels
 - Factory method for server addresses
-- Add support von vCard
+- Add support for vCard
 - improve documentation
