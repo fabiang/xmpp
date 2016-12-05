@@ -131,7 +131,8 @@ class Options
      */
     protected $authenticationClasses = array(
         'digest-md5' => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\DigestMd5',
-        'plain'      => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Plain'
+        'plain'      => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Plain',
+        'anonymous'  => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Anonymous'
     );
 
 
