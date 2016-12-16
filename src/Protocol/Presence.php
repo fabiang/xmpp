@@ -133,6 +133,13 @@ class Presence implements ProtocolImplementationInterface
     protected $nickname;
 
     /**
+     * Channel password.
+     *
+     * @var string
+     */
+    protected $password;
+
+    /**
      * Constructor.
      *
      * @param integer $priority
@@ -155,7 +162,14 @@ class Presence implements ProtocolImplementationInterface
             $presence .= ' to="' . XML::quote($this->getTo()) . '/' . XML::quote($this->getNickname()) . '"';
         }
 
-        return $presence . '><priority>' . $this->getPriority() . '</priority></presence>';
+        $presence .= '><priority>' . $this->getPriority() . '</priority>';
+
+        if (null !== $this->getPassword()) {
+            $presence .= "<x xmlns='http://jabber.org/protocol/muc'><password>" . $this->getPassword() . "</password></x>";
+        }
+
+        $presence .= '</presence>';
+        return $presence;
     }
 
     /**
@@ -221,6 +235,28 @@ class Presence implements ProtocolImplementationInterface
     public function setPriority($priority)
     {
         $this->priority = (int) $priority;
+        return $this;
+    }
+
+    /**
+     * Get channel password.
+     *
+     * @return string¦null
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * Set channel password.
+     *
+     * @param string|null $to
+     * @return $this
+     */
+    public function setPassword($password = null)
+    {
+        $this->password = $password;
         return $this;
     }
 }
