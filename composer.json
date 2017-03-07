@@ -1,5 +1,5 @@
 {
-    "name": "fabiang/xmpp",
+    "name": "elfuvo/xmpp",
     "description": "Library for XMPP protocol (Jabber) connections",
     "license": "BSD-2-Clause",
     "homepage": "https://github.com/fabiang/xmpp",
