@@ -257,10 +257,8 @@ class VCardUpdate implements ProtocolImplementationInterface
     protected function getImageMime()
     {
         if (!$this->imageMime) {
-            $info = array();
-            getimagesize($this->imagePath, $info);
-
-            return image_type_to_mime_type($info['info']);
+            $size = getimagesize($this->imagePath);
+            $this->imageMime = isset($size['mime']) ? $size['mime'] : '';
         }
         return $this->imageMime;
     }
