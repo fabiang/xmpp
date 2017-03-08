@@ -59,7 +59,7 @@ class RegisterUser implements ProtocolImplementationInterface
      * RegisterUser constructor.
      * @param $userJid string
      * @param $password string
-     * @param $sid string - SID of request form @see RegisterUser
+     * @param $sid string - SID of request form RequestUserRegisterForm
      * @param $from string - admin user JID
      * @param null|string $to
      */
@@ -83,8 +83,8 @@ class RegisterUser implements ProtocolImplementationInterface
             "<x xmlns='jabber:x:data' type='submit'>" .
             "<field type='hidden' var='FORM_TYPE'>" .
             "<value>http://jabber.org/protocol/admin</value>" .
-            "</field>" .
-            "<field var='userJid'>" .
+            "</field >" .
+            "<field var='accountjid'>" .
             "<value>%s</value>" .
             "</field>" .
             "<field var='password'>" .

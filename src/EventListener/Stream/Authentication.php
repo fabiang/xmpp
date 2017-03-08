@@ -37,11 +37,11 @@
 namespace Fabiang\Xmpp\EventListener\Stream;
 
 use Fabiang\Xmpp\Event\XMLEvent;
-use Fabiang\Xmpp\Exception\RuntimeException;
-use Fabiang\Xmpp\EventListener\Stream\Authentication\AuthenticationInterface;
-use Fabiang\Xmpp\Exception\Stream\AuthenticationErrorException;
 use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
+use Fabiang\Xmpp\EventListener\Stream\Authentication\AuthenticationInterface;
+use Fabiang\Xmpp\Exception\RuntimeException;
+use Fabiang\Xmpp\Exception\Stream\AuthenticationErrorException;
 
 /**
  * Listener
@@ -154,7 +154,7 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
      * Authentication failed.
      *
      * @param XMLEvent $event
-     * @throws StreamErrorException
+     * @throws AuthenticationErrorException
      */
     public function failure(XMLEvent $event)
     {
