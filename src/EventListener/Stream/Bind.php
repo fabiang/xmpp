@@ -36,8 +36,8 @@
 
 namespace Fabiang\Xmpp\EventListener\Stream;
 
-use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 use Fabiang\Xmpp\Event\XMLEvent;
+use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 
 /**
  * Listener
@@ -65,7 +65,7 @@ class Bind extends AbstractSessionEvent implements BlockingEventListenerInterfac
      */
     public function bindFeatures(XMLEvent $event)
     {
-        $this->respondeToFeatures(
+        $this->respondToFeatures(
             $event,
             '<iq type="set" id="%s"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"><resource>%s</resource></bind></iq>'
         );

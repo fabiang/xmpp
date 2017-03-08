@@ -36,8 +36,8 @@
 
 namespace Fabiang\Xmpp\EventListener\Stream;
 
-use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\Event\XMLEvent;
+use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\Util\XML;
 
 /**
@@ -66,15 +66,16 @@ abstract class AbstractSessionEvent extends AbstractEventListener
      * Handle session event.
      *
      * @param XMLEvent $event
+     * @param string $data
      * @return void
      */
-    protected function respondeToFeatures(XMLEvent $event, $data)
+    protected function respondToFeatures(XMLEvent $event, $data)
     {
         if ($event->isEndTag()) {
             /* @var $element \DOMElement */
             $element = $event->getParameter(0);
 
-            // bind element occured in <features>
+            // bind element occurred in <features>
             if ('features' === $element->parentNode->localName) {
                 $this->blocking = true;
                 $this->getConnection()->send(sprintf(

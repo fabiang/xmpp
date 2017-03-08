@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2014 Fabian Grutschus. All rights reserved.
  *
@@ -34,57 +33,13 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\EventListener\Stream;
-
-use Fabiang\Xmpp\Event\XMLEvent;
-use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
+namespace Fabiang\Xmpp\Exception\Stream;
 
 /**
- * Listener
- *
- * @package Xmpp\EventListener
+ * Class RegistrationErrorException
+ * @package Fabiang\Xmpp\Exception\Stream
  */
-class Session extends AbstractSessionEvent implements BlockingEventListenerInterface
+class RegistrationErrorException extends StreamErrorException
 {
 
-    /**
-     * {@inheritDoc}
-     */
-    public function attachEvents()
-    {
-        $input = $this->getInputEventManager();
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-session}session', array($this, 'sessionStart'));
-        $input->attach('{jabber:client}iq', array($this, 'iq'));
-    }
-
-    /**
-     * Handle session event.
-     *
-     * @param XMLEvent $event
-     * @return void
-     */
-    public function sessionStart(XMLEvent $event)
-    {
-        $this->respondToFeatures(
-            $event,
-            '<iq type="set" id="%s"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>'
-        );
-    }
-
-    /**
-     * Handle iq event.
-     *
-     * @param XMLEvent $event
-     * @retrun void
-     */
-    public function iq(XMLEvent $event)
-    {
-        if ($event->isEndTag()) {
-            /* @var $element \DOMElement */
-            $element = $event->getParameter(0);
-            if ($this->getId() === $element->getAttribute('id')) {
-                $this->blocking = false;
-            }
-        }
-    }
 }

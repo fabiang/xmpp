@@ -41,6 +41,7 @@ use Fabiang\Xmpp\Event\EventManagerInterface;
 use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Fabiang\Xmpp\EventListener\Stream\Authentication;
 use Fabiang\Xmpp\EventListener\Stream\Bind;
+use Fabiang\Xmpp\EventListener\Stream\RequestChangePasswordFrom;
 use Fabiang\Xmpp\EventListener\Stream\RequestUserRegisterFrom;
 use Fabiang\Xmpp\EventListener\Stream\Roster as RosterListener;
 use Fabiang\Xmpp\EventListener\Stream\Session;
@@ -84,6 +85,7 @@ class DefaultImplementation implements ImplementationInterface
         $this->registerListener(new Session);
         $this->registerListener(new RosterListener);
         $this->registerListener(new RequestUserRegisterFrom);
+        $this->registerListener(new RequestChangePasswordFrom);
     }
 
     /**

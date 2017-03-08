@@ -39,6 +39,7 @@ namespace Fabiang\Xmpp\EventListener\Stream;
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
+use Fabiang\Xmpp\Exception\Stream\RegistrationErrorException;
 use Fabiang\Xmpp\Protocol\User\User;
 
 /**
@@ -71,6 +72,8 @@ class RequestUserRegisterFrom extends AbstractEventListener implements BlockingE
         $this->getOutputEventManager()
             ->attach('{http://jabber.org/protocol/commands}command', array($this, 'query'));
         $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}bad-request', array($this, 'error'));
+        $this->getInputEventManager()
             ->attach('{http://jabber.org/protocol/commands}command', array($this, 'result'));
     }
 
@@ -98,6 +101,20 @@ class RequestUserRegisterFrom extends AbstractEventListener implements BlockingE
 
             $this->getOptions()->setSid($sid);
             $this->blocking = false;
+        }
+    }
+
+    /**
+     * we have some errors.
+     *
+     * @param \Fabiang\Xmpp\Event\XMLEvent $event
+     * @return void
+     */
+    public function error(XMLEvent $event)
+    {
+        if (false === $event->isStartTag()) {
+            $this->blocking = false;
+            throw RegistrationErrorException::createFromEvent($event);
         }
     }
 

@@ -1,9 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: elfuvo
- * Date: 07.03.17
- * Time: 18:42
+ *
  */
 
 namespace Fabiang\Xmpp\Protocol\User;
@@ -13,14 +10,14 @@ use Fabiang\Xmpp\Protocol\ProtocolImplementationInterface;
 use Fabiang\Xmpp\Util\XML;
 
 /**
- * Class RegisterUser
+ * Class ChangeUserPassword
  *
- * Register user
+ * Change user password
  *
- * @see https://xmpp.org/extensions/xep-0133.html#add-user
+ * @see https://xmpp.org/extensions/xep-0133.html#change-user-password
  * @package Fabiang\Xmpp\Protocol\User
  */
-class RegisterUser implements ProtocolImplementationInterface
+class ChangeUserPassword implements ProtocolImplementationInterface
 {
 
     /**
@@ -56,10 +53,10 @@ class RegisterUser implements ProtocolImplementationInterface
     protected $sid;
 
     /**
-     * RegisterUser constructor.
+     * ChangeUserPassword constructor.
      * @param $userJid string
      * @param $password string
-     * @param $sid string - SID of request form @see RegisterUser
+     * @param $sid string - SID of request form @see ChangeUserPassword
      * @param $from string - admin user JID
      * @param null|string $to
      */
@@ -79,18 +76,17 @@ class RegisterUser implements ProtocolImplementationInterface
     {
         return XML::quoteMessage(
             "<iq from='%s' id='%s' to='%s' type='set' xml:lang='en'>" .
-            "<command xmlns='http://jabber.org/protocol/commands' node='http://jabber.org/protocol/admin#add-user' sessionid='%s'>" .
+            "<command xmlns='http://jabber.org/protocol/commands' " .
+            "node='http://jabber.org/protocol/admin#change-user-password' " .
+            "sessionid='%s'>" .
             "<x xmlns='jabber:x:data' type='submit'>" .
             "<field type='hidden' var='FORM_TYPE'>" .
             "<value>http://jabber.org/protocol/admin</value>" .
             "</field>" .
-            "<field var='userJid'>" .
+            "<field var='accountjid'>" .
             "<value>%s</value>" .
             "</field>" .
             "<field var='password'>" .
-            "<value>%s</value>" .
-            "</field>" .
-            "<field var='password-verify'>" .
             "<value>%s</value>" .
             "</field>" .
             "</x>" .
@@ -101,7 +97,6 @@ class RegisterUser implements ProtocolImplementationInterface
             $this->getTo(),
             $this->getSID(),
             $this->getUserJID(),
-            $this->getPassword(),
             $this->getPassword()
         );
     }
