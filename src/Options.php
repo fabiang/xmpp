@@ -37,8 +37,8 @@
 namespace Fabiang\Xmpp;
 
 use Fabiang\Xmpp\Connection\ConnectionInterface;
-use Fabiang\Xmpp\Protocol\ImplementationInterface;
 use Fabiang\Xmpp\Protocol\DefaultImplementation;
+use Fabiang\Xmpp\Protocol\ImplementationInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -98,6 +98,12 @@ class Options
      * @var string
      */
     protected $jid;
+
+    /**
+     *
+     * @var string
+     */
+    protected $sid;
 
     /**
      *
@@ -336,6 +342,26 @@ class Options
     public function setJid($jid)
     {
         $this->jid = (string) $jid;
+        return $this;
+    }
+
+    /**
+     * Get sid.
+     *
+     * @return string
+     */
+    public function getSid()
+    {
+        return $this->sid;
+    }
+
+    /**
+     * @param $sid string
+     * @return $this
+     */
+    public function setSid($sid)
+    {
+        $this->sid = (string) $sid;
         return $this;
     }
 

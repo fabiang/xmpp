@@ -54,6 +54,7 @@ class VCardUpdate implements ProtocolImplementationInterface
         'PHOTO',
         'JABBERID',
         'NICKNAME',
+        'URL',
         'DESC',
     ];
     /**
