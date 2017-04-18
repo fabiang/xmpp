@@ -36,9 +36,9 @@
 
 namespace Fabiang\Xmpp\Stream;
 
+use Fabiang\Xmpp\Event\EventManager;
 use Fabiang\Xmpp\Event\EventManagerAwareInterface;
 use Fabiang\Xmpp\Event\EventManagerInterface;
-use Fabiang\Xmpp\Event\EventManager;
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\Event\XMLEventInterface;
 use Fabiang\Xmpp\Exception\XMLParserException;
@@ -123,7 +123,9 @@ class XMLStream implements EventManagerAwareInterface
     protected $eventCache = array();
 
     /**
-     * Constructor.
+     * XMLStream constructor.
+     * @param string $encoding
+     * @param XMLEventInterface|null $eventObject
      */
     public function __construct($encoding = 'UTF-8', XMLEventInterface $eventObject = null)
     {
@@ -176,6 +178,7 @@ class XMLStream implements EventManagerAwareInterface
      *
      * Method resets the parser instance if <?xml is found. Overwise it clears the DOM document.
      *
+     * @param $source string|\DOMElement
      * @return void
      */
     protected function clearDocument($source)
@@ -203,9 +206,9 @@ class XMLStream implements EventManagerAwareInterface
     /**
      * Starting tag found.
      *
-     * @param resource $parser  XML parser
-     * @param string   $name    Element name
-     * @param attribs  $attribs Element attributes
+     * @param resource $parser XML parser
+     * @param string $name Element name
+     * @param attribs $attribs Element attributes
      * @return void
      */
     protected function startXml()
@@ -214,10 +217,10 @@ class XMLStream implements EventManagerAwareInterface
 
         $elementData = explode(static::NAMESPACE_SEPARATOR, $name, 2);
         $elementName = $elementData[0];
-        $prefix      = null;
+        $prefix = null;
         if (isset($elementData[1])) {
             $elementName = $elementData[1];
-            $prefix      = $elementData[0];
+            $prefix = $elementData[0];
         }
 
         $attributesNodes = $this->createAttributeNodes($attribs);
@@ -234,7 +237,7 @@ class XMLStream implements EventManagerAwareInterface
         if (null !== $prefix) {
             $namespaceElement = $this->namespacePrefixes[$prefix];
         } else {
-            $namespaceAttrib  = true;
+            $namespaceAttrib = true;
             $namespaceElement = $namespaceURI;
         }
 
@@ -279,8 +282,8 @@ class XMLStream implements EventManagerAwareInterface
 
                 $this->namespacePrefixes[$prefix] = $value;
             } else {
-                $attribute         = $this->document->createAttribute($name);
-                $attribute->value  = $value;
+                $attribute = $this->document->createAttribute($name);
+                $attribute->value = $value;
                 $attributesNodes[] = $attribute;
             }
         }
@@ -307,7 +310,7 @@ class XMLStream implements EventManagerAwareInterface
 
         $localName = $element->localName;
 
-        // Frist: try to get the namespace from element.
+        // First: try to get the namespace from element.
         $namespaceURI = $element->namespaceURI;
 
         // Second: loop over namespaces till namespace is not null
@@ -323,7 +326,7 @@ class XMLStream implements EventManagerAwareInterface
      * Data found.
      *
      * @param resource $parser XML parser
-     * @param string   $data   Element data
+     * @param string $data Element data
      * @return void
      */
     protected function dataXml()
@@ -338,9 +341,9 @@ class XMLStream implements EventManagerAwareInterface
     /**
      * Add event to cache.
      *
-     * @param string  $event
+     * @param string $event
      * @param boolean $startTag
-     * @param array   $params
+     * @param array $params
      * @return void
      */
     protected function cacheEvent($event, $startTag, $params)
@@ -379,12 +382,12 @@ class XMLStream implements EventManagerAwareInterface
         xml_set_element_handler($parser, 'startXml', 'endXml');
         xml_set_character_data_handler($parser, 'dataXml');
 
-        $this->parser            = $parser;
-        $this->depth             = 0;
-        $this->document          = new \DOMDocument('1.0', $this->encoding);
-        $this->namespaces        = array();
+        $this->parser = $parser;
+        $this->depth = 0;
+        $this->document = new \DOMDocument('1.0', $this->encoding);
+        $this->namespaces = array();
         $this->namespacePrefixes = array();
-        $this->elements          = array();
+        $this->elements = array();
     }
 
     /**

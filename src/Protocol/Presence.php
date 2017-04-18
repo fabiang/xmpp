@@ -117,7 +117,12 @@ class Presence implements ProtocolImplementationInterface
      * @var string|null
      */
     protected $to;
-
+    /**
+     * presence show
+     *
+     * @var string
+     */
+    protected $show;
     /**
      * Priority.
      *
@@ -133,15 +138,15 @@ class Presence implements ProtocolImplementationInterface
     protected $nickname;
 
     /**
-     * Constructor.
-     *
-     * @param integer $priority
-     * @param string $to
-     * @param string $nickname
+     * Presence constructor.
+     * @param int $priority
+     * @param null $to
+     * @param null $nickname
+     * @param string $show
      */
-    public function __construct($priority = 1, $to = null, $nickname = null)
+    public function __construct($priority = 1, $to = null, $nickname = null, $show = null)
     {
-        $this->setPriority($priority)->setTo($to)->setNickname($nickname);
+        $this->setPriority($priority)->setTo($to)->setShow($show)->setNickname($nickname);
     }
 
     /**
@@ -154,8 +159,12 @@ class Presence implements ProtocolImplementationInterface
         if (null !== $this->getTo()) {
             $presence .= ' to="' . XML::quote($this->getTo()) . '/' . XML::quote($this->getNickname()) . '"';
         }
+        $presence .= '>';
 
-        return $presence . '><priority>' . $this->getPriority() . '</priority></presence>';
+        if ('' !== $this->getShow()) {
+            $presence .= '<show>' . $this->getShow() . '</show>';
+        }
+        return $presence . '<priority>' . $this->getPriority() . '</priority></presence>';
     }
 
     /**
@@ -176,14 +185,36 @@ class Presence implements ProtocolImplementationInterface
      */
     public function setNickname($nickname)
     {
-        $this->nickname = (string) $nickname;
+        $this->nickname = (string)$nickname;
+        return $this;
+    }
+
+    /**
+     * Get show.
+     *
+     * @return string
+     */
+    public function getShow()
+    {
+        return $this->show;
+    }
+
+    /**
+     * Set show.
+     *
+     * @param string $show
+     * @return $this
+     */
+    public function setShow($show)
+    {
+        $this->show = (string)$show;
         return $this;
     }
 
     /**
      * Get to.
      *
-     * @return string¦null
+     * @return string|null
      */
     public function getTo()
     {
@@ -220,7 +251,7 @@ class Presence implements ProtocolImplementationInterface
      */
     public function setPriority($priority)
     {
-        $this->priority = (int) $priority;
+        $this->priority = (int)$priority;
         return $this;
     }
 }

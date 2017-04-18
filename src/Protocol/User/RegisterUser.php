@@ -9,6 +9,7 @@
 namespace Fabiang\Xmpp\Protocol\User;
 
 
+use Fabiang\Xmpp\Form\FormInterface;
 use Fabiang\Xmpp\Protocol\ProtocolImplementationInterface;
 use Fabiang\Xmpp\Util\XML;
 
@@ -37,6 +38,11 @@ class RegisterUser implements ProtocolImplementationInterface
     protected $to;
 
     /**
+     * @var FormInterface
+     */
+    protected $form;
+
+    /**
      * new user account JID
      *
      * @var string
@@ -48,28 +54,48 @@ class RegisterUser implements ProtocolImplementationInterface
      * @var string
      */
     protected $password;
+
     /**
-     * SID of registration form
+     * user E-mail
      *
      * @var string
      */
-    protected $sid;
+    protected $email;
+
+    /**
+     * user surname
+     *
+     * @var string
+     */
+    protected $surname;
+
+    /**
+     * user given name
+     *
+     * @var string
+     */
+    protected $givenName;
+
 
     /**
      * RegisterUser constructor.
      * @param $userJid string
      * @param $password string
-     * @param $sid string - SID of request form RequestUserRegisterForm
-     * @param $from string - admin user JID
-     * @param null|string $to
+     * @param $from string - admin account
+     * @param $to string
+     * @param FormInterface $form
      */
-    public function __construct($userJid, $password, $sid, $from, $to = null)
+    public function __construct($userJid, $password, $from, $to, FormInterface $form)
     {
         $this->setFrom($from)
             ->setTo($to)
+            ->setForm($form)
             ->setUserJID($userJid)
-            ->setPassword($password)
-            ->setSID($sid);
+            ->setPassword($password);
+
+        $this->form->setFieldValue('accountjid', $this->getUserJID());
+        $this->form->setFieldValue('password', $this->getPassword());
+        $this->form->setFieldValue('password-verify', $this->getPassword());
     }
 
     /**
@@ -79,30 +105,11 @@ class RegisterUser implements ProtocolImplementationInterface
     {
         return XML::quoteMessage(
             "<iq from='%s' id='%s' to='%s' type='set' xml:lang='en'>" .
-            "<command xmlns='http://jabber.org/protocol/commands' node='http://jabber.org/protocol/admin#add-user' sessionid='%s'>" .
-            "<x xmlns='jabber:x:data' type='submit'>" .
-            "<field type='hidden' var='FORM_TYPE'>" .
-            "<value>http://jabber.org/protocol/admin</value>" .
-            "</field >" .
-            "<field var='accountjid'>" .
-            "<value>%s</value>" .
-            "</field>" .
-            "<field var='password'>" .
-            "<value>%s</value>" .
-            "</field>" .
-            "<field var='password-verify'>" .
-            "<value>%s</value>" .
-            "</field>" .
-            "</x>" .
-            "</command>" .
+            $this->form->toString() .
             "</iq>",
             $this->getFrom(),
             XML::generateId(),
-            $this->getTo(),
-            $this->getSID(),
-            $this->getUserJID(),
-            $this->getPassword(),
-            $this->getPassword()
+            $this->getTo()
         );
     }
 
@@ -151,21 +158,13 @@ class RegisterUser implements ProtocolImplementationInterface
     }
 
     /**
-     * @param $sid
+     * @param FormInterface $form
      * @return $this
      */
-    public function setSID($sid)
+    private function setForm(FormInterface $form)
     {
-        $this->sid = (string)$sid;
+        $this->form = $form;
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSID()
-    {
-        return $this->sid;
     }
 
     /**

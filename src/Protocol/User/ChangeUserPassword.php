@@ -6,6 +6,7 @@
 namespace Fabiang\Xmpp\Protocol\User;
 
 
+use Fabiang\Xmpp\Form\FormInterface;
 use Fabiang\Xmpp\Protocol\ProtocolImplementationInterface;
 use Fabiang\Xmpp\Util\XML;
 
@@ -46,27 +47,28 @@ class ChangeUserPassword implements ProtocolImplementationInterface
      */
     protected $password;
     /**
-     * SID of registration form
-     *
-     * @var string
+     * @var FormInterface
      */
-    protected $sid;
+    protected $form;
 
     /**
      * ChangeUserPassword constructor.
      * @param $userJid string
      * @param $password string
-     * @param $sid string - SID of request form @see ChangeUserPassword
-     * @param $from string - admin user JID
-     * @param null|string $to
+     * @param $from string
+     * @param $to string
+     * @param FormInterface $form
      */
-    public function __construct($userJid, $password, $sid, $from, $to = null)
+    public function __construct($userJid, $password, $from, $to, FormInterface $form)
     {
         $this->setFrom($from)
             ->setTo($to)
             ->setUserJID($userJid)
             ->setPassword($password)
-            ->setSID($sid);
+            ->setForm($form);
+
+        $this->form->setFieldValue('accountjid', $this->getUserJID());
+        $this->form->setFieldValue('password', $this->getPassword());
     }
 
     /**
@@ -76,28 +78,11 @@ class ChangeUserPassword implements ProtocolImplementationInterface
     {
         return XML::quoteMessage(
             "<iq from='%s' id='%s' to='%s' type='set' xml:lang='en'>" .
-            "<command xmlns='http://jabber.org/protocol/commands' " .
-            "node='http://jabber.org/protocol/admin#change-user-password' " .
-            "sessionid='%s'>" .
-            "<x xmlns='jabber:x:data' type='submit'>" .
-            "<field type='hidden' var='FORM_TYPE'>" .
-            "<value>http://jabber.org/protocol/admin</value>" .
-            "</field>" .
-            "<field var='accountjid'>" .
-            "<value>%s</value>" .
-            "</field>" .
-            "<field var='password'>" .
-            "<value>%s</value>" .
-            "</field>" .
-            "</x>" .
-            "</command>" .
+            $this->form->toString() .
             "</iq>",
             $this->getFrom(),
             XML::generateId(),
-            $this->getTo(),
-            $this->getSID(),
-            $this->getUserJID(),
-            $this->getPassword()
+            $this->getTo()
         );
     }
 
@@ -146,21 +131,13 @@ class ChangeUserPassword implements ProtocolImplementationInterface
     }
 
     /**
-     * @param $sid
+     * @param FormInterface $form
      * @return $this
      */
-    public function setSID($sid)
+    private function setForm(FormInterface $form)
     {
-        $this->sid = (string)$sid;
+        $this->form = $form;
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSID()
-    {
-        return $this->sid;
     }
 
     /**

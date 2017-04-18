@@ -36,11 +36,11 @@
 
 namespace Fabiang\Xmpp\Connection;
 
-use Psr\Log\LogLevel;
+use Fabiang\Xmpp\Exception\TimeoutException;
+use Fabiang\Xmpp\Options;
 use Fabiang\Xmpp\Stream\SocketClient;
 use Fabiang\Xmpp\Util\XML;
-use Fabiang\Xmpp\Options;
-use Fabiang\Xmpp\Exception\TimeoutException;
+use Psr\Log\LogLevel;
 
 /**
  * Connection to a socket stream.
@@ -51,11 +51,11 @@ class Socket extends AbstractConnection implements SocketConnectionInterface
 {
 
     const DEFAULT_LENGTH = 4096;
-    const STREAM_START   = <<<'XML'
+    const STREAM_START = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <stream:stream to="%s" xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client" version="1.0">
 XML;
-    const STREAM_END     = '</stream:stream>';
+    const STREAM_END = '</stream:stream>';
 
     /**
      * Socket.
@@ -74,7 +74,7 @@ XML;
     /**
      * Constructor set default socket instance if no socket was given.
      *
-     * @param StreamSocket $socket  Socket instance
+     * @param SocketClient $socket Socket instance
      */
     public function __construct(SocketClient $socket)
     {
@@ -89,7 +89,7 @@ XML;
      */
     public static function factory(Options $options)
     {
-        $socket = new SocketClient($options->getAddress());
+        $socket = new SocketClient($options->getAddress(), $options->getVerifyPeer());
         $object = new static($socket);
         $object->setOptions($options);
         return $object;
@@ -189,7 +189,7 @@ XML;
     public function disconnect()
     {
         if (true === $this->connected) {
-            $address         = $this->getAddress();
+            $address = $this->getAddress();
             $this->send(static::STREAM_END);
             $this->getSocket()->close();
             $this->connected = false;

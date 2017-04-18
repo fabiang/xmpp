@@ -39,7 +39,8 @@ namespace Fabiang\Xmpp\EventListener\Stream;
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
-use Fabiang\Xmpp\Exception\Stream\ChangePasswordErrorException;
+use Fabiang\Xmpp\Exception\Stream\CommandErrorException;
+use Fabiang\Xmpp\Form\Form;
 use Fabiang\Xmpp\Protocol\User\User;
 
 /**
@@ -47,7 +48,7 @@ use Fabiang\Xmpp\Protocol\User\User;
  *
  * @package Xmpp\EventListener
  */
-class RequestChangePasswordFrom extends AbstractEventListener implements BlockingEventListenerInterface
+class Command extends AbstractEventListener implements BlockingEventListenerInterface
 {
 
     /**
@@ -71,8 +72,34 @@ class RequestChangePasswordFrom extends AbstractEventListener implements Blockin
     {
         $this->getOutputEventManager()
             ->attach('{http://jabber.org/protocol/commands}command', array($this, 'query'));
+        /**
+         * error events
+         * @see https://xmpp.org/extensions/xep-0133.html#errors
+         */
         $this->getInputEventManager()
             ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}bad-request', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}conflict', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}feature-not-implemented', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}not-allowed', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}service-unavailable', array($this, 'error'));
+        /**
+         * MUC error events
+         * @see https://xmpp.org/extensions/xep-0045.html#enter-errorcodes
+         */
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}item-not-found', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}registration-required', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}jid-malformed', array($this, 'error'));
+
+        // result
         $this->getInputEventManager()
             ->attach('{http://jabber.org/protocol/commands}command', array($this, 'result'));
     }
@@ -96,10 +123,11 @@ class RequestChangePasswordFrom extends AbstractEventListener implements Blockin
     public function result(XMLEvent $event)
     {
         if ($event->isEndTag()) {
-            /* @var $element \DOMElement */
-            $sid = $event->getParameter(0)->getAttribute('sessionid');
-
-            $this->getOptions()->setSid($sid);
+            // same events
+            if (!$this->getOptions()->getForm()) {
+                $form = new Form($event);
+                $this->getOptions()->setForm($form);
+            }
             $this->blocking = false;
         }
     }
@@ -114,7 +142,8 @@ class RequestChangePasswordFrom extends AbstractEventListener implements Blockin
     {
         if (false === $event->isStartTag()) {
             $this->blocking = false;
-            throw ChangePasswordErrorException::createFromEvent($event);
+            /** @var $event \DOMElement */
+            throw CommandErrorException::createFromEvent($event);
         }
     }
 

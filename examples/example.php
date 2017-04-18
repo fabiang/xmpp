@@ -1,32 +1,26 @@
 <?php
 
-require 'vendor/autoload.php';
+require '../vendor/autoload.php';
+$config = require('config.inc.php');
 error_reporting(-1);
 
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-use Fabiang\Xmpp\Options;
 use Fabiang\Xmpp\Client;
-
-use Fabiang\Xmpp\Protocol\Roster;
-use Fabiang\Xmpp\Protocol\Presence;
+use Fabiang\Xmpp\Options;
 use Fabiang\Xmpp\Protocol\Message;
+use Fabiang\Xmpp\Protocol\Presence;
+use Fabiang\Xmpp\Protocol\Roster;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 
 $logger = new Logger('xmpp');
 $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
 
-$hostname       = 'localhost';
-$port           = 5222;
-$connectionType = 'tcp';
-$address        = "$connectionType://$hostname:$port";
-
-$username = 'xmpp';
-$password = 'test';
+$address = $config['connectionType'] . '://' . $config['host'] . ':' . $config['port'];
 
 $options = new Options($address);
 $options->setLogger($logger)
-    ->setUsername($username)
-    ->setPassword($password);
+    ->setUsername($config['login'])
+    ->setPassword($config['password']);
 
 $client = new Client($options);
 

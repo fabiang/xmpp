@@ -64,20 +64,29 @@ class SocketClient
     protected $address;
 
     /**
+     * verify peer on connect
+     *
+     * @var bool
+     */
+    protected $verifyPeer = true;
+
+    /**
      * Constructor takes address as argument.
      *
      * @param string $address
+     * @param bool $verifyPeer
      */
-    public function __construct($address)
+    public function __construct($address, $verifyPeer = true)
     {
         $this->address = $address;
+        $this->verifyPeer = $verifyPeer;
     }
 
     /**
      * Connect.
      *
-     * @param integer $timeout    Timeout for connection
-     * @param boolean $persistent Persitent connection
+     * @param integer $timeout Timeout for connection
+     * @param boolean $persistent Persistent connection
      * @return void
      */
     public function connect($timeout = 30, $persistent = false)
@@ -88,9 +97,24 @@ class SocketClient
             $flags = STREAM_CLIENT_CONNECT;
         }
 
+        $context = null;
+        if ($this->verifyPeer === false) {
+            $context = stream_context_create(array(
+                    'ssl' => array(
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true
+                    )
+                )
+            );
+        }
+
         // call stream_socket_client with custom error handler enabled
         $handler = new ErrorHandler(
-            function ($address, $timeout, $flags) {
+            function ($address, $timeout, $flags) use ($context) {
+                if ($context) {
+                    return stream_socket_client($address, $errno, $errstr, $timeout, $flags, $context);
+                }
                 return stream_socket_client($address, $errno, $errstr, $timeout, $flags);
             },
             $this->address,
@@ -106,9 +130,9 @@ class SocketClient
     /**
      * Reconnect and optionally use different address.
      *
-     * @param string  $address
+     * @param string $address
      * @param integer $timeout
-     * @param bool    $persistent
+     * @param bool $persistent
      */
     public function reconnect($address = null, $timeout = 30, $persistent = false)
     {
@@ -139,7 +163,7 @@ class SocketClient
      */
     public function setBlocking($flag = true)
     {
-        stream_set_blocking($this->resource, (int) $flag);
+        stream_set_blocking($this->resource, (int)$flag);
         return $this;
     }
 
@@ -157,7 +181,7 @@ class SocketClient
     /**
      * Write to stream.
      *
-     * @param string  $string String
+     * @param string $string String
      * @param integer $length Limit
      * @return void
      */
@@ -173,7 +197,7 @@ class SocketClient
     /**
      * Enable/disable cryptography on stream.
      *
-     * @param boolean $enable     Flag
+     * @param boolean $enable Flag
      * @param integer $cryptoType One of the STREAM_CRYPTO_METHOD_* constants.
      * @return void
      * @throws InvalidArgumentException

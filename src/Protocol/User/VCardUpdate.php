@@ -52,6 +52,7 @@ class VCardUpdate implements ProtocolImplementationInterface
         'FAMILY',
         'MIDDLE',
         'PHOTO',
+        'EMAIL',
         'JABBERID',
         'NICKNAME',
         'URL',
@@ -104,12 +105,12 @@ class VCardUpdate implements ProtocolImplementationInterface
      */
     public function toString()
     {
-        return XML::quoteMessage("<iq from='%s' type='set' id='%s'>" .
-            "<vCard xmlns='vcard-temp'>%s</vCard>" .
+        return XML::quoteMessage("<iq type='set' id='%s'>" .
+            "<vCard xmlns='vcard-temp'>" .
+            $this->composeVCard() .
+            "</vCard>" .
             "</iq>",
-            $this->getFrom(),
-            XML::generateId(),
-            $this->composeVCard()
+            XML::generateId()
         );
     }
 
@@ -122,6 +123,7 @@ class VCardUpdate implements ProtocolImplementationInterface
         $xmlVCard = '';
         if (!empty($this->vCard)) {
             foreach ($this->vCard as $attrName => $attrValue) {
+                // DOMNode maybe?
                 $xmlVCard .= '<' . $attrName . '>';
                 if (is_array($attrValue)) {
                     foreach ($attrValue as $subAttrName => $subAttrValue) {
@@ -187,12 +189,15 @@ class VCardUpdate implements ProtocolImplementationInterface
                 case 'DESC':
                     $this->vCard[$property] = strip_tags($value);
                     break;
+                case 'EMAIL':
+                    $this->vCard[$property]['USERID'] = strip_tags($value);
+                    break;
                 case 'PHOTO':
                     // value must be path to image
                     $this->setImage($value);
                     $this->vCard['PHOTO'] = array('TYPE' => $this->getImageMime(), 'BINVAL' => $this->getImageBase64Data());
                     // free some memory
-                    $this->imagePath = null;
+                    $this->imageData = null;
                     break;
             }
         }
@@ -243,14 +248,17 @@ class VCardUpdate implements ProtocolImplementationInterface
     /**
      * get converted to Base64 image data
      *
+     * @see https://xmpp.org/extensions/xep-0153.html#bizrules-image
      * @return string
      */
     protected function getImageBase64Data()
     {
-        return base64_encode($this->imageData);
+        return "\n" . wordwrap(XML::base64Encode($this->imageData), 75, "\n", true) . "\n";
     }
 
     /**
+     * todo: check image size: 32-96px, file size: 8096 b,
+     * extensions: image/png;image/gif;image/jpeg
      * get image mime type
      * @return string
      */

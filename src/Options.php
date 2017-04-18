@@ -37,8 +37,10 @@
 namespace Fabiang\Xmpp;
 
 use Fabiang\Xmpp\Connection\ConnectionInterface;
+use Fabiang\Xmpp\Form\FormInterface;
 use Fabiang\Xmpp\Protocol\DefaultImplementation;
 use Fabiang\Xmpp\Protocol\ImplementationInterface;
+use Fabiang\Xmpp\Protocol\Room\Room;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -101,9 +103,16 @@ class Options
 
     /**
      *
-     * @var string
+     * @var FormInterface|null
      */
-    protected $sid;
+    protected $form;
+
+    /**
+     * verify SSL certificate on connect
+     *
+     * @var bool
+     */
+    protected $verifyPeer = true;
 
     /**
      *
@@ -116,6 +125,12 @@ class Options
      * @var array
      */
     protected $users = array();
+
+    /**
+     *
+     * @var null|Protocol\Room\Room
+     */
+    protected $room;
 
     /**
      * Timeout for connection.
@@ -131,7 +146,7 @@ class Options
      */
     protected $authenticationClasses = array(
         'digest-md5' => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\DigestMd5',
-        'plain'      => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Plain'
+        'plain' => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Plain'
     );
 
     /**
@@ -192,7 +207,7 @@ class Options
      */
     public function setAddress($address)
     {
-        $this->address = (string) $address;
+        $this->address = (string)$address;
         if (false !== ($host = parse_url($address, PHP_URL_HOST))) {
             $this->setTo($host);
         }
@@ -263,7 +278,7 @@ class Options
      */
     public function setTo($to)
     {
-        $this->to = (string) $to;
+        $this->to = (string)$to;
         return $this;
     }
 
@@ -285,7 +300,7 @@ class Options
      */
     public function setUsername($username)
     {
-        $this->username = (string) $username;
+        $this->username = (string)$username;
         return $this;
     }
 
@@ -319,7 +334,7 @@ class Options
      */
     public function setPassword($password)
     {
-        $this->password = (string) $password;
+        $this->password = (string)$password;
         return $this;
     }
 
@@ -341,28 +356,46 @@ class Options
      */
     public function setJid($jid)
     {
-        $this->jid = (string) $jid;
+        $this->jid = (string)$jid;
         return $this;
     }
 
     /**
-     * Get sid.
-     *
-     * @return string
+     * @return FormInterface
      */
-    public function getSid()
+    public function getForm()
     {
-        return $this->sid;
+        return $this->form;
     }
 
     /**
-     * @param $sid string
+     * set form
+     *
+     * @param FormInterface $form
      * @return $this
      */
-    public function setSid($sid)
+    public function setForm(FormInterface $form)
     {
-        $this->sid = (string) $sid;
+        $this->form = $form;
         return $this;
+    }
+
+    /**
+     * @param $verify bool
+     * @return $this
+     */
+    public function setVerifyPeer($verify)
+    {
+        $this->verifyPeer = (bool)$verify;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getVerifyPeer()
+    {
+        return $this->verifyPeer;
     }
 
     /**
@@ -383,7 +416,7 @@ class Options
      */
     public function setAuthenticated($authenticated)
     {
-        $this->authenticated = (bool) $authenticated;
+        $this->authenticated = (bool)$authenticated;
         return $this;
     }
 
@@ -406,6 +439,28 @@ class Options
     public function setUsers(array $users)
     {
         $this->users = $users;
+        return $this;
+    }
+
+    /**
+     * Get room.
+     *
+     * @return Protocol\Room\Room
+     */
+    public function getRoom()
+    {
+        return $this->room;
+    }
+
+    /**
+     * Set room.
+     *
+     * @param Room $room
+     * @return $this
+     */
+    public function setRoom(Room $room)
+    {
+        $this->room = $room;
         return $this;
     }
 
@@ -448,7 +503,7 @@ class Options
      */
     public function setTimeout($timeout)
     {
-        $this->timeout = (int) $timeout;
+        $this->timeout = (int)$timeout;
         return $this;
     }
 }
