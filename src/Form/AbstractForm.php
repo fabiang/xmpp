@@ -8,8 +8,6 @@
 
 namespace Fabiang\Xmpp\Form;
 
-use Fabiang\Xmpp\Event\XMLEvent;
-
 /**
  * Class AbstractForm
  * @package Fabiang\Xmpp\Form
@@ -34,12 +32,12 @@ class AbstractForm implements FormInterface
     /**
      * @var \DOMElement[]
      */
-    protected $fields = [];
+    protected $fields = array();
 
     /**
      * @var \DOMElement
      */
-    private $form;
+    protected static $form;
 
     /**
      * get sessionid of form
@@ -91,7 +89,7 @@ class AbstractForm implements FormInterface
     public function setFieldValue($fieldName, $value)
     {
         if (isset($this->fields[$fieldName])) {
-            $valueNode = $this->form->ownerDocument->createElement('value', (string)$value);
+            $valueNode = static::$form->ownerDocument->createElement('value', (string)$value);
             // remove previous value
             while ($this->fields[$fieldName]->hasChildNodes()) {
                 $this->fields[$fieldName]->removeChild($this->fields[$fieldName]->firstChild);
@@ -113,7 +111,7 @@ class AbstractForm implements FormInterface
     public function addFieldValue($fieldName, $value)
     {
         if (isset($this->fields[$fieldName])) {
-            $valueNode = $this->form->ownerDocument->createElement('value', (string)$value);
+            $valueNode = static::$form->ownerDocument->createElement('value', (string)$value);
             // add new value
             $this->fields[$fieldName]->appendChild($valueNode);
             return true;
@@ -149,18 +147,34 @@ class AbstractForm implements FormInterface
     }
 
     /**
+     * return field options if has
+     *
+     * @param $field string
+     * @return array
+     */
+    public function getFieldOptions($field)
+    {
+        $options = array();
+        if (isset($this->fields[$field])) {
+            $optionNodeList = $this->fields[$field]->getElementsByTagName('option');
+            if ($optionNodeList->length > 0) {
+                for ($i = 0; $i < $optionNodeList->length; $i++) {
+                    $optionNode = $optionNodeList->item($i);
+                    array_push($options, $optionNode->firstChild->textContent);
+                }
+            }
+        }
+        return $options;
+    }
+
+    /**
      * converts form to XML string
      *
      * @return string
      */
     public function toString()
     {
-        $this->form->removeAttribute('status');
-        $this->form->firstChild->setAttribute('type', 'submit');
-        // remove previous values
-        while ($this->form->firstChild->hasChildNodes()) {
-            $this->form->firstChild->removeChild($this->form->firstChild->firstChild);
-        }
+        static::$form->setAttribute('type', 'submit');
         // append new values
         foreach ($this->fields as $field) {
             if ($field->getAttribute('type') && $field->getAttribute('type') != 'hidden') {
@@ -169,43 +183,20 @@ class AbstractForm implements FormInterface
             if ($field->getAttribute('label')) {
                 $field->removeAttribute('label');
             }
-            $this->form->firstChild->appendChild($field);
+            // remove option artifacts
+            $optionNodeList = $field->getElementsByTagName('option');
+            while ($optionNodeList->length > 0) {
+                $field->removeChild($optionNodeList->item(0));
+            }
+
+            static::$form->appendChild($field);
         }
 
-        return $this->form->ownerDocument->saveXML($this->form);
+        return static::$form->ownerDocument->saveXML(static::$form);
     }
 
-    /**
-     * parse XMLEvent to the form fields
-     *
-     * AbstractForm constructor.
-     * @param XMLEvent $event
-     */
-    public function __construct(XMLEvent $event)
+    public function unsetAllFields()
     {
-        /** @var $event \DOMElement */
-        $this->form = $event->getParameter(0);
-        if ($this->sid = $this->form->getAttribute('sessionid')) {
-            $titleNode = $this->form->getElementsByTagName('title')->item(0);
-            if ($titleNode) {
-                $this->title = $titleNode->nodeValue;
-            }
-            unset($titleNode);
-            $instructionsNode = $this->form->getElementsByTagName('instructions')->item(0);
-            if ($instructionsNode) {
-                $this->instructions = $instructionsNode->nodeValue;
-            }
-            unset($instructionsNode);
-            $fieldNodeList = $this->form->getElementsByTagName('field');
-            if ($fieldNodeList->length > 0) {
-                foreach ($fieldNodeList as $field) {
-                    /**@var $field \DOMElement */
-                    $this->fields[$field->getAttribute('var')] = $field;
-                }
-            } else {
-                $this->fields = [];
-            }
-            unset($fieldNodeList);
-        }
+        $this->fields = array();
     }
 }

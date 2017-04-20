@@ -13,7 +13,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
 $logger = new Logger('xmpp');
-$logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
+$logger->pushHandler(new StreamHandler('xmpp.log', Logger::DEBUG));
 
 $address = $config['connectionType'] . '://' . $config['host'] . ':' . $config['port'];
 

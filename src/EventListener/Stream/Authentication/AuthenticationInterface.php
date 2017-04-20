@@ -54,4 +54,11 @@ interface AuthenticationInterface extends EventListenerInterface
      * @return void
      */
     public function authenticate($username, $password);
+
+    /**
+     * get current class name
+     *
+     * @return string
+     */
+    public static function className();
 }

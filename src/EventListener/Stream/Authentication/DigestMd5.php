@@ -36,10 +36,10 @@
 
 namespace Fabiang\Xmpp\EventListener\Stream\Authentication;
 
-use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\Event\XMLEvent;
-use Fabiang\Xmpp\Util\XML;
+use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\Exception\Stream\AuthenticationErrorException;
+use Fabiang\Xmpp\Util\XML;
 
 /**
  * Handler for "digest md5" authentication mechanism.
@@ -67,6 +67,14 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
      * @var string
      */
     protected $password;
+
+    /**
+     * @return string
+     */
+    public static function className()
+    {
+        return get_class();
+    }
 
     /**
      * {@inheritDoc}
@@ -113,7 +121,7 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
             list($element) = $event->getParameters();
 
             $challenge = XML::base64Decode($element->nodeValue);
-            $values    = $this->parseCallenge($challenge);
+            $values = $this->parseCallenge($challenge);
 
             if (isset($values['nonce'])) {
                 $send = '<response xmlns="urn:ietf:params:xml:ns:xmpp-sasl">'
@@ -132,12 +140,13 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
      * Generate response data.
      *
      * @param array $values
+     * @return string
      */
     protected function response($values)
     {
         $values['cnonce'] = uniqid(mt_rand(), false);
-        $values['nc']     = '00000001';
-        $values['qop']    = 'auth';
+        $values['nc'] = '00000001';
+        $values['qop'] = 'auth';
 
         if (!isset($values['realm'])) {
             $values['realm'] = $this->getOptions()->getTo();
@@ -190,7 +199,7 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
         preg_match_all('#(\w+)\=(?:"([^"]+)"|([^,]+))#', $challenge, $matches);
         list(, $variables, $quoted, $unquoted) = $matches;
         // filter empty strings; preserve keys
-        $quoted   = array_filter($quoted);
+        $quoted = array_filter($quoted);
         $unquoted = array_filter($unquoted);
         // replace "unquoted" values into "quoted" array and combine variables array with it
         return array_combine($variables, array_replace($quoted, $unquoted));

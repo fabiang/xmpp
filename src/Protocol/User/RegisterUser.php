@@ -56,28 +56,6 @@ class RegisterUser implements ProtocolImplementationInterface
     protected $password;
 
     /**
-     * user E-mail
-     *
-     * @var string
-     */
-    protected $email;
-
-    /**
-     * user surname
-     *
-     * @var string
-     */
-    protected $surname;
-
-    /**
-     * user given name
-     *
-     * @var string
-     */
-    protected $givenName;
-
-
-    /**
      * RegisterUser constructor.
      * @param $userJid string
      * @param $password string
@@ -105,11 +83,15 @@ class RegisterUser implements ProtocolImplementationInterface
     {
         return XML::quoteMessage(
             "<iq from='%s' id='%s' to='%s' type='set' xml:lang='en'>" .
+            "<command xmlns='http://jabber.org/protocol/commands' node='http://jabber.org/protocol/admin#add-user' " .
+            "sessionid='%s'>" .
             $this->form->toString() .
+            "</command>" .
             "</iq>",
             $this->getFrom(),
             XML::generateId(),
-            $this->getTo()
+            $this->getTo(),
+            $this->form->getSid()
         );
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2014 Fabian Grutschus. All rights reserved.
  *
@@ -33,13 +34,20 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Exception\Stream;
+namespace Fabiang\Xmpp\EventListener;
 
 /**
- * Class ChangePasswordErrorException
- * @package Fabiang\Xmpp\Exception\Stream
+ * Interface for event listeners.
+ *
+ * @package Xmpp\EventListener
  */
-class ChangePasswordErrorException extends StreamErrorException
+interface UnBlockingEventListenerInterface
 {
 
+    /**
+     * unblock event listener
+     *
+     * @return boolean
+     */
+    public function unBlock();
 }

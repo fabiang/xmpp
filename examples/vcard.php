@@ -4,7 +4,7 @@ $config = require('config.inc.php');
 error_reporting(-1);
 
 use Fabiang\Xmpp\Client;
-use Fabiang\Xmpp\Exception\Stream\CommandErrorException;
+use Fabiang\Xmpp\Exception\Stream\StanzasErrorException;
 use Fabiang\Xmpp\Options;
 use Fabiang\Xmpp\Protocol\User\VCardPresence;
 use Fabiang\Xmpp\Protocol\User\VCardUpdate;
@@ -12,13 +12,12 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
 $logger = new Logger('xmpp');
-$fh = fopen('xmpp.log', 'a+');
-$logger->pushHandler(new StreamHandler($fh, Logger::DEBUG));
+$logger->pushHandler(new StreamHandler('xmpp.log', Logger::DEBUG));
 
 $address = $config['connectionType'] . '://' . $config['host'] . ':' . $config['port'];
 
 $login = 'testuser';
-$password = 'test-password';
+$password = '123456';
 
 
 $options = new Options($address);
@@ -32,7 +31,7 @@ $client = new Client($options);
 $client->connect();
 
 $vCard = new VCardUpdate($login);
-$vCard->setProperty('NICKNAME', 'iCoolVan 22222')
+$vCard->setProperty('NICKNAME', 'iCoolVan')
     ->setProperty('FAMILY', 'Ivanov')
     ->setProperty('GIVEN', 'Ivan')
     ->setProperty('MIDDLE', 'Ivanovich')
@@ -49,7 +48,7 @@ try {
     $presence = new VCardPresence($image_hash);
     $client->send($presence);
     fwrite(STDOUT, 'vCard was updated.' . PHP_EOL);
-} catch (CommandErrorException $e) {
+} catch (StanzasErrorException $e) {
     fwrite(STDOUT, 'Failed to update user vCard!' . PHP_EOL);
     fwrite(STDOUT, $e->getMessage() . PHP_EOL);
 }

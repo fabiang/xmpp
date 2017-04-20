@@ -4,7 +4,7 @@ $config = require('config.inc.php');
 error_reporting(-1);
 
 use Fabiang\Xmpp\Client;
-use Fabiang\Xmpp\Exception\Stream\CommandErrorException;
+use Fabiang\Xmpp\Exception\Stream\StanzasErrorException;
 use Fabiang\Xmpp\Options;
 use Fabiang\Xmpp\Protocol\User\ChangeUserPassword;
 use Fabiang\Xmpp\Protocol\User\RegisterUser;
@@ -14,8 +14,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 
 $logger = new Logger('xmpp');
-$fh = fopen('xmpp.log', 'a+');
-$logger->pushHandler(new StreamHandler($fh, Logger::DEBUG));
+$logger->pushHandler(new StreamHandler('xmpp.log', Logger::DEBUG));
 
 $address = $config['connectionType'] . '://' . $config['host'] . ':' . $config['port'];
 
@@ -44,29 +43,35 @@ $user = new RegisterUser(
 );
 
 try {
-    print $user->toString() . PHP_EOL;
     $client->send($user);
-    print 'user sent' . PHP_EOL;
-} catch (CommandErrorException $e) {
+    print 'User is registered' . PHP_EOL;
+} catch (StanzasErrorException $e) {
     /**
      * @see https://xmpp.org/extensions/xep-0086.html#sect-idm139696314152720
      */
-    if ($e->getCode() == CommandErrorException::ERROR_CONFLICT) { //  conflict
+    if ($e->getCode() == StanzasErrorException::ERROR_CONFLICT) { //  conflict
         fwrite(STDOUT, 'User already exists. Try to change password' . PHP_EOL);
         $request = new RequestChangePasswordForm(
             $config['login'] . '@' . $config['host'],
             $config['host']
         );
-        $client->send($request);
 
-        $form = $client->getOptions()->getForm();
-        $user = new ChangeUserPassword(
-            $newUser . '@' . $config['host'],
-            $newPassword,
-            $config['login'] . '@' . $config['host'],
-            $config['host'],
-            $form
-        );
+        try {
+            $client->send($request);
+
+            $form = $client->getOptions()->getForm();
+            $user = new ChangeUserPassword(
+                $newUser . '@' . $config['host'],
+                $newPassword,
+                $config['login'] . '@' . $config['host'],
+                $config['host'],
+                $form
+            );
+        } catch (StanzasErrorException $e) {
+            fwrite(STDOUT, 'Failed to change password of user!' . PHP_EOL);
+            fwrite(STDOUT, $e->getMessage() . PHP_EOL);
+        }
+
     } else {
         fwrite(STDOUT, 'Failed to register user!' . PHP_EOL);
         fwrite(STDOUT, $e->getMessage() . PHP_EOL);

@@ -78,11 +78,14 @@ class ChangeUserPassword implements ProtocolImplementationInterface
     {
         return XML::quoteMessage(
             "<iq from='%s' id='%s' to='%s' type='set' xml:lang='en'>" .
+            "<command xmlns='http://jabber.org/protocol/commands' node='http://jabber.org/protocol/admin#change-user-password' " .
+            "sessionid='%s'>" .
             $this->form->toString() .
             "</iq>",
             $this->getFrom(),
             XML::generateId(),
-            $this->getTo()
+            $this->getTo(),
+            $this->form->getSid()
         );
     }
 

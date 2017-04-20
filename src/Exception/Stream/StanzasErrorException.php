@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2014 Fabian Grutschus. All rights reserved.
  *
@@ -34,43 +33,60 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\EventListener\Stream\Authentication;
+namespace Fabiang\Xmpp\Exception\Stream;
 
-use Fabiang\Xmpp\EventListener\AbstractEventListener;
-use Fabiang\Xmpp\Util\XML;
+use Fabiang\Xmpp\Event\XMLEvent;
 
 /**
- * Handler for "plain" authentication mechanism.
- *
- * @package Xmpp\EventListener\Authentication
+ * Class StanzasErrorException
+ * @package Fabiang\Xmpp\Exception\Stream
  */
-class Plain extends AbstractEventListener implements AuthenticationInterface
+class StanzasErrorException extends StreamErrorException
 {
+    /**
+     * @see https://xmpp.org/extensions/xep-0086.html#sect-idm139696314152720
+     */
+    const ERROR_UNDEFINED = 0;
+    const ERROR_BAD_REQUEST = 400;
+    const ERROR_CONFLICT = 409;
+    const ERROR_FEATURE_NOT_IMPLEMENTED = 501;
+    const ERROR_FORBIDDEN = 403;
+    const ERROR_GONE = 302;
+    const ERROR_INTERNAL_SERVER_ERROR = 500;
+    const ERROR_ITEM_NOT_FOUND = 404;
+    const ERROR_NOT_ACCEPTABLE = 406;
+    const ERROR_NOT_ALLOWED = 405;
+    const ERROR_NOT_AUTHORIZED = 401;
+    const ERROR_REGISTRATION_REQUIRED = 407;
+    const ERROR_SERVER_TIMEOUT = 504;
+    const ERROR_SERVICE_UNAVAILABLE = 503;
 
     /**
-     * @return string
+     * Create exception from XMLEvent object.
+     *
+     * @param \Fabiang\Xmpp\Event\XMLEvent $event XMLEvent object
+     *
+     * @return static
      */
-    public static function className()
+    public static function createFromEvent(XMLEvent $event)
     {
-        return get_class();
-    }
+        /* @var $element \DOMElement */
+        list($element) = $event->getParameters();
 
-    /**
-     * {@inheritDoc}
-     */
-    public function attachEvents()
-    {
+        /* @var $first \DOMElement */
+        $parent = $element->parentNode;
 
-    }
+        if (null !== $parent && XML_ELEMENT_NODE === $parent->nodeType) {
+            $code = (int)$parent->getAttribute('code');
+            $message = 'Stanzas error: "' . $element->localName . '"';
+        } else {
+            $code = 0;
+            $message = 'Generic stream error';
+        }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function authenticate($username, $password)
-    {
-        $authString = XML::quote(base64_encode("\x00" . $username . "\x00" . $password));
-        $this->getConnection()->send(
-            '<auth xmlns="urn:ietf:params:xml:ns:xmpp-sasl" mechanism="PLAIN">' . $authString . '</auth>'
-        );
+        $exception = new static($message, $code);
+        $exception->setContent($element->ownerDocument->saveXML($element));
+
+        return $exception;
     }
 }

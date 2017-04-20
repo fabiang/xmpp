@@ -40,10 +40,14 @@ use Fabiang\Xmpp\Event\EventManager;
 use Fabiang\Xmpp\Event\EventManagerInterface;
 use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Fabiang\Xmpp\EventListener\Stream\Authentication;
+use Fabiang\Xmpp\EventListener\Stream\Avatar;
 use Fabiang\Xmpp\EventListener\Stream\Bind;
 use Fabiang\Xmpp\EventListener\Stream\Command;
+use Fabiang\Xmpp\EventListener\Stream\RoomOwner;
+use Fabiang\Xmpp\EventListener\Stream\RoomPresence;
 use Fabiang\Xmpp\EventListener\Stream\Roster as RosterListener;
 use Fabiang\Xmpp\EventListener\Stream\Session;
+use Fabiang\Xmpp\EventListener\Stream\Stanzas;
 use Fabiang\Xmpp\EventListener\Stream\StartTls;
 use Fabiang\Xmpp\EventListener\Stream\Stream;
 use Fabiang\Xmpp\EventListener\Stream\StreamError;
@@ -83,7 +87,11 @@ class DefaultImplementation implements ImplementationInterface
         $this->registerListener(new Bind);
         $this->registerListener(new Session);
         $this->registerListener(new RosterListener);
+        $this->registerListener(new Stanzas);
         $this->registerListener(new Command);
+        $this->registerListener(new Avatar);
+        $this->registerListener(new RoomPresence);
+        $this->registerListener(new RoomOwner);
     }
 
     /**

@@ -24,7 +24,7 @@ interface FormInterface
      * @param XMLEvent $event
      * @return mixed
      */
-    public function __construct(XMLEvent $event);
+    //public function __construct(XMLEvent $event);
 
     /**
      * returns title of form
@@ -79,6 +79,14 @@ interface FormInterface
      * @return array|null
      */
     public function getFieldAttributes($field);
+
+    /**
+     * return field options if has
+     *
+     * @param $field string
+     * @return array
+     */
+    public function getFieldOptions($field);
 
     /**
      * converts form to XML string

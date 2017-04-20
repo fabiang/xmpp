@@ -84,11 +84,11 @@ class VCardUpdate implements ProtocolImplementationInterface
      * Allowed image mime types
      * @var array
      */
-    protected $mimes = [
+    protected $mimes = array(
         'image/jpeg',
         'image/png',
         'image/gif'
-    ];
+    );
 
     /**
      * VCardUpdate constructor.
@@ -217,10 +217,7 @@ class VCardUpdate implements ProtocolImplementationInterface
         }
         $this->imagePath = $path;
 
-        if (!in_array($this->getImageMime(), $this->mimes)) {
-            throw new InvalidArgumentException('Type of Image must be of allowed mimes: ' . implode(', ', $this->mimes) . '.');
-        }
-
+        $this->getImageMime();
         $this->imageData = file_get_contents($path);
         $this->setImageId();
         return $this;
@@ -257,8 +254,6 @@ class VCardUpdate implements ProtocolImplementationInterface
     }
 
     /**
-     * todo: check image size: 32-96px, file size: 8096 b,
-     * extensions: image/png;image/gif;image/jpeg
      * get image mime type
      * @return string
      */
@@ -267,6 +262,13 @@ class VCardUpdate implements ProtocolImplementationInterface
         if (!$this->imageMime) {
             $size = getimagesize($this->imagePath);
             $this->imageMime = isset($size['mime']) ? $size['mime'] : '';
+
+            if ($size[0] < 32 || $size[1] < 32 || $size[0] > 96 || $size[1] > 96) {
+                throw new InvalidArgumentException('Image size must be between 32px and 96px');
+            }
+            if (!in_array($this->imageMime, $this->mimes)) {
+                throw new InvalidArgumentException('Type of Image must be of allowed mimes: ' . implode(', ', $this->mimes) . '.');
+            }
         }
         return $this->imageMime;
     }

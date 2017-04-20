@@ -34,121 +34,104 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Connection;
+namespace Fabiang\Xmpp\EventListener\Stream;
 
-use Fabiang\Xmpp\Event\EventManagerAwareInterface;
+use Fabiang\Xmpp\Event\XMLEvent;
+use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
-use Fabiang\Xmpp\EventListener\EventListenerInterface;
-use Fabiang\Xmpp\OptionsAwareInterface;
-use Fabiang\Xmpp\Stream\XMLStream;
+use Fabiang\Xmpp\EventListener\UnBlockingEventListenerInterface;
+use Fabiang\Xmpp\Exception\Stream\StanzasErrorException;
+use Fabiang\Xmpp\Form\RoomForm;
+use Fabiang\Xmpp\Protocol\User\User;
 
 /**
- * Connections must implement this interface.
+ * Listener
  *
- * @package Xmpp\Connection
+ * @package Xmpp\EventListener
  */
-interface ConnectionInterface extends EventManagerAwareInterface, OptionsAwareInterface
+class RoomOwner extends AbstractEventListener implements BlockingEventListenerInterface, UnBlockingEventListenerInterface
 {
+
     /**
-     * Connect.
+     * Blocking.
+     *
+     * @var boolean
+     */
+    protected $blocking = false;
+
+    /**
+     * user object.
+     *
+     * @var User
+     */
+    protected $userObject;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function attachEvents()
+    {
+        $this->getOutputEventManager()
+            ->attach('{http://jabber.org/protocol/muc#owner}query', array($this, 'query'));
+        $this->getInputEventManager()
+            ->attach('{http://jabber.org/protocol/muc#owner}query', array($this, 'result'));
+    }
+
+    /**
+     * Sending a query request for roster sets listener to blocking mode.
      *
      * @return void
      */
-    public function connect();
+    public function query()
+    {
+        $this->blocking = true;
+    }
 
     /**
-     * Disconnect.
+     * Result received.
      *
+     * @param \Fabiang\Xmpp\Event\XMLEvent $event
      * @return void
      */
-    public function disconnect();
+    public function result(XMLEvent $event)
+    {
+        if ($event->isEndTag()) {
+            if (!$this->getOptions()->getForm()) {
+                $form = new RoomForm($event);
+                $this->getOptions()->setForm($form);
+            }
+            $this->blocking = false;
+        }
+    }
 
     /**
-     * Set stream is ready.
+     * we have some errors.
      *
-     * @param boolean $flag Flag
-     * @return $this
-     */
-    public function setReady($flag);
-
-    /**
-     * Is stream ready.
-     *
-     * @return boolean
-     */
-    public function isReady();
-
-    /**
-     * Is connection established.
-     *
-     * @return boolean
-     */
-    public function isConnected();
-
-    /**
-     * Receive data.
-     *
-     * @return string
-     */
-    public function receive();
-
-    /**
-     * Send data.
-     *
-     * @param string $buffer Data to send.
+     * @param \Fabiang\Xmpp\Event\XMLEvent $event
      * @return void
      */
-    public function send($buffer);
+    public function error(XMLEvent $event)
+    {
+        if (false === $event->isStartTag()) {
+            $this->blocking = false;
+            /** @var $event \DOMElement */
+            throw StanzasErrorException::createFromEvent($event);
+        }
+    }
 
     /**
-     * Get output stream.
-     *
-     * @return XMLStream
+     * {@inheritDoc}
      */
-    public function getOutputStream();
+    public function isBlocking()
+    {
+        return $this->blocking;
+    }
 
     /**
-     * Get input stream.
-     *
-     * @return XMLStream
+     * {@inheritDoc}
      */
-    public function getInputStream();
-
-    /**
-     * Set output stream.
-     *
-     * @param XMLStream $outputStream Output stream
-     * @return $this
-     */
-    public function setOutputStream(XMLStream $outputStream);
-
-    /**
-     * Set input stream.
-     *
-     * @param XMLStream $inputStream Input stream
-     * @return $this
-     */
-    public function setInputStream(XMLStream $inputStream);
-
-    /**
-     * Reset streams.
-     *
-     * @return void
-     */
-    public function resetStreams();
-
-    /**
-     * Add listener.
-     *
-     * @param EventListenerInterface $eventListener
-     * @return $this
-     */
-    public function addListener(EventListenerInterface $eventListener);
-
-    /**
-     * get last blocking listener
-     *
-     * @return BlockingEventListenerInterface
-     */
-    public function getLastBlockingListener();
+    public function unBlock()
+    {
+        $this->blocking = false;
+    }
 }

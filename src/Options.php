@@ -37,10 +37,13 @@
 namespace Fabiang\Xmpp;
 
 use Fabiang\Xmpp\Connection\ConnectionInterface;
+use Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5;
+use Fabiang\Xmpp\EventListener\Stream\Authentication\Plain;
 use Fabiang\Xmpp\Form\FormInterface;
 use Fabiang\Xmpp\Protocol\DefaultImplementation;
 use Fabiang\Xmpp\Protocol\ImplementationInterface;
 use Fabiang\Xmpp\Protocol\Room\Room;
+use Fabiang\Xmpp\Protocol\User\User;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -133,6 +136,12 @@ class Options
     protected $room;
 
     /**
+     *
+     * @var null|User
+     */
+    protected $user;
+
+    /**
      * Timeout for connection.
      *
      * @var integer
@@ -144,10 +153,7 @@ class Options
      *
      * @var array
      */
-    protected $authenticationClasses = array(
-        'digest-md5' => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\DigestMd5',
-        'plain' => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Plain'
-    );
+    protected $authenticationClasses;
 
     /**
      * Constructor.
@@ -156,6 +162,11 @@ class Options
      */
     public function __construct($address = null)
     {
+        $this->authenticationClasses = array(
+            'digest-md5' => DigestMd5::className(),
+            'plain' => Plain::className()
+        );
+
         if (null !== $address) {
             $this->setAddress($address);
         }
@@ -439,6 +450,26 @@ class Options
     public function setUsers(array $users)
     {
         $this->users = $users;
+        return $this;
+    }
+
+    /**
+     * Get users.
+     *
+     * @return Protocol\User\User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param User $user
+     * @return $this
+     */
+    public function setUser(User $user)
+    {
+        $this->user = $user;
         return $this;
     }
 

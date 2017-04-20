@@ -38,78 +38,68 @@ namespace Fabiang\Xmpp\EventListener\Stream;
 
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\EventListener\AbstractEventListener;
-use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
+use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Fabiang\Xmpp\EventListener\UnBlockingEventListenerInterface;
-use Fabiang\Xmpp\Form\Form;
+use Fabiang\Xmpp\Exception\Stream\StanzasErrorException;
 
 /**
  * Listener
  *
  * @package Xmpp\EventListener
  */
-class Command extends AbstractEventListener implements BlockingEventListenerInterface, UnBlockingEventListenerInterface
+class Stanzas extends AbstractEventListener implements EventListenerInterface
 {
-
-    /**
-     * Blocking.
-     *
-     * @var boolean
-     */
-    protected $blocking = false;
-
 
     /**
      * {@inheritDoc}
      */
     public function attachEvents()
     {
-        $this->getOutputEventManager()
-            ->attach('{http://jabber.org/protocol/commands}command', array($this, 'query'));
-
+        /**
+         * error events
+         * @see https://xmpp.org/extensions/xep-0133.html#errors
+         */
         $this->getInputEventManager()
-            ->attach('{http://jabber.org/protocol/commands}command', array($this, 'result'));
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}bad-request', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}conflict', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}feature-not-implemented', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}forbidden', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}not-allowed', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}service-unavailable', array($this, 'error'));
+        /**
+         * MUC error events
+         * @see https://xmpp.org/extensions/xep-0045.html#enter-errorcodes
+         */
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}item-not-found', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}registration-required', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}not-acceptable', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}jid-malformed', array($this, 'error'));
     }
 
     /**
-     * Sending a query request for roster sets listener to blocking mode.
-     *
-     * @return void
-     */
-    public function query()
-    {
-        $this->blocking = true;
-    }
-
-    /**
-     * Result received.
+     * we have some errors.
      *
      * @param \Fabiang\Xmpp\Event\XMLEvent $event
      * @return void
      */
-    public function result(XMLEvent $event)
+    public function error(XMLEvent $event)
     {
         if ($event->isEndTag()) {
-            if (!$this->getOptions()->getForm()) {
-                $form = new Form($event);
-                $this->getOptions()->setForm($form);
+            $blockedEvent = $this->getConnection()->getLastBlockingListener();
+            if ($blockedEvent instanceof UnBlockingEventListenerInterface) {
+                $blockedEvent->unBlock();
             }
-            $this->blocking = false;
+            throw StanzasErrorException::createFromEvent($event);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function isBlocking()
-    {
-        return $this->blocking;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function unBlock()
-    {
-        $this->blocking = false;
-    }
 }

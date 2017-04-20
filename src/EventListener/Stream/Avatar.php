@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2014 Fabian Grutschus. All rights reserved.
  *
@@ -33,60 +34,99 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Exception\Stream;
+namespace Fabiang\Xmpp\EventListener\Stream;
 
 use Fabiang\Xmpp\Event\XMLEvent;
+use Fabiang\Xmpp\EventListener\AbstractEventListener;
+use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 
 /**
- * Class CommandErrorException
- * @package Fabiang\Xmpp\Exception\Stream
+ * Listener
+ *
+ * @package Xmpp\EventListener
  */
-class CommandErrorException extends StreamErrorException
+class Avatar extends AbstractEventListener implements BlockingEventListenerInterface
 {
     /**
-     * @see https://xmpp.org/extensions/xep-0086.html#sect-idm139696314152720
+     * Generated id.
+     *
+     * @var string
      */
-    const ERROR_UNDEFINED = 0;
-    const ERROR_BAD_REQUEST = 400;
-    const ERROR_CONFLICT = 409;
-    const ERROR_FEATURE_NOT_IMPLEMENTED = 501;
-    const ERROR_FORBIDDEN = 403;
-    const ERROR_GONE = 302;
-    const ERROR_INTERNAL_SERVER_ERROR = 500;
-    const ERROR_ITEM_NOT_FOUND = 404;
-    const ERROR_NOT_ACCEPTABLE = 406;
-    const ERROR_NOT_ALLOWED = 405;
-    const ERROR_NOT_AUTHORIZED = 401;
-    const ERROR_REGISTRATION_REQUIRED = 407;
-    const ERROR_SERVER_TIMEOUT = 504;
-    const ERROR_SERVICE_UNAVAILABLE = 503;
+    protected $id;
 
     /**
-     * Create exception from XMLEvent object.
+     * Blocking.
      *
-     * @param \Fabiang\Xmpp\Event\XMLEvent $event XMLEvent object
-     *
-     * @return static
+     * @var boolean
      */
-    public static function createFromEvent(XMLEvent $event)
+    protected $blocking = false;
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public function attachEvents()
     {
+        $this->getOutputEventManager()
+            ->attach('{http://jabber.org/protocol/pubsub}pubsub', array($this, 'query'));
+        $this->getInputEventManager()
+            ->attach('{jabber:client}iq', array($this, 'result'));
+    }
+
+    /**
+     * @param XMLEvent $event
+     */
+    public function query(XMLEvent $event)
+    {
+        $this->blocking = true;
         /* @var $element \DOMElement */
-        list($element) = $event->getParameters();
+        $element = $event->getParameter(0);
+        $this->setId($element->parentNode->getAttribute('id'));
+    }
 
-        /* @var $first \DOMElement */
-        $parent = $element->parentNode;
-
-        if (null !== $parent && XML_ELEMENT_NODE === $parent->nodeType) {
-            $code = (int)$parent->getAttribute('code');
-            $message = 'Stream Error: "' . $element->localName . '"';
-        } else {
-            $code = 0;
-            $message = 'Generic stream error';
+    /**
+     * Result received.
+     *
+     * @param \Fabiang\Xmpp\Event\XMLEvent $event
+     * @return void
+     */
+    public function result(XMLEvent $event)
+    {
+        if ($event->isEndTag()) {
+            /* @var $element \DOMElement */
+            $element = $event->getParameter(0);
+            if ($this->getId() === $element->getAttribute('id')) {
+                $this->blocking = false;
+            }
         }
+    }
 
-        $exception = new static($message, $code);
-        $exception->setContent($element->ownerDocument->saveXML($element));
+    /**
+     * Get generated id.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
-        return $exception;
+    /**
+     * Set generated id.
+     *
+     * @param string $id
+     * @return void
+     */
+    public function setId($id)
+    {
+        $this->id = (string)$id;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isBlocking()
+    {
+        return $this->blocking;
     }
 }

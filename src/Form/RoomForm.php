@@ -1,21 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: elfuvo
- * Date: 15.04.17
- * Time: 9:58
- */
 
 namespace Fabiang\Xmpp\Form;
 
 use Fabiang\Xmpp\Event\XMLEvent;
 
 /**
- * Class Form
+ * Class RoomForm
  * @package Fabiang\Xmpp\Form
  */
-class Form extends AbstractForm implements FormInterface
+class RoomForm extends AbstractForm implements FormInterface
 {
+
     /**
      * parse XMLEvent to the form fields
      *
@@ -24,13 +19,12 @@ class Form extends AbstractForm implements FormInterface
      */
     public function __construct(XMLEvent $event)
     {
-        /** @var $event \DOMElement */
-
-        $command = $event->getParameter(0);
-        $form = $command->getElementsByTagName('x')->item(0);
+        /** @var \DOMElement $query */
+        $query = $event->getParameter(0);
+        $form = $query->getElementsByTagName('x')->item(0);
         if ($form) {
             static::$form = $form;
-            $this->sid = $command->getAttribute('sessionid');
+            unset($query);
             $titleNode = static::$form->getElementsByTagName('title')->item(0);
             if ($titleNode) {
                 $this->title = $titleNode->nodeValue;

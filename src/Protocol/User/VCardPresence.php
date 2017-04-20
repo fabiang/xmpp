@@ -47,7 +47,6 @@ class VCardPresence implements ProtocolImplementationInterface
                 "<x xmlns='jabber:x:avatar'>" .
                 "<hash>%s</hash>" .
                 "</x>" .
-                "<c xmlns='http://jabber.org/protocol/caps' node='http://vacuum-im.googlecode.com' ver='nvOfScxvX/KRll5e2pqmMEBIls0=' hash='sha-1'/>" .
                 "</presence>",
                 $this->getImageId(),
                 $this->getImageId()

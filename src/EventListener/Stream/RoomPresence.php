@@ -40,14 +40,17 @@ use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 use Fabiang\Xmpp\EventListener\UnBlockingEventListenerInterface;
-use Fabiang\Xmpp\Form\Form;
+use Fabiang\Xmpp\Protocol\Room\Room;
+use Fabiang\Xmpp\Protocol\User\User;
 
 /**
  * Listener
  *
+ * @see https://xmpp.org/extensions/xep-0045.html#createroom-general
+ *
  * @package Xmpp\EventListener
  */
-class Command extends AbstractEventListener implements BlockingEventListenerInterface, UnBlockingEventListenerInterface
+class RoomPresence extends AbstractEventListener implements BlockingEventListenerInterface, UnBlockingEventListenerInterface
 {
 
     /**
@@ -57,6 +60,12 @@ class Command extends AbstractEventListener implements BlockingEventListenerInte
      */
     protected $blocking = false;
 
+    /**
+     * user object.
+     *
+     * @var User
+     */
+    protected $userObject;
 
     /**
      * {@inheritDoc}
@@ -64,10 +73,10 @@ class Command extends AbstractEventListener implements BlockingEventListenerInte
     public function attachEvents()
     {
         $this->getOutputEventManager()
-            ->attach('{http://jabber.org/protocol/commands}command', array($this, 'query'));
+            ->attach('{http://jabber.org/protocol/muc}x', array($this, 'query'));
 
         $this->getInputEventManager()
-            ->attach('{http://jabber.org/protocol/commands}command', array($this, 'result'));
+            ->attach('{http://jabber.org/protocol/muc#user}x', array($this, 'result'));
     }
 
     /**
@@ -89,9 +98,26 @@ class Command extends AbstractEventListener implements BlockingEventListenerInte
     public function result(XMLEvent $event)
     {
         if ($event->isEndTag()) {
-            if (!$this->getOptions()->getForm()) {
-                $form = new Form($event);
-                $this->getOptions()->setForm($form);
+            if (!$room = $this->getOptions()->getRoom()) {
+                $room = new Room();
+                $this->getOptions()->setRoom($room);
+            }
+
+            /** @var \DOMElement $element */
+            $element = $event->getParameter(0);
+            $affiliationNode = $element->getElementsByTagName('item')->item(0);
+            if ($affiliationNode && $affiliation = $affiliationNode->getAttribute('affiliation')) {
+                $room->setAffiliation($affiliation);
+            } else {
+                $room->setAffiliation(Room::AFFILIATION_OUTCAST);
+            }
+
+            $statusNodeList = $element->getElementsByTagName('status');
+            if ($statusNodeList->length > 0) {
+                for ($i = 0; $i < $statusNodeList->length; $i++) {
+                    $statusNode = $statusNodeList->item($i);
+                    $room->addStatus($statusNode->getAttribute('code'));
+                }
             }
             $this->blocking = false;
         }
