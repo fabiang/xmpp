@@ -39,19 +39,28 @@ namespace Fabiang\Xmpp\EventListener\Stream;
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
-use Fabiang\Xmpp\EventListener\UnBlockingEventListenerInterface;
-use Fabiang\Xmpp\Protocol\Room\Room;
-use Fabiang\Xmpp\Protocol\User\User;
 
 /**
- * Listener
+ * pubsub is using in many cases
  *
- * @see https://xmpp.org/extensions/xep-0045.html#createroom-general
+ * avatars
+ * @see https://xmpp.org/extensions/xep-0084.html#process-pubmeta
+ *
+ * bookmarks
+ * @see https://xmpp.org/extensions/xep-0048.html#storage-pubsub-upload
+ *
+ * Listener
  *
  * @package Xmpp\EventListener
  */
-class RoomPresence extends AbstractEventListener implements BlockingEventListenerInterface, UnBlockingEventListenerInterface
+class Pubsub extends AbstractEventListener implements BlockingEventListenerInterface
 {
+    /**
+     * Generated id.
+     *
+     * @var string
+     */
+    protected $id;
 
     /**
      * Blocking.
@@ -60,12 +69,6 @@ class RoomPresence extends AbstractEventListener implements BlockingEventListene
      */
     protected $blocking = false;
 
-    /**
-     * user object.
-     *
-     * @var User
-     */
-    protected $userObject;
 
     /**
      * {@inheritDoc}
@@ -73,20 +76,20 @@ class RoomPresence extends AbstractEventListener implements BlockingEventListene
     public function attachEvents()
     {
         $this->getOutputEventManager()
-            ->attach('{http://jabber.org/protocol/muc}x', array($this, 'query'));
-
+            ->attach('{http://jabber.org/protocol/pubsub}pubsub', array($this, 'query'));
         $this->getInputEventManager()
-            ->attach('{http://jabber.org/protocol/muc#user}x', array($this, 'result'));
+            ->attach('{jabber:client}iq', array($this, 'result'));
     }
 
     /**
-     * Sending a query request for roster sets listener to blocking mode.
-     *
-     * @return void
+     * @param XMLEvent $event
      */
-    public function query()
+    public function query(XMLEvent $event)
     {
         $this->blocking = true;
+        /* @var $element \DOMElement */
+        $element = $event->getParameter(0);
+        $this->setId($element->parentNode->getAttribute('id'));
     }
 
     /**
@@ -98,33 +101,33 @@ class RoomPresence extends AbstractEventListener implements BlockingEventListene
     public function result(XMLEvent $event)
     {
         if ($event->isEndTag()) {
-            if (!$room = $this->getOptions()->getRoom()) {
-                $room = new Room();
-                $this->getOptions()->setRoom($room);
-            }
-
-            /** @var \DOMElement $element */
+            /* @var $element \DOMElement */
             $element = $event->getParameter(0);
-            $from = $element->parentNode->getAttribute('from');
-            $from = explode("/", $from);
-            $room->setJid($from[0]);
-
-            $affiliationNode = $element->getElementsByTagName('item')->item(0);
-            if ($affiliationNode && $affiliation = $affiliationNode->getAttribute('affiliation')) {
-                $room->setAffiliation($affiliation);
-            } else {
-                $room->setAffiliation(Room::AFFILIATION_OUTCAST);
+            if ($this->getId() === $element->getAttribute('id')) {
+                $this->blocking = false;
             }
-
-            $statusNodeList = $element->getElementsByTagName('status');
-            if ($statusNodeList->length > 0) {
-                for ($i = 0; $i < $statusNodeList->length; $i++) {
-                    $statusNode = $statusNodeList->item($i);
-                    $room->addStatus($statusNode->getAttribute('code'));
-                }
-            }
-            $this->blocking = false;
         }
+    }
+
+    /**
+     * Get generated id.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set generated id.
+     *
+     * @param string $id
+     * @return void
+     */
+    public function setId($id)
+    {
+        $this->id = (string)$id;
     }
 
     /**
@@ -133,13 +136,5 @@ class RoomPresence extends AbstractEventListener implements BlockingEventListene
     public function isBlocking()
     {
         return $this->blocking;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function unBlock()
-    {
-        $this->blocking = false;
     }
 }

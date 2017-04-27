@@ -5,7 +5,10 @@ error_reporting(-1);
 
 use Fabiang\Xmpp\Client;
 use Fabiang\Xmpp\Exception\Stream\StanzasErrorException;
+use Fabiang\Xmpp\Exception\Stream\StreamErrorException;
 use Fabiang\Xmpp\Options;
+use Fabiang\Xmpp\Protocol\Room\Bookmark;
+use Fabiang\Xmpp\Protocol\Room\Membership;
 use Fabiang\Xmpp\Protocol\Room\RequestRoomConfigForm;
 use Fabiang\Xmpp\Protocol\Room\Room;
 use Fabiang\Xmpp\Protocol\Room\RoomConfig;
@@ -18,8 +21,10 @@ $logger->pushHandler(new StreamHandler('xmpp.log', Logger::DEBUG));
 
 $address = $config['connectionType'] . '://' . $config['host'] . ':' . $config['port'];
 
-$room = 'new-room';
+$room = 'test-room';
 $password = '';
+$newUser = 'testuser';
+$newPassword = '123456';
 
 $options = new Options($address);
 $options->setLogger($logger)
@@ -31,13 +36,13 @@ $client = new Client($options);
 
 $client->connect();
 try {
-    $request = new RoomPresence(
+    $presence = new RoomPresence(
         $config['login'] . '@' . $config['host'],
         $config['conference'],
         $room
     );
 
-    $client->send($request);
+    $client->send($presence);
 
 } catch (StanzasErrorException $e) {
     if ($e->getCode() != StanzasErrorException::ERROR_CONFLICT) {
@@ -50,27 +55,36 @@ try {
 
 if ($client->getOptions()->getRoom()->isJustCreated()) {
     fwrite(STDOUT, 'Room presence has been created.' . PHP_EOL);
+} else if ($client->getOptions()->getRoom()->isOwner()) {
+    fwrite(STDOUT, 'Room is already exists. But you are owner of the group. Continue configuring...' . PHP_EOL);
 }
 
+
 if (!$client->getOptions()->getRoom()->isOwner()) {
-    fwrite(STDOUT, 'You are not owner of this room, so forbidden for configuring it.' . PHP_EOL);
-    exit;
+    // this case is often occurs when persistent room is already exists
+    // TODO: check room affiliation of current user
+    fwrite(STDOUT, 'You are not owner of this room, so forbidden to configuring it.' . PHP_EOL);
 }
 
 
 try {
-    $requestForm = new RequestRoomConfigForm(
+    $presenceForm = new RequestRoomConfigForm(
         $config['login'] . '@' . $config['host'],
         $config['conference'],
         $room
     );
-    $client->send($requestForm);
+    $client->send($presenceForm);
     $form = $client->getOptions()->getForm();
+
+    if (!$client->getOptions()->getRoom()) {
+        $client->getOptions()->setRoom(new Room());
+    }
+    $client->getOptions()->getRoom()->setName('New cool room');
 
     /**
      * @see https://xmpp.org/extensions/xep-0045.html#createroom-reserved
-     */
-    $form->setFieldValue('muc#roomconfig_roomname', 'New cool room');
+     **/
+    $form->setFieldValue('muc#roomconfig_roomname', $client->getOptions()->getRoom()->getName());
     $form->setFieldValue('muc#roomconfig_roomdesc', 'Some description...');
     // no public logging. before turn this option on you must check that logging is enabled
     $form->setFieldValue('muc#roomconfig_enablelogging', Room::CONFIG_NO);
@@ -109,7 +123,37 @@ try {
             $form);
         $client->send($roomConfig);
 
+
         fwrite(STDOUT, 'Room success configured' . PHP_EOL);
+
+
+        // add room in a roster
+        $bookmark = new Bookmark(
+            $config['login'] . '@' . $config['host'],
+            $client->getOptions()->getRoom()->getJid(),
+            $client->getOptions()->getRoom()->getName(),
+            $newUser,
+            true
+        );
+
+        $client->send($bookmark);
+
+
+        try {
+
+            $member = new Membership(
+                $config['login'] . '@' . $config['host'],
+                $client->getOptions()->getRoom()->getJid(),
+                Membership::AFFILIATION_MEMBER,
+                $newUser . '@' . $config['host']
+            );
+            $client->send($member);
+
+            fwrite(STDOUT, 'The ' . $newUser . '@' . $config['host'] . ' now is member of the room ' . $room . PHP_EOL);
+        } catch (StanzasErrorException $e) {
+            fwrite(STDOUT, 'Can\'t add member' . PHP_EOL);
+            fwrite(STDOUT, $e->getMessage() . PHP_EOL);
+        }
     } catch (StanzasErrorException $e) {
         fwrite(STDOUT, 'Failed to configure room!' . PHP_EOL);
         fwrite(STDOUT, $e->getMessage() . PHP_EOL);
@@ -117,6 +161,38 @@ try {
 
 } catch (StanzasErrorException $e) {
     fwrite(STDOUT, 'Failed to create room!' . PHP_EOL);
+    fwrite(STDOUT, $e->getMessage() . PHP_EOL);
+}
+$client->disconnect();
+
+
+// the room is not in user roster
+// so add it into bookmarks
+fwrite(STDOUT, 'Login as ' . $newUser . PHP_EOL);
+
+$options = new Options($address);
+$options->setLogger($logger)
+    ->setUsername($newUser)
+    ->setPassword($newPassword)
+    ->setVerifyPeer($config['verifyPeer']);
+
+$client = new Client($options);
+
+
+$client->connect();
+try {
+    $bookmark = new Bookmark(
+        $newUser . '@' . $config['host'],
+        $room . '@' . $config['conference'],
+        'New cool room',
+        $newUser,
+        true
+    );
+
+    $client->send($bookmark);
+    fwrite(STDOUT, 'Bookmark for ' . $room . '@' . $config['conference'] . ' is created.' . PHP_EOL);
+} catch (StreamErrorException $e) {
+    fwrite(STDOUT, 'Can\'t create bookmark for ' . $room . '@' . $config['conference'] . '.' . PHP_EOL);
     fwrite(STDOUT, $e->getMessage() . PHP_EOL);
 }
 $client->disconnect();

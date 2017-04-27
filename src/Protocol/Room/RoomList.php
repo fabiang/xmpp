@@ -18,7 +18,7 @@ use Fabiang\Xmpp\Util\XML;
  * list of rooms
  * @package Fabiang\Xmpp\Protocol
  */
-class Room implements ProtocolImplementationInterface
+class RoomList implements ProtocolImplementationInterface
 {
 
     /**

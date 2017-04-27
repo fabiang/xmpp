@@ -14,7 +14,7 @@ use Fabiang\Xmpp\Util\XML;
 
 /**
  * Class RoomRequestConfig
- * request from for configuring the room
+ * request form for configuring the room
  * user must be owner
  *
  * @see https://xmpp.org/extensions/xep-0045.html#createroom-reserved
@@ -22,16 +22,6 @@ use Fabiang\Xmpp\Util\XML;
  */
 class RequestRoomConfigForm implements ProtocolImplementationInterface
 {
-    /**
-     * role of user in MUC
-     * @see https://xmpp.org/extensions/xep-0045.html#affil
-     */
-    const AFFILIATION_OWNER = 'owner';
-    const AFFILIATION_ADMIN = 'admin';
-    const AFFILIATION_MEMBER = 'member';
-    const AFFILIATION_OUTCAST = 'outcast';
-    const AFFILIATION_NONE = 'none';
-
     /**
      * @var string - name of MUC server
      */

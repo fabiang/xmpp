@@ -45,11 +45,11 @@ class DirectInvite implements ProtocolImplementationInterface
 
     /**
      * DirectInvite constructor.
-     * @param $from string
-     * @param $to string
-     * @param $room string
-     * @param string $password
-     * @param string $reason
+     * @param $from string - invitation from user
+     * @param $to string - invitation to user
+     * @param $room string - full room name, like an new-room@conference.xmpp.site.com
+     * @param string $password - password for the room
+     * @param string $reason - reason for invitation
      */
     public function __construct($from, $to, $room, $password = '', $reason = '')
     {

@@ -12,6 +12,12 @@ namespace Fabiang\Xmpp\Protocol\Room;
 use Fabiang\Xmpp\Protocol\ProtocolImplementationInterface;
 use Fabiang\Xmpp\Util\XML;
 
+/**
+ * @see https://xmpp.org/extensions/xep-0045.html#enter-pres
+ *
+ * Class RoomPresence
+ * @package Fabiang\Xmpp\Protocol\Room
+ */
 class RoomPresence implements ProtocolImplementationInterface
 {
 

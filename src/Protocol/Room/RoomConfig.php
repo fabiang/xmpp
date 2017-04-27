@@ -8,7 +8,9 @@ use Fabiang\Xmpp\Protocol\ProtocolImplementationInterface;
 use Fabiang\Xmpp\Util\XML;
 
 /**
- * Class CreateReservedRoom
+ * Send configuration of the room to the server
+ *
+ * Class RoomConfig
  * @package Fabiang\Xmpp\Protocol\Room
  */
 class RoomConfig implements ProtocolImplementationInterface
@@ -52,7 +54,7 @@ class RoomConfig implements ProtocolImplementationInterface
         return XML::quoteMessage(
             "<iq from='%s' id='%s' to='%s' type='set' xml:lang='en'>" .
             "<query xmlns='http://jabber.org/protocol/muc#owner'>" .
-            "<x xmlns='jabber:x:data' type='submit'/>" .//$this->form->toString() .
+            $this->form->toString() .
             "</query>" .
             "</iq>",
             $this->getFrom(),

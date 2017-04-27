@@ -95,11 +95,18 @@ class Room
      */
     protected $jid;
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * @param string|null $name
+     * @return $this
+     */
     public function setName($name = null)
     {
         if (null === $name || '' === $name) {
@@ -110,11 +117,18 @@ class Room
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getJid()
     {
         return $this->jid;
     }
 
+    /**
+     * @param $jid
+     * @return $this
+     */
     public function setJid($jid)
     {
         $this->jid = (string)$jid;

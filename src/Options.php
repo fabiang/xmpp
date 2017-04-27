@@ -163,6 +163,7 @@ class Options
     public function __construct($address = null)
     {
         $this->authenticationClasses = array(
+            // 'scram-sha-1' => ScramSha1::className(),
             'digest-md5' => DigestMd5::className(),
             'plain' => Plain::className()
         );

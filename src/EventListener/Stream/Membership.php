@@ -45,7 +45,7 @@ use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
  *
  * @package Xmpp\EventListener
  */
-class Avatar extends AbstractEventListener implements BlockingEventListenerInterface
+class Membership extends AbstractEventListener implements BlockingEventListenerInterface
 {
     /**
      * Generated id.
@@ -68,20 +68,17 @@ class Avatar extends AbstractEventListener implements BlockingEventListenerInter
     public function attachEvents()
     {
         $this->getOutputEventManager()
-            ->attach('{http://jabber.org/protocol/pubsub}pubsub', array($this, 'query'));
+            ->attach('{http://jabber.org/protocol/muc#admin}query', array($this, 'query'));
         $this->getInputEventManager()
-            ->attach('{jabber:client}iq', array($this, 'result'));
+            ->attach('{http://jabber.org/protocol/muc#admin}query', array($this, 'result'));
     }
 
     /**
-     * @param XMLEvent $event
+     * Blocking event
      */
-    public function query(XMLEvent $event)
+    public function query()
     {
         $this->blocking = true;
-        /* @var $element \DOMElement */
-        $element = $event->getParameter(0);
-        $this->setId($element->parentNode->getAttribute('id'));
     }
 
     /**
@@ -93,33 +90,8 @@ class Avatar extends AbstractEventListener implements BlockingEventListenerInter
     public function result(XMLEvent $event)
     {
         if ($event->isEndTag()) {
-            /* @var $element \DOMElement */
-            $element = $event->getParameter(0);
-            if ($this->getId() === $element->getAttribute('id')) {
-                $this->blocking = false;
-            }
+            $this->blocking = false;
         }
-    }
-
-    /**
-     * Get generated id.
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set generated id.
-     *
-     * @param string $id
-     * @return void
-     */
-    public function setId($id)
-    {
-        $this->id = (string)$id;
     }
 
     /**
