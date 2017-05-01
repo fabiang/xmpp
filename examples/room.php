@@ -7,7 +7,9 @@ use Fabiang\Xmpp\Client;
 use Fabiang\Xmpp\Exception\Stream\StanzasErrorException;
 use Fabiang\Xmpp\Exception\Stream\StreamErrorException;
 use Fabiang\Xmpp\Options;
-use Fabiang\Xmpp\Protocol\Room\Bookmark;
+use Fabiang\Xmpp\Protocol\Pubsub\BookmarkItem;
+use Fabiang\Xmpp\Protocol\Pubsub\PubsubGet;
+use Fabiang\Xmpp\Protocol\Pubsub\PubsubSet;
 use Fabiang\Xmpp\Protocol\Room\Membership;
 use Fabiang\Xmpp\Protocol\Room\RequestRoomConfigForm;
 use Fabiang\Xmpp\Protocol\Room\Room;
@@ -127,18 +129,6 @@ try {
         fwrite(STDOUT, 'Room success configured' . PHP_EOL);
 
 
-        // add room in a roster
-        $bookmark = new Bookmark(
-            $config['login'] . '@' . $config['host'],
-            $client->getOptions()->getRoom()->getJid(),
-            $client->getOptions()->getRoom()->getName(),
-            $newUser,
-            true
-        );
-
-        $client->send($bookmark);
-
-
         try {
 
             $member = new Membership(
@@ -166,6 +156,7 @@ try {
 $client->disconnect();
 
 
+
 // the room is not in user roster
 // so add it into bookmarks
 fwrite(STDOUT, 'Login as ' . $newUser . PHP_EOL);
@@ -180,17 +171,63 @@ $client = new Client($options);
 
 
 $client->connect();
+
 try {
-    $bookmark = new Bookmark(
+    // firstly, we must get all bookmarks
+    $pubsub = new PubsubGet(
         $newUser . '@' . $config['host'],
-        $room . '@' . $config['conference'],
-        'New cool room',
-        $newUser,
-        true
+        '',// set this option empty for bookmarks, in other cases this option must by something like this pubsub.xmpp.stie.com
+        PubsubGet::NODE_BOOKMARKS
     );
 
-    $client->send($bookmark);
-    fwrite(STDOUT, 'Bookmark for ' . $room . '@' . $config['conference'] . ' is created.' . PHP_EOL);
+    $client->send($pubsub);
+
+} catch (StanzasErrorException $e) {
+    if ($e->getCode() == StanzasErrorException::ERROR_ITEM_NOT_FOUND) {
+        fwrite(STDOUT, 'Bookmarks is empty' . PHP_EOL);
+    } else {
+        fwrite(STDOUT, $e->getMessage() . PHP_EOL);
+        exit;
+    }
+
+}
+
+try {
+    // secondly, we must check that bookmark does not exists
+    $exists = false;
+    /** @var BookmarkItem $item */
+    foreach ($client->getOptions()->getUser()->getPubsubs(PubsubGet::NODE_BOOKMARKS) as $item) {
+        if ($item->getJid() == $room . '@' . $config['conference']) {
+            $exists = true;
+            break;
+        }
+    }
+
+    if (!$exists) {
+        // add bookmark to a list
+        $bookmark = new BookmarkItem(
+            $room . '@' . $config['conference'],
+            'New cool room',
+            true,
+            $newUser
+        );
+        $client->getOptions()->getUser()->addBookmark($bookmark);
+
+        $bookmarkSet = new PubsubSet(
+            $newUser . '@' . $config['host'],
+            PubsubSet::NODE_BOOKMARKS);
+
+        $bookmarkSet->setItems(
+            $client->getOptions()->getUser()->getPubsubs(PubsubGet::NODE_BOOKMARKS)
+        );
+
+        $client->send($bookmarkSet);
+
+
+        fwrite(STDOUT, 'Bookmark for ' . $room . '@' . $config['conference'] . ' is created.' . PHP_EOL);
+    } else {
+        fwrite(STDOUT, 'Bookmark ' . $room . '@' . $config['conference'] . ' exists.' . PHP_EOL);
+    }
 } catch (StreamErrorException $e) {
     fwrite(STDOUT, 'Can\'t create bookmark for ' . $room . '@' . $config['conference'] . '.' . PHP_EOL);
     fwrite(STDOUT, $e->getMessage() . PHP_EOL);

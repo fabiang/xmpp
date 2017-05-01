@@ -83,6 +83,13 @@ class Stanzas extends AbstractEventListener implements EventListenerInterface
             ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}not-acceptable', array($this, 'error'));
         $this->getInputEventManager()
             ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}jid-malformed', array($this, 'error'));
+        /**
+         * Pubsub
+         * @see https://xmpp.org/extensions/xep-0060.html#subscriber-retrieve-error
+         */
+        $this->getInputEventManager()
+            ->attach('{urn:ietf:params:xml:ns:xmpp-stanzas}payment-required', array($this, 'error'));
+
     }
 
     /**

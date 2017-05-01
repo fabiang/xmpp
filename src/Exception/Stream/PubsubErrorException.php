@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2014 Fabian Grutschus. All rights reserved.
  *
@@ -34,88 +33,44 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\EventListener\Stream;
+namespace Fabiang\Xmpp\Exception\Stream;
 
 use Fabiang\Xmpp\Event\XMLEvent;
-use Fabiang\Xmpp\EventListener\AbstractEventListener;
-use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
-use Fabiang\Xmpp\EventListener\UnBlockingEventListenerInterface;
-use Fabiang\Xmpp\Form\RoomForm;
-use Fabiang\Xmpp\Protocol\User\User;
 
 /**
- * Listener
- *
- * @package Xmpp\EventListener
+ * Class PubsubErrorException
+ * @package Fabiang\Xmpp\Exception\Stream
  */
-class RoomOwner extends AbstractEventListener implements BlockingEventListenerInterface, UnBlockingEventListenerInterface
+class PubsubErrorException extends StreamErrorException
 {
 
     /**
-     * Blocking.
+     * Create exception from XMLEvent object.
      *
-     * @var boolean
-     */
-    protected $blocking = false;
-
-    /**
-     * user object.
+     * @param \Fabiang\Xmpp\Event\XMLEvent $event XMLEvent object
      *
-     * @var User
+     * @return static
      */
-    protected $userObject;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function attachEvents()
+    public static function createFromEvent(XMLEvent $event)
     {
-        $this->getOutputEventManager()
-            ->attach('{http://jabber.org/protocol/muc#owner}query', array($this, 'query'));
-        $this->getInputEventManager()
-            ->attach('{http://jabber.org/protocol/muc#owner}query', array($this, 'result'));
-    }
+        /* @var $element \DOMElement */
+        list($element) = $event->getParameters();
 
-    /**
-     * Sending a query request for roster sets listener to blocking mode.
-     *
-     * @return void
-     */
-    public function query()
-    {
-        $this->blocking = true;
-    }
+        /* @var $first \DOMElement */
+        $parent = $element->parentNode;
 
-    /**
-     * Result received.
-     *
-     * @param \Fabiang\Xmpp\Event\XMLEvent $event
-     * @return void
-     */
-    public function result(XMLEvent $event)
-    {
-        if ($event->isEndTag()) {
-            if (!$this->getOptions()->getForm()) {
-                $form = new RoomForm($event);
-                $this->getOptions()->setForm($form);
-            }
-            $this->blocking = false;
+        if (null !== $parent && XML_ELEMENT_NODE === $parent->nodeType) {
+            $message = 'Pubsub error: "' . $element->localName . '"';
+        } else {
+            $message = 'Generic stream error';
         }
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function isBlocking()
-    {
-        return $this->blocking;
-    }
+        if ($feature = $element->getAttribute('feature')) {
+            $message .= ' (' . $feature . ')';
+        }
+        $exception = new static($message);
+        $exception->setContent($element->ownerDocument->saveXML($element));
 
-    /**
-     * {@inheritDoc}
-     */
-    public function unBlock()
-    {
-        $this->blocking = false;
+        return $exception;
     }
 }

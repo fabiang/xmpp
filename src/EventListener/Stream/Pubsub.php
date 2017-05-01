@@ -39,6 +39,10 @@ namespace Fabiang\Xmpp\EventListener\Stream;
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
+use Fabiang\Xmpp\Exception\Stream\PubsubErrorException;
+use Fabiang\Xmpp\Protocol\Pubsub\BookmarkItem;
+use Fabiang\Xmpp\Protocol\Pubsub\PubsubGet;
+use Fabiang\Xmpp\Protocol\User\User;
 
 /**
  * pubsub is using in many cases
@@ -79,6 +83,28 @@ class Pubsub extends AbstractEventListener implements BlockingEventListenerInter
             ->attach('{http://jabber.org/protocol/pubsub}pubsub', array($this, 'query'));
         $this->getInputEventManager()
             ->attach('{jabber:client}iq', array($this, 'result'));
+        $this->getInputEventManager()
+            ->attach('{http://jabber.org/protocol/pubsub}pubsub', array($this, 'collection'));
+        /**
+         * errors
+         * @see https://xmpp.org/extensions/xep-0060.html#subscriber-retrieve-error
+         */
+        $this->getInputEventManager()
+            ->attach('{http://jabber.org/protocol/pubsub#errors}jid-required', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{http://jabber.org/protocol/pubsub#errors}subid-required', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{http://jabber.org/protocol/pubsub#errors}invalid-subid', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{http://jabber.org/protocol/pubsub#errors}not-subscribed', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{http://jabber.org/protocol/pubsub#errors}unsupported', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{http://jabber.org/protocol/pubsub#errors}closed-node', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{http://jabber.org/protocol/pubsub#errors}not-in-roster-group', array($this, 'error'));
+        $this->getInputEventManager()
+            ->attach('{http://jabber.org/protocol/pubsub#errors}presence-subscription-required', array($this, 'error'));
     }
 
     /**
@@ -106,6 +132,57 @@ class Pubsub extends AbstractEventListener implements BlockingEventListenerInter
             if ($this->getId() === $element->getAttribute('id')) {
                 $this->blocking = false;
             }
+        }
+    }
+
+    /**
+     * @param XMLEvent $event
+     */
+    public function collection(XMLEvent $event)
+    {
+        $this->blocking = false;
+
+        $element = $event->getParameter(0);
+
+        if (!$this->getOptions()->getUser()) {
+            $this->getOptions()->setUser(new User());
+        }
+        $user = $this->getOptions()->getUser();
+
+        /**
+         * bookmark items
+         *
+         * @see https://xmpp.org/extensions/xep-0048.html#storage-pubsub-retrieve
+         */
+        $items = $element->getElementsByTagName('conference');
+        if ($items && $items->length > 0) {
+            /** @var \DOMElement $item */
+            foreach ($items as $item) {
+                $bookmark = new BookmarkItem(
+                    $item->getAttribute('jid'),
+                    $item->getAttribute('name'),
+                    $item->getAttribute('autojoin')
+                );
+                if ($item->firstChild) {
+                    $bookmark->setNickname($item->firstChild->textContent);
+                }
+
+                $user->addPubsub(PubsubGet::NODE_BOOKMARKS, $bookmark);
+            }
+        }
+    }
+
+    /**
+     * we have some errors.
+     *
+     * @param \Fabiang\Xmpp\Event\XMLEvent $event
+     * @return void
+     */
+    public function error(XMLEvent $event)
+    {
+        if ($event->isEndTag()) {
+            $this->blocking = false;
+            throw PubsubErrorException::createFromEvent($event);
         }
     }
 

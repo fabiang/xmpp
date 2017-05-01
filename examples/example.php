@@ -20,7 +20,8 @@ $address = $config['connectionType'] . '://' . $config['host'] . ':' . $config['
 $options = new Options($address);
 $options->setLogger($logger)
     ->setUsername($config['login'])
-    ->setPassword($config['password']);
+    ->setPassword($config['password'])
+    ->setVerifyPeer($config['verifyPeer']);
 
 $client = new Client($options);
 

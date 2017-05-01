@@ -35,6 +35,9 @@
  */
 
 namespace Fabiang\Xmpp\Protocol\User;
+use Fabiang\Xmpp\Protocol\Pubsub\BookmarkItem;
+use Fabiang\Xmpp\Protocol\Pubsub\PubsubGet;
+use Fabiang\Xmpp\Protocol\Pubsub\PubsubItemInterface;
 
 /**
  * User object.
@@ -68,11 +71,23 @@ class User
      */
     protected $groups = array();
 
+    /**
+     * @var array
+     */
+    protected $pubsubs = array();
+
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     * @return $this
+     */
     public function setName($name = null)
     {
         if (null === $name || '' === $name) {
@@ -83,42 +98,98 @@ class User
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getJid()
     {
         return $this->jid;
     }
 
+    /**
+     * @param $jid
+     * @return $this
+     */
     public function setJid($jid)
     {
         $this->jid = (string) $jid;
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getSubscription()
     {
         return $this->subscription;
     }
 
+    /**
+     * @param string $subscription
+     * @return $this
+     */
     public function setSubscription($subscription)
     {
         $this->subscription = (string) $subscription;
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getGroups()
     {
         return $this->groups;
     }
 
+    /**
+     * @param array $groups
+     * @return $this
+     */
     public function setGroups(array $groups)
     {
         $this->groups = $groups;
         return $this;
     }
 
+    /**
+     * @param $group
+     * @return $this
+     */
     public function addGroup($group)
     {
         $this->groups[] = (string) $group;
         return $this;
+    }
+
+    /**
+     * @param BookmarkItem $item
+     */
+    public function addBookmark(BookmarkItem $item){
+        $this->addPubsub(PubsubGet::NODE_BOOKMARKS, $item);
+    }
+
+    /**
+     * @param $node
+     * @param PubsubItemInterface $item
+     * @return $this
+     */
+    public function addPubsub($node, PubsubItemInterface $item){
+        if(!array_key_exists($node, $this->pubsubs)){
+            $this->pubsubs[$node] = array();
+        }
+        array_push($this->pubsubs[$node], $item);
+        return $this;
+    }
+
+    /**
+     * @param $node
+     * @return array
+     */
+    public function getPubsubs($node){
+        if(array_key_exists($node, $this->pubsubs)){
+            return $this->pubsubs[$node];
+        }
+        return array();
     }
 }
