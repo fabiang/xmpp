@@ -35,9 +35,10 @@
  */
 
 namespace Fabiang\Xmpp\Protocol\User;
+
 use Fabiang\Xmpp\Protocol\Pubsub\BookmarkItem;
-use Fabiang\Xmpp\Protocol\Pubsub\PubsubGet;
 use Fabiang\Xmpp\Protocol\Pubsub\PubsubItemInterface;
+use Fabiang\Xmpp\Protocol\Pubsub\PubsubSet;
 
 /**
  * User object.
@@ -112,7 +113,7 @@ class User
      */
     public function setJid($jid)
     {
-        $this->jid = (string) $jid;
+        $this->jid = (string)$jid;
         return $this;
     }
 
@@ -130,7 +131,7 @@ class User
      */
     public function setSubscription($subscription)
     {
-        $this->subscription = (string) $subscription;
+        $this->subscription = (string)$subscription;
         return $this;
     }
 
@@ -158,15 +159,16 @@ class User
      */
     public function addGroup($group)
     {
-        $this->groups[] = (string) $group;
+        $this->groups[] = (string)$group;
         return $this;
     }
 
     /**
      * @param BookmarkItem $item
      */
-    public function addBookmark(BookmarkItem $item){
-        $this->addPubsub(PubsubGet::NODE_BOOKMARKS, $item);
+    public function addBookmark(BookmarkItem $item)
+    {
+        $this->addPubsub(PubsubSet::NODE_BOOKMARKS, $item);
     }
 
     /**
@@ -174,8 +176,9 @@ class User
      * @param PubsubItemInterface $item
      * @return $this
      */
-    public function addPubsub($node, PubsubItemInterface $item){
-        if(!array_key_exists($node, $this->pubsubs)){
+    public function addPubsub($node, PubsubItemInterface $item)
+    {
+        if (!array_key_exists($node, $this->pubsubs)) {
             $this->pubsubs[$node] = array();
         }
         array_push($this->pubsubs[$node], $item);
@@ -186,8 +189,9 @@ class User
      * @param $node
      * @return array
      */
-    public function getPubsubs($node){
-        if(array_key_exists($node, $this->pubsubs)){
+    public function getPubsubs($node)
+    {
+        if (array_key_exists($node, $this->pubsubs)) {
             return $this->pubsubs[$node];
         }
         return array();

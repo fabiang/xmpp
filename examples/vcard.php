@@ -38,7 +38,8 @@ $vCard->setProperty('NICKNAME', 'iCoolVan')
     ->setProperty('EMAIL', 'info@personal-site.com');
 
 
-$vCard->setProperty('PHOTO', 'avatar.png');
+$vCard->setProperty('PHOTO', 'avatar.png')
+    ->setImageUrl("https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png");
 $image_hash = $vCard->getImageId();
 
 $vCard->setProperty('URL', 'https://personal-site.com');

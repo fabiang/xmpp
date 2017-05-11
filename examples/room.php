@@ -63,19 +63,20 @@ if ($client->getOptions()->getRoom()->isJustCreated()) {
 
 
 if (!$client->getOptions()->getRoom()->isOwner()) {
-    // this case is often occurs when persistent room is already exists
+    // this case is often occurs when persistent room is already exists,
+    // because jabber server does not returns current user affiliation on presence
     // TODO: check room affiliation of current user
     fwrite(STDOUT, 'You are not owner of this room, so forbidden to configuring it.' . PHP_EOL);
 }
 
 
 try {
-    $presenceForm = new RequestRoomConfigForm(
+    $requestForm = new RequestRoomConfigForm(
         $config['login'] . '@' . $config['host'],
         $config['conference'],
         $room
     );
-    $client->send($presenceForm);
+    $client->send($requestForm);
     $form = $client->getOptions()->getForm();
 
     if (!$client->getOptions()->getRoom()) {
@@ -88,7 +89,7 @@ try {
      **/
     $form->setFieldValue('muc#roomconfig_roomname', $client->getOptions()->getRoom()->getName());
     $form->setFieldValue('muc#roomconfig_roomdesc', 'Some description...');
-    // no public logging. before turn this option on you must check that logging is enabled
+    // no public logging. before turn on this option on you must check that logging is enabled
     $form->setFieldValue('muc#roomconfig_enablelogging', Room::CONFIG_NO);
     // only owner can change name of this room
     $form->setFieldValue('muc#roomconfig_changesubject', Room::CONFIG_NO);
@@ -156,8 +157,7 @@ try {
 $client->disconnect();
 
 
-
-// the room is not in user roster
+// the newly created room is not in user roster
 // so add it into bookmarks
 fwrite(STDOUT, 'Login as ' . $newUser . PHP_EOL);
 
@@ -225,8 +225,10 @@ try {
 
 
         fwrite(STDOUT, 'Bookmark for ' . $room . '@' . $config['conference'] . ' is created.' . PHP_EOL);
+
+
     } else {
-        fwrite(STDOUT, 'Bookmark ' . $room . '@' . $config['conference'] . ' exists.' . PHP_EOL);
+        fwrite(STDOUT, 'Bookmark for ' . $room . '@' . $config['conference'] . ' exists.' . PHP_EOL);
     }
 } catch (StreamErrorException $e) {
     fwrite(STDOUT, 'Can\'t create bookmark for ' . $room . '@' . $config['conference'] . '.' . PHP_EOL);

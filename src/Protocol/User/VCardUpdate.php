@@ -81,6 +81,11 @@ class VCardUpdate implements ProtocolImplementationInterface
     protected $imageId;
 
     /**
+     * @var string|null
+     */
+    protected $imageUrl;
+
+    /**
      * Allowed image mime types
      * @var array
      */
@@ -200,6 +205,18 @@ class VCardUpdate implements ProtocolImplementationInterface
                     $this->imageData = null;
                     break;
             }
+        }
+        return $this;
+    }
+
+    /**
+     * @param $url
+     * @return $this
+     */
+    public function setImageUrl($url)
+    {
+        if (filter_var($url, FILTER_VALIDATE_URL) && isset($this->vCard['PHOTO'])) {
+            $this->vCard['PHOTO']['EXTVAL'] = $url;
         }
         return $this;
     }
