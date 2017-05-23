@@ -34,7 +34,7 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Exception;
+namespace Updivision\Xmpp\Exception;
 
 /**
  * Exception for out-of-bounds.

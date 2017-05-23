@@ -34,11 +34,11 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Integration;
+namespace Updivision\Xmpp\Integration;
 
 use Behat\Behat\Context\BehatContext;
 use Behat\Behat\Exception\PendingException;
-use Fabiang\Xmpp\Util\XML;
+use Updivision\Xmpp\Util\XML;
 
 class AuthenticationContext extends BehatContext
 {
@@ -137,7 +137,7 @@ class AuthenticationContext extends BehatContext
     {
         /* @var $exception \Exception */
         $exception = $this->getMainContext()->exception;
-        assertInstanceOf('\Fabiang\Xmpp\Exception\Stream\AuthenticationErrorException', $exception);
+        assertInstanceOf('\Updivision\Xmpp\Exception\Stream\AuthenticationErrorException', $exception);
         assertSame('Stream Error: "not-authorized"', $exception->getMessage());
     }
 
@@ -161,7 +161,7 @@ class AuthenticationContext extends BehatContext
 
     /**
      *
-     * @return \Fabiang\Xmpp\Connection\Test
+     * @return \Updivision\Xmpp\Connection\Test
      */
     public function getConnection()
     {

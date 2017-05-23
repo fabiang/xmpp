@@ -34,12 +34,12 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Connection;
+namespace Updivision\Xmpp\Connection;
 
-use Fabiang\Xmpp\Stream\XMLStream;
-use Fabiang\Xmpp\Event\EventManagerAwareInterface;
-use Fabiang\Xmpp\EventListener\EventListenerInterface;
-use Fabiang\Xmpp\OptionsAwareInterface;
+use Updivision\Xmpp\Stream\XMLStream;
+use Updivision\Xmpp\Event\EventManagerAwareInterface;
+use Updivision\Xmpp\EventListener\EventListenerInterface;
+use Updivision\Xmpp\OptionsAwareInterface;
 
 /**
  * Connections must implement this interface.
@@ -61,10 +61,10 @@ interface ConnectionInterface extends EventManagerAwareInterface, OptionsAwareIn
      * @return void
      */
     public function disconnect();
-    
+
     /**
      * Set stream is ready.
-     * 
+     *
      * @param boolean $flag Flag
      * @return $this
      */
@@ -72,7 +72,7 @@ interface ConnectionInterface extends EventManagerAwareInterface, OptionsAwareIn
 
     /**
      * Is stream ready.
-     * 
+     *
      * @return boolean
      */
     public function isReady();
@@ -83,7 +83,7 @@ interface ConnectionInterface extends EventManagerAwareInterface, OptionsAwareIn
      * @return boolean
      */
     public function isConnected();
-    
+
     /**
      * Receive data.
      *
@@ -128,10 +128,10 @@ interface ConnectionInterface extends EventManagerAwareInterface, OptionsAwareIn
      * @return $this
      */
     public function setInputStream(XMLStream $inputStream);
-    
+
     /**
      * Reset streams.
-     * 
+     *
      * @return void
      */
     public function resetStreams();

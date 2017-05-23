@@ -34,7 +34,7 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp;
+namespace Updivision\Xmpp;
 
 /**
  * Classes that take options should implent this interface.

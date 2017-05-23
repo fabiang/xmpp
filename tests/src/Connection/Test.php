@@ -34,9 +34,9 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Connection;
+namespace Updivision\Xmpp\Connection;
 
-use Fabiang\Xmpp\Util\XML;
+use Updivision\Xmpp\Util\XML;
 
 /**
  * Connection test double.

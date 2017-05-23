@@ -34,7 +34,7 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Event;
+namespace Updivision\Xmpp\Event;
 
 /**
  * Interface for events.
@@ -88,10 +88,10 @@ interface EventInterface
      * @return $this
      */
     public function setParameters(array $parameters);
-    
+
     /**
      * Get a parameter by index.
-     * 
+     *
      * @param integer $index
      * @retrun mixed
      */
@@ -103,10 +103,10 @@ interface EventInterface
      * @return array
      */
     public function getEventStack();
-    
+
     /**
      * Set event stack.
-     * 
+     *
      * @param array $stack Event stack
      * @return $this
      */

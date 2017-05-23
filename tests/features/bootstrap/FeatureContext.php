@@ -34,14 +34,14 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Integration;
+namespace Updivision\Xmpp\Integration;
 
 use Behat\Behat\Context\BehatContext;
-use Fabiang\Xmpp\Options;
-use Fabiang\Xmpp\Client;
-use Fabiang\Xmpp\Connection\Test;
-use Fabiang\Xmpp\Connection\Socket;
-use Fabiang\Xmpp\Stream\SocketClient;
+use Updivision\Xmpp\Options;
+use Updivision\Xmpp\Client;
+use Updivision\Xmpp\Connection\Test;
+use Updivision\Xmpp\Connection\Socket;
+use Updivision\Xmpp\Stream\SocketClient;
 
 /**
  * Description of FeatureContext
@@ -231,7 +231,7 @@ class FeatureContext extends BehatContext
      */
     public function timeoutExceptionShouldHaveThrown()
     {
-        assertInstanceOf('\\Fabiang\\Xmpp\\Exception\\TimeoutException', $this->exception);
+        assertInstanceOf('\\Updivision\\Xmpp\\Exception\\TimeoutException', $this->exception);
     }
 
     /**
@@ -239,7 +239,7 @@ class FeatureContext extends BehatContext
      */
     public function socketExceptionShouldHaveBeenThrown()
     {
-        assertInstanceOf('\\Fabiang\\Xmpp\\Exception\\ErrorException', $this->exception);
+        assertInstanceOf('\\Updivision\\Xmpp\\Exception\\ErrorException', $this->exception);
     }
 
     /**

@@ -36,55 +36,109 @@
 
 namespace Updivision\Xmpp\EventListener\Stream;
 
-use Updivision\Xmpp\EventListener\BlockingEventListenerInterface;
 use Updivision\Xmpp\Event\XMLEvent;
+use Updivision\Xmpp\EventListener\AbstractEventListener;
+use Updivision\Xmpp\EventListener\BlockingEventListenerInterface;
+use Updivision\Xmpp\Protocol\User\User;
 
 /**
  * Listener
  *
  * @package Xmpp\EventListener
  */
-class Session extends AbstractSessionEvent implements BlockingEventListenerInterface
+class BlockedUsers extends AbstractEventListener implements BlockingEventListenerInterface
 {
+
+    /**
+     * Blocking.
+     *
+     * @var boolean
+     */
+    protected $blocking = false;
+
+    /**
+     * user object.
+     *
+     * @var User
+     */
+    protected $userObject;
 
     /**
      * {@inheritDoc}
      */
     public function attachEvents()
     {
-        $input = $this->getInputEventManager();
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-session}session', array($this, 'sessionStart'));
-        $input->attach('{jabber:client}iq', array($this, 'iq'));
+        $this->getOutputEventManager()
+            ->attach('{urn:xmpp:blocking}blocklist', array($this, 'query'));
+        $this->getInputEventManager()
+            ->attach('{urn:xmpp:blocking}blocklist', array($this, 'result'));
     }
 
     /**
-     * Handle session event.
+     * Sending a query request for roster sets listener to blocking mode.
      *
-     * @param XMLEvent $event
      * @return void
      */
-    public function sessionStart(XMLEvent $event)
+    public function query()
     {
-        $this->respondeToFeatures(
-            $event,
-            '<iq type="set" id="%s"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>'
-        );
+        $this->blocking = true;
     }
 
     /**
-     * Handle iq event.
+     * Result received.
      *
-     * @param XMLEvent $event
-     * @retrun void
+     * @param \Updivision\Xmpp\Event\XMLEvent $event
+     * @return void
      */
-    public function iq(XMLEvent $event)
+    public function result(XMLEvent $event)
     {
         if ($event->isEndTag()) {
+            $users = array();
+
             /* @var $element \DOMElement */
             $element = $event->getParameter(0);
-            if ($this->getId() === $element->getAttribute('id')) {
-                $this->blocking = false;
+            $items   = $element->getElementsByTagName('item');
+            /* @var $item \DOMElement */
+            foreach ($items as $item) {
+                $users[] = $item->getAttribute('jid');
             }
+            dd($users);
+            //$this->getOptions()->setUsers($users);
+            $this->blocking = false;
         }
+    }
+
+    /**
+     * Get user object.
+     *
+     * @return User
+     */
+    public function getUserObject()
+    {
+        if (null === $this->userObject) {
+            $this->setUserObject(new User);
+        }
+
+        return $this->userObject;
+    }
+
+    /**
+     * Set user object.
+     *
+     * @param User $userObject
+     * @return $this
+     */
+    public function setUserObject(User $userObject)
+    {
+        $this->userObject = $userObject;
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isBlocking()
+    {
+        return $this->blocking;
     }
 }

@@ -34,9 +34,9 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Event;
+namespace Updivision\Xmpp\Event;
 
-use Fabiang\Xmpp\Exception\InvalidArgumentException;
+use Updivision\Xmpp\Exception\InvalidArgumentException;
 
 /**
  * Event manager.

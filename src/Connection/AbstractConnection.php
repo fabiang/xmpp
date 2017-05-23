@@ -34,15 +34,15 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Connection;
+namespace Updivision\Xmpp\Connection;
 
-use Fabiang\Xmpp\Stream\XMLStream;
-use Fabiang\Xmpp\EventListener\EventListenerInterface;
-use Fabiang\Xmpp\Event\EventManager;
-use Fabiang\Xmpp\Event\EventManagerInterface;
-use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
-use Fabiang\Xmpp\Options;
-use Fabiang\Xmpp\Exception\TimeoutException;
+use Updivision\Xmpp\Stream\XMLStream;
+use Updivision\Xmpp\EventListener\EventListenerInterface;
+use Updivision\Xmpp\Event\EventManager;
+use Updivision\Xmpp\Event\EventManagerInterface;
+use Updivision\Xmpp\EventListener\BlockingEventListenerInterface;
+use Updivision\Xmpp\Options;
+use Updivision\Xmpp\Exception\TimeoutException;
 use Psr\Log\LogLevel;
 
 /**

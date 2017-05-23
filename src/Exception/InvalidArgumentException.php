@@ -34,11 +34,11 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Exception;
+namespace Updivision\Xmpp\Exception;
 
 /**
  * Exception for invalid arguments.
- * 
+ *
  * "Throw an InvalidArgumentException when your functions or methods receive arguments that are invalid."
  *
  * @package Xmpp\Exception

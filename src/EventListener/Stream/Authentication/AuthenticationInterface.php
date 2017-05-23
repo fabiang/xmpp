@@ -34,9 +34,9 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\EventListener\Stream\Authentication;
+namespace Updivision\Xmpp\EventListener\Stream\Authentication;
 
-use Fabiang\Xmpp\EventListener\EventListenerInterface;
+use Updivision\Xmpp\EventListener\EventListenerInterface;
 
 /**
  * Interface for classes that handle authentication.

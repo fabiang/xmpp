@@ -34,11 +34,11 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp;
+namespace Updivision\Xmpp;
 
-use Fabiang\Xmpp\Connection\ConnectionInterface;
-use Fabiang\Xmpp\Protocol\ImplementationInterface;
-use Fabiang\Xmpp\Protocol\DefaultImplementation;
+use Updivision\Xmpp\Connection\ConnectionInterface;
+use Updivision\Xmpp\Protocol\ImplementationInterface;
+use Updivision\Xmpp\Protocol\DefaultImplementation;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -101,6 +101,12 @@ class Options
 
     /**
      *
+     * @var string
+     */
+    protected $sid;
+
+    /**
+     *
      * @var boolean
      */
     protected $authenticated = false;
@@ -124,8 +130,8 @@ class Options
      * @var array
      */
     protected $authenticationClasses = array(
-        'digest-md5' => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\DigestMd5',
-        'plain'      => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Plain'
+        'digest-md5' => '\\Updivision\\Xmpp\\EventListener\\Stream\\Authentication\\DigestMd5',
+        'plain'      => '\\Updivision\\Xmpp\\EventListener\\Stream\\Authentication\\Plain'
     );
 
     /**
@@ -340,6 +346,28 @@ class Options
     }
 
     /**
+     * Get users jid.
+     *
+     * @return string
+     */
+    public function getSid()
+    {
+        return $this->sid;
+    }
+
+    /**
+     * Set users jid.
+     *
+     * @param string $jid
+     * @return $this
+     */
+    public function setSid($sid)
+    {
+        $this->sid = (string) $sid;
+        return $this;
+    }
+
+    /**
      * Is user authenticated.
      *
      * @return boolean
@@ -418,7 +446,7 @@ class Options
      * Set timeout for connection.
      *
      * @param integer $timeout Seconds
-     * @return \Fabiang\Xmpp\Options
+     * @return \Updivision\Xmpp\Options
      */
     public function setTimeout($timeout)
     {

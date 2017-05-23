@@ -34,19 +34,21 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Protocol;
+namespace Updivision\Xmpp\Protocol;
 
-use Fabiang\Xmpp\Options;
-use Fabiang\Xmpp\EventListener\EventListenerInterface;
-use Fabiang\Xmpp\Event\EventManagerInterface;
-use Fabiang\Xmpp\Event\EventManager;
-use Fabiang\Xmpp\EventListener\Stream\Stream;
-use Fabiang\Xmpp\EventListener\Stream\StreamError;
-use Fabiang\Xmpp\EventListener\Stream\StartTls;
-use Fabiang\Xmpp\EventListener\Stream\Authentication;
-use Fabiang\Xmpp\EventListener\Stream\Bind;
-use Fabiang\Xmpp\EventListener\Stream\Session;
-use Fabiang\Xmpp\EventListener\Stream\Roster as RosterListener;
+use Updivision\Xmpp\Options;
+use Updivision\Xmpp\EventListener\EventListenerInterface;
+use Updivision\Xmpp\Event\EventManagerInterface;
+use Updivision\Xmpp\Event\EventManager;
+use Updivision\Xmpp\EventListener\Stream\Stream;
+use Updivision\Xmpp\EventListener\Stream\StreamError;
+use Updivision\Xmpp\EventListener\Stream\StartTls;
+use Updivision\Xmpp\EventListener\Stream\Authentication;
+use Updivision\Xmpp\EventListener\Stream\Bind;
+use Updivision\Xmpp\EventListener\Stream\Session;
+use Updivision\Xmpp\EventListener\Stream\Roster as RosterListener;
+use Updivision\Xmpp\EventListener\Stream\Register as RegisterListener;
+use Updivision\Xmpp\EventListener\Stream\BlockedUsers as BlockedUsersListener;
 
 /**
  * Default Protocol implementation.
@@ -82,6 +84,8 @@ class DefaultImplementation implements ImplementationInterface
         $this->registerListener(new Bind);
         $this->registerListener(new Session);
         $this->registerListener(new RosterListener);
+        $this->registerListener(new RegisterListener);
+        $this->registerListener(new BlockedUsersListener);
     }
 
     /**

@@ -34,57 +34,23 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Updivision\Xmpp\EventListener\Stream;
+namespace Updivision\Xmpp\Protocol;
 
-use Updivision\Xmpp\EventListener\BlockingEventListenerInterface;
-use Updivision\Xmpp\Event\XMLEvent;
+use Updivision\Xmpp\Util\XML;
 
 /**
- * Listener
+ * Protocol setting for Xmpp.
  *
- * @package Xmpp\EventListener
+ * @package Xmpp\Protocol
  */
-class Session extends AbstractSessionEvent implements BlockingEventListenerInterface
+class BlockedUsers implements ProtocolImplementationInterface
 {
 
     /**
      * {@inheritDoc}
      */
-    public function attachEvents()
+    public function toString()
     {
-        $input = $this->getInputEventManager();
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-session}session', array($this, 'sessionStart'));
-        $input->attach('{jabber:client}iq', array($this, 'iq'));
-    }
-
-    /**
-     * Handle session event.
-     *
-     * @param XMLEvent $event
-     * @return void
-     */
-    public function sessionStart(XMLEvent $event)
-    {
-        $this->respondeToFeatures(
-            $event,
-            '<iq type="set" id="%s"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>'
-        );
-    }
-
-    /**
-     * Handle iq event.
-     *
-     * @param XMLEvent $event
-     * @retrun void
-     */
-    public function iq(XMLEvent $event)
-    {
-        if ($event->isEndTag()) {
-            /* @var $element \DOMElement */
-            $element = $event->getParameter(0);
-            if ($this->getId() === $element->getAttribute('id')) {
-                $this->blocking = false;
-            }
-        }
+        return '<iq type="get" id="' . XML::generateId() . '"><blocklist xmlns="urn:xmpp:blocking"/></iq>';
     }
 }

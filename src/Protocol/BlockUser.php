@@ -34,57 +34,79 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Updivision\Xmpp\EventListener\Stream;
+namespace Updivision\Xmpp\Protocol;
 
-use Updivision\Xmpp\EventListener\BlockingEventListenerInterface;
-use Updivision\Xmpp\Event\XMLEvent;
+use Updivision\Xmpp\Util\XML;
 
 /**
- * Listener
+ * Protocol setting for Xmpp.
  *
- * @package Xmpp\EventListener
+ * @package Xmpp\Protocol
  */
-class Session extends AbstractSessionEvent implements BlockingEventListenerInterface
+class BlockUser implements ProtocolImplementationInterface
 {
 
+	protected $from;
+
+	// the jid of the user to block
+	protected $accountjid;
     /**
      * {@inheritDoc}
      */
-    public function attachEvents()
+    public function toString()
     {
-        $input = $this->getInputEventManager();
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-session}session', array($this, 'sessionStart'));
-        $input->attach('{jabber:client}iq', array($this, 'iq'));
+        return XML::quoteMessage('<iq from="%s" type="set" id="%s">
+				  <block xmlns="urn:xmpp:blocking">
+				    <item jid="%s"/>
+				  </block>
+				</iq>',
+				$this->getFrom(),
+				XML::generateId(),
+				$this->getJabberID()
+			);
     }
 
     /**
-     * Handle session event.
+     * Get JabberID.
      *
-     * @param XMLEvent $event
-     * @return void
+     * @return string
      */
-    public function sessionStart(XMLEvent $event)
+    public function getJabberID()
     {
-        $this->respondeToFeatures(
-            $event,
-            '<iq type="set" id="%s"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>'
-        );
+        return $this->accountjid;
     }
 
     /**
-     * Handle iq event.
+     * Set abberID.
      *
-     * @param XMLEvent $event
-     * @retrun void
+     * @param string $nickname
+     * @return $this
      */
-    public function iq(XMLEvent $event)
+    public function setJabberID($accountjid)
     {
-        if ($event->isEndTag()) {
-            /* @var $element \DOMElement */
-            $element = $event->getParameter(0);
-            if ($this->getId() === $element->getAttribute('id')) {
-                $this->blocking = false;
-            }
-        }
+        $this->accountjid = (string) $accountjid;
+        return $this;
+    }
+
+    /**
+     * Get JabberID.
+     *
+     * @return string
+     */
+    public function getFrom()
+    {
+        return $this->from;
+    }
+
+    /**
+     * Set abberID.
+     *
+     * @param string $nickname
+     * @return $this
+     */
+    public function setFrom($from)
+    {
+        $this->from = (string) $from;
+        return $this;
     }
 }

@@ -34,7 +34,7 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Protocol;
+namespace Updivision\Xmpp\Protocol;
 
 /**
  * Protocol setting for Xmpp.

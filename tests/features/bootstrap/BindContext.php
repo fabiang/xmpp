@@ -34,7 +34,7 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Integration;
+namespace Updivision\Xmpp\Integration;
 
 use Behat\Behat\Context\BehatContext;
 use Behat\Behat\Exception\PendingException;
@@ -78,7 +78,7 @@ class BindContext extends BehatContext
 
     /**
      *
-     * @return \Fabiang\Xmpp\Connection\Test
+     * @return \Updivision\Xmpp\Connection\Test
      */
     public function getConnection()
     {
