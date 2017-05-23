@@ -2,6 +2,7 @@
 
 ## x.x.x (2017-05-xx)
 
+- [MAJOR]: Drop support for PHP lower than 5.6
 - [MAJOR]: [Pull Request #31](https://github.com/fabiang/xmpp/pull/31): Possibility to set context for SocketClient
 
 ## 0.6.1 (2014-11-20)
