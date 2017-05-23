@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## x.x.x (2017-05-xx)
+## 0.7.0 (2017-05-23)
 
 - [MAJOR]: [PR #46](https://github.com/fabiang/xmpp/pull/46) Added support for password-protected chatrooms
 - [MAJOR]: [PR #44](https://github.com/fabiang/xmpp/pull/44) Added anonymous authentication method
