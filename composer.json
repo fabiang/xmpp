@@ -33,7 +33,10 @@
         "behat/behat": "^2.5.5",
         "monolog/monolog": "^1.22",
         "phpunit/phpunit": "^4.8.35",
-        "satooshi/php-coveralls": "^1.0"
+        "satooshi/php-coveralls": "^1.0",
+        "symfony/console": "^2.8",
+        "symfony/dependency-injection": "^2.8",
+        "symfony/finder": "^2.8"
     },
     "suggest": {
         "psr/log-implementation": "Allows more advanced logging of the xmpp connection"
