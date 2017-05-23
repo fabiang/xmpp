@@ -61,11 +61,11 @@ class Stream extends AbstractEventListener implements BlockingEventListenerInter
     public function attachEvents()
     {
         $this->getOutputEventManager()
-            ->attach('{http://etherx.jabber.org/streams}stream', array($this, 'streamStart'));
+            ->attach('{http://etherx.jabber.org/streams}stream', [$this, 'streamStart']);
 
         $input = $this->getInputEventManager();
-        $input->attach('{http://etherx.jabber.org/streams}stream', array($this, 'streamServer'));
-        $input->attach('{http://etherx.jabber.org/streams}features', array($this, 'features'));
+        $input->attach('{http://etherx.jabber.org/streams}stream', [$this, 'streamServer']);
+        $input->attach('{http://etherx.jabber.org/streams}features', [$this, 'features']);
     }
 
     /**

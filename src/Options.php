@@ -115,7 +115,7 @@ class Options
      *
      * @var array
      */
-    protected $users = array();
+    protected $users = [];
 
     /**
      * Timeout for connection.
@@ -129,11 +129,11 @@ class Options
      *
      * @var array
      */
-    protected $authenticationClasses = array(
+    protected $authenticationClasses = [
         'digest-md5' => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\DigestMd5',
         'plain'      => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Plain',
         'anonymous'  => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Anonymous'
-    );
+    ];
 
 
     /**
@@ -141,7 +141,7 @@ class Options
      *
      * @var array
      */
-    protected $contextOptions = array();
+    protected $contextOptions = [];
 
 
     /**

@@ -55,7 +55,7 @@ class EventManager implements EventManagerInterface
      *
      * @var array
      */
-    protected $events = array(self::WILDCARD => array());
+    protected $events = [self::WILDCARD => []];
 
     /**
      * Event object.
@@ -90,7 +90,7 @@ class EventManager implements EventManagerInterface
         }
 
         if (!isset($this->events[$event])) {
-            $this->events[$event] = array();
+            $this->events[$event] = [];
         }
 
         if (!in_array($callback, $this->events[$event], true)) {
@@ -107,13 +107,13 @@ class EventManager implements EventManagerInterface
             return;
         }
 
-        $events = array();
+        $events = [];
         if (!empty($this->events[$event])) {
             $events = $this->events[$event];
         }
 
         $callbacks = array_merge($events, $this->events[self::WILDCARD]);
-        $previous  = array();
+        $previous  = [];
 
         $eventObject = clone $this->getEventObject();
         $eventObject->setName($event);

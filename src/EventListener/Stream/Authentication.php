@@ -63,7 +63,7 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
      *
      * @var array
      */
-    protected $mechanisms = array();
+    protected $mechanisms = [];
 
     /**
      * {@inheritDoc}
@@ -71,10 +71,10 @@ class Authentication extends AbstractEventListener implements BlockingEventListe
     public function attachEvents()
     {
         $input = $this->getConnection()->getInputStream()->getEventManager();
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}mechanisms', array($this, 'authenticate'));
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}mechanism', array($this, 'collectMechanisms'));
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}failure', array($this, 'failure'));
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}success', array($this, 'success'));
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}mechanisms', [$this, 'authenticate']);
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}mechanism', [$this, 'collectMechanisms']);
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}failure', [$this, 'failure']);
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}success', [$this, 'success']);
     }
 
     /**

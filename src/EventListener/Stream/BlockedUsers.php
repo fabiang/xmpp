@@ -69,9 +69,9 @@ class BlockedUsers extends AbstractEventListener implements BlockingEventListene
     public function attachEvents()
     {
         $this->getOutputEventManager()
-            ->attach('{urn:xmpp:blocking}blocklist', array($this, 'query'));
+            ->attach('{urn:xmpp:blocking}blocklist', [$this, 'query']);
         $this->getInputEventManager()
-            ->attach('{urn:xmpp:blocking}blocklist', array($this, 'result'));
+            ->attach('{urn:xmpp:blocking}blocklist', [$this, 'result']);
     }
 
     /**
@@ -93,7 +93,7 @@ class BlockedUsers extends AbstractEventListener implements BlockingEventListene
     public function result(XMLEvent $event)
     {
         if ($event->isEndTag()) {
-            $users = array();
+            $users = [];
 
             /* @var $element \DOMElement */
             $element = $event->getParameter(0);

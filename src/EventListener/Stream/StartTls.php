@@ -62,8 +62,8 @@ class StartTls extends AbstractEventListener implements BlockingEventListenerInt
     public function attachEvents()
     {
         $input = $this->getInputEventManager();
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-tls}starttls', array($this, 'starttlsEvent'));
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-tls}proceed', array($this, 'proceed'));
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-tls}starttls', [$this, 'starttlsEvent']);
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-tls}proceed', [$this, 'proceed']);
     }
 
     /**

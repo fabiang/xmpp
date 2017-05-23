@@ -66,7 +66,7 @@ class User
      *
      * @var array
      */
-    protected $groups = array();
+    protected $groups = [];
 
     public function getName()
     {

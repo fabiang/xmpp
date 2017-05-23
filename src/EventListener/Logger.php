@@ -69,6 +69,6 @@ class Logger extends AbstractEventListener
      */
     public function attachEvents()
     {
-        $this->getEventManager()->attach('logger', array($this, 'event'));
+        $this->getEventManager()->attach('logger', [$this, 'event']);
     }
 }

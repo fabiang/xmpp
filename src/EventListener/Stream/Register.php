@@ -69,9 +69,9 @@ class Register extends AbstractEventListener implements BlockingEventListenerInt
     public function attachEvents()
     {
         $this->getOutputEventManager()
-            ->attach('{http://jabber.org/protocol/commands}command', array($this, 'query'));
+            ->attach('{http://jabber.org/protocol/commands}command', [$this, 'query']);
         $this->getInputEventManager()
-            ->attach('{http://jabber.org/protocol/commands}command', array($this, 'result'));
+            ->attach('{http://jabber.org/protocol/commands}command', [$this, 'result']);
     }
 
     /**

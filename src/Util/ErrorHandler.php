@@ -59,7 +59,7 @@ class ErrorHandler
      *
      * @var array
      */
-    protected $arguments = array();
+    protected $arguments = [];
 
     public function __construct($method)
     {

@@ -129,7 +129,7 @@ XML;
         // check if we didn't receive any data
         // if not we re-try to connect via TLS
         if (false === $this->receivedAnyData) {
-            $matches = array();
+            $matches = [];
             $previousAddress = $this->getOptions()->getAddress();
             // only reconnect via tls if we've used tcp before.
             if (preg_match('#tcp://(?<address>.+)#', $previousAddress, $matches)) {

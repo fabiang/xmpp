@@ -84,7 +84,7 @@ abstract class AbstractConnection implements ConnectionInterface
      *
      * @var EventListenerInterface[]
      */
-    protected $listeners = array();
+    protected $listeners = [];
 
     /**
      * Connected.
@@ -259,7 +259,7 @@ abstract class AbstractConnection implements ConnectionInterface
      */
     protected function log($message, $level = LogLevel::DEBUG)
     {
-        $this->getEventManager()->trigger('logger', $this, array($message, $level));
+        $this->getEventManager()->trigger('logger', $this, [$message, $level]);
     }
 
     /**
