@@ -7,6 +7,11 @@ cache:
     - vendor
     - $HOME/.composer/cache
 
+env:
+  matrix:
+    - PREFER_LOWEST=""
+    - PREFER_LOWEST="--prefer-lowest"
+
 php:
   - 7.1
   - 7
@@ -14,12 +19,15 @@ php:
   - nightly
   - hhvm
 
+before_install:
+  - composer config --global github-oauth.github.com $GITHUB_OAUTH_TOKEN
+
 install:
-  - composer install --dev --no-interaction
+  - composer update --no-interaction --prefer-stable --prefer-dist --no-suggest --no-scripts --no-plugins $PREFER_LOWEST
 
 script:
-  - ./vendor/bin/phpunit -c tests --coverage-clover=build/logs/clover.xml
-  - ./vendor/bin/behat --config=tests/behat.yml --format=progress --strict
+  - ./vendor/bin/phpunit --coverage-clover=build/logs/clover.xml
+  - ./vendor/bin/behat --format=progress --strict
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar

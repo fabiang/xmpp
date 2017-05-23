@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## x.x.x (2017-05-xx)
+
+- [MAJOR]: [Pull Request #31](https://github.com/fabiang/xmpp/pull/31): Possibility to set context for SocketClient
+
 ## 0.6.1 (2014-11-20)
 
 - [PATCH] [Issue #4](https://github.com/fabiang/xmpp/issues/4):  Incomplete buffer response
