@@ -36,6 +36,7 @@
 
 namespace Fabiang\Xmpp\EventListener\Stream;
 
+use PHPUnit\Framework\TestCase;
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\Connection\Test;
 use Fabiang\Xmpp\Event\EventManager;
@@ -46,7 +47,7 @@ use Fabiang\Xmpp\Options;
  *
  * @coversDefaultClass Fabiang\Xmpp\EventListener\Stream\Authentication
  */
-class AuthenticationTest extends \PHPUnit_Framework_TestCase
+class AuthenticationTest extends TestCase
 {
 
     /**
@@ -276,7 +277,7 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
         $event   = new XMLEvent;
         $event->setParameters(array($element));
 
-        $connection = $this->getMock('\Fabiang\Xmpp\Connection\Test', array());
+        $connection = $this->createMock(Test::class);
         $this->object->getOptions()->setConnection($connection);
 
         $connection->expects($this->once())

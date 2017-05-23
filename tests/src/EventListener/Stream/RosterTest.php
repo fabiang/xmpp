@@ -36,6 +36,7 @@
 
 namespace Fabiang\Xmpp\EventListener\Stream;
 
+use PHPUnit\Framework\TestCase;
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\Connection\Test;
 use Fabiang\Xmpp\Options;
@@ -46,7 +47,7 @@ use Fabiang\Xmpp\Protocol\User\User;
  *
  * @coversDefaultClass Fabiang\Xmpp\EventListener\Stream\Roster
  */
-class RosterTest extends \PHPUnit_Framework_TestCase
+class RosterTest extends TestCase
 {
 
     /**

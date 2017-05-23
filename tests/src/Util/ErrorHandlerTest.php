@@ -36,6 +36,7 @@
 
 namespace Fabiang\Xmpp\Util;
 
+use PHPUnit\Framework\TestCase;
 use Fabiang\Xmpp\Exception\ErrorException;
 
 /**
@@ -43,7 +44,7 @@ use Fabiang\Xmpp\Exception\ErrorException;
  *
  * @coversDefaultClass Fabiang\Xmpp\Util\ErrorHandler
  */
-class ErrorHandlerTest extends \PHPUnit_Framework_TestCase
+class ErrorHandlerTest extends TestCase
 {
 
     /**

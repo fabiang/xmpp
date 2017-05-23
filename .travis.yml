@@ -26,7 +26,7 @@ install:
   - composer update --no-interaction --prefer-stable --prefer-dist --no-suggest --no-scripts --no-plugins $PREFER_LOWEST
 
 script:
-  - ./vendor/bin/phpunit --coverage-clover=build/logs/clover.xml
+  - ./vendor/bin/phpunit --verbose --coverage-clover=build/logs/clover.xml
   - ./vendor/bin/behat --format=progress --strict
 
 after_script:

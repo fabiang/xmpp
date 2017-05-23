@@ -41,9 +41,7 @@
     convertErrorsToExceptions="true"
     convertNoticesToExceptions="true"
     convertWarningsToExceptions="true"
-    forceCoversAnnotation="true"
-    strict="true"
-    verbose="true">
+    forceCoversAnnotation="true">
 
     <testsuites>
         <testsuite name="Xmpp">
@@ -56,5 +54,11 @@
             <directory>src/</directory>
         </whitelist>
     </filter>
+
+    <php>
+        <ini name="error_reporting" value="-1"/>
+        <ini name="display_errors" value="On"/>
+        <ini name="log_errors" value="Off"/>
+    </php>
 
 </phpunit>

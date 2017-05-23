@@ -2,6 +2,7 @@
 
 namespace Fabiang\Xmpp\Connection;
 
+use PHPUnit\Framework\TestCase;
 use Fabiang\Xmpp\Options;
 use Fabiang\Xmpp\Connection\Socket;
 use Fabiang\Xmpp\EventListener\Stream\Stream;
@@ -12,7 +13,7 @@ use Fabiang\Xmpp\Event\Event;
  *
  * @coversDefaultClass Fabiang\Xmpp\Connection\Test
  */
-class TestTest extends \PHPUnit_Framework_TestCase
+class TestTest extends TestCase
 {
 
     /**

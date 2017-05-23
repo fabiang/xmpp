@@ -36,6 +36,7 @@
 
 namespace Fabiang\Xmpp\EventListener\Stream\Authentication;
 
+use PHPUnit\Framework\TestCase;
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\Connection\Test;
 use Fabiang\Xmpp\Options;
@@ -46,7 +47,7 @@ use Fabiang\Xmpp\Util\XML;
  *
  * @coversDefaultClass Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5
  */
-class DigestMd5Test extends \PHPUnit_Framework_TestCase
+class DigestMd5Test extends TestCase
 {
 
     /**

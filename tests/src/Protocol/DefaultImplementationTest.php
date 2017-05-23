@@ -36,6 +36,7 @@
 
 namespace Fabiang\Xmpp\Protocol;
 
+use PHPUnit\Framework\TestCase;
 use Fabiang\Xmpp\Options;
 use Fabiang\Xmpp\Connection\Test;
 
@@ -44,7 +45,7 @@ use Fabiang\Xmpp\Connection\Test;
  *
  * @coversDefaultClass Fabiang\Xmpp\Protocol\DefaultImplementation
  */
-class DefaultImplementationTest extends \PHPUnit_Framework_TestCase
+class DefaultImplementationTest extends TestCase
 {
 
     /**

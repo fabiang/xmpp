@@ -36,6 +36,7 @@
 
 namespace Fabiang\Xmpp\EventListener\Stream;
 
+use PHPUnit\Framework\TestCase;
 use Fabiang\Xmpp\Connection\Test;
 use Fabiang\Xmpp\Options;
 use Fabiang\Xmpp\Event\XMLEvent;
@@ -45,7 +46,7 @@ use Fabiang\Xmpp\Event\XMLEvent;
  *
  * @coversDefaultClass Fabiang\Xmpp\EventListener\Stream\StartTls
  */
-class StartTlsTest extends \PHPUnit_Framework_TestCase
+class StartTlsTest extends TestCase
 {
 
     /**

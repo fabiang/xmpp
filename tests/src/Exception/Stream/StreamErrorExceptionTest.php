@@ -36,6 +36,7 @@
 
 namespace Fabiang\Xmpp\Exception\Stream;
 
+use PHPUnit\Framework\TestCase;
 use Fabiang\Xmpp\Event\XMLEvent;
 
 /**
@@ -43,7 +44,7 @@ use Fabiang\Xmpp\Event\XMLEvent;
  *
  * @coversDefaultClass Fabiang\Xmpp\Exception\Stream\StreamErrorException
  */
-class StreamErrorExceptionTest extends \PHPUnit_Framework_TestCase
+class StreamErrorExceptionTest extends TestCase
 {
 
     /**

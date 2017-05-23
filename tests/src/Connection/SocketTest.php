@@ -36,6 +36,7 @@
 
 namespace Fabiang\Xmpp\Connection;
 
+use PHPUnit\Framework\TestCase;
 use Fabiang\Xmpp\Stream\XMLStream;
 use Fabiang\Xmpp\Stream\SocketClient;
 use Fabiang\Xmpp\EventListener\Stream\Stream;
@@ -49,7 +50,7 @@ use Psr\Log\LogLevel;
  *
  * @coversDefaultClass Fabiang\Xmpp\Connection\Socket
  */
-class SocketTest extends \PHPUnit_Framework_TestCase
+class SocketTest extends TestCase
 {
 
     /**
@@ -87,7 +88,7 @@ class SocketTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructor()
     {
-        $mock   = $this->getMock('\Fabiang\Xmpp\Stream\SocketClient', array(), array(), '', false);
+        $mock   = $this->createMock(SocketClient::class);
         $object = new Socket($mock, '');
         $this->assertSame($mock, $object->getSocket());
     }
