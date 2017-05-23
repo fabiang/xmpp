@@ -92,21 +92,28 @@ class SocketClient
      */
     public function connect($timeout = 30, $persistent = false)
     {
+        $flags = STREAM_CLIENT_CONNECT;
+
         if (true === $persistent) {
-            $flags = STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT;
-        } else {
-            $flags = STREAM_CLIENT_CONNECT;
+            $flags |= STREAM_CLIENT_PERSISTENT;
         }
 
         // call stream_socket_client with custom error handler enabled
         $handler = new ErrorHandler(
-            function ($address, $timeout, $flags) {
-                $context = (null != $this->options) ? stream_context_create($this->options) : null;
-                return stream_socket_client($address, $errno, $errstr, $timeout, $flags, $context);
+            function ($address, $timeout, $flags, array $options = null) {
+                $errno  = null;
+                $errstr = null;
+
+                if (!empty($options)) {
+                    $context = stream_context_create($options);
+                    return stream_socket_client($address, $errno, $errstr, $timeout, $flags, $context);
+                }
+                return stream_socket_client($address, $errno, $errstr, $timeout, $flags);
             },
             $this->address,
             $timeout,
-            $flags
+            $flags,
+            $this->options
         );
         $resource = $handler->execute(__FILE__, __LINE__);
 
