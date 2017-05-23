@@ -2,8 +2,11 @@
 
 ## x.x.x (2017-05-xx)
 
+- [MAJOR]: [PR #34](https://github.com/fabiang/xmpp/pull/34) Added support for registereing user
+- [MAJOR]: [PR #34](https://github.com/fabiang/xmpp/pull/34) Added vCard support
+- [MAJOR]: [PR #34](https://github.com/fabiang/xmpp/pull/34) Added support for blocking and unblocking an user
 - [MAJOR]: Drop support for PHP lower than 5.6
-- [MAJOR]: [Pull Request #31](https://github.com/fabiang/xmpp/pull/31): Possibility to set context for SocketClient
+- [MAJOR]: [PR #31](https://github.com/fabiang/xmpp/pull/31): Possibility to set context for SocketClient
 
 ## 0.6.1 (2014-11-20)
 
