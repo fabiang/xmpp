@@ -5,12 +5,12 @@ error_reporting(-1);
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-use Fabiang\Xmpp\Options;
-use Fabiang\Xmpp\Client;
+use Updivision\Xmpp\Options;
+use Updivision\Xmpp\Client;
 
-use Fabiang\Xmpp\Protocol\Roster;
-use Fabiang\Xmpp\Protocol\Presence;
-use Fabiang\Xmpp\Protocol\Message;
+use Updivision\Xmpp\Protocol\Roster;
+use Updivision\Xmpp\Protocol\Presence;
+use Updivision\Xmpp\Protocol\Message;
 
 $logger = new Logger('xmpp');
 $logger->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));

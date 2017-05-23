@@ -34,7 +34,7 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Integration;
+namespace Updivision\Xmpp\Integration;
 
 use Behat\Behat\Context\BehatContext;
 use Behat\Behat\Exception\PendingException;
@@ -79,7 +79,7 @@ class RosterContext extends BehatContext
     {
         $users = $this->getConnection()->getOptions()->getUsers();
         assertCount(1, $users);
-        /* @var $user \Fabiang\Xmpp\Protocol\User\User */
+        /* @var $user \Updivision\Xmpp\Protocol\User\User */
         $user = $users[0];
         assertSame('John Doe', $user->getName());
         assertSame('john.doe@localhost', $user->getJid());
@@ -89,7 +89,7 @@ class RosterContext extends BehatContext
 
     /**
      *
-     * @return \Fabiang\Xmpp\Connection\Test
+     * @return \Updivision\Xmpp\Connection\Test
      */
     public function getConnection()
     {

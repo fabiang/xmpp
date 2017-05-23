@@ -34,7 +34,7 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Event;
+namespace Updivision\Xmpp\Event;
 
 /**
  * INterface for xml events.

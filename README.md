@@ -1,7 +1,7 @@
-# fabiang/xmpp
+# updivison/xmpp
 
-[![Latest Stable Version](https://poser.pugx.org/fabiang/xmpp/v/stable.svg)](https://packagist.org/packages/fabiang/xmpp) [![Total Downloads](https://poser.pugx.org/fabiang/xmpp/downloads.svg)](https://packagist.org/packages/fabiang/xmpp) [![Latest Unstable Version](https://poser.pugx.org/fabiang/xmpp/v/unstable.svg)](https://packagist.org/packages/fabiang/xmpp) [![License](https://poser.pugx.org/fabiang/xmpp/license.svg)](https://packagist.org/packages/fabiang/xmpp)  
-[![Build Status](https://travis-ci.org/fabiang/xmpp.png?branch=master)](https://travis-ci.org/fabiang/xmpp) [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/fabiang/xmpp/badges/quality-score.png?s=2605ad2bc987ff8501b8f749addff43ec1ac7098)](https://scrutinizer-ci.com/g/fabiang/xmpp/) [![Coverage Status](https://img.shields.io/coveralls/fabiang/xmpp.svg)](https://coveralls.io/r/fabiang/xmpp?branch=master) [![Dependency Status](https://gemnasium.com/fabiang/xmpp.png)](https://gemnasium.com/fabiang/xmpp) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/a535cd82-788d-4506-803e-02ede44a9e74/mini.png)](https://insight.sensiolabs.com/projects/a535cd82-788d-4506-803e-02ede44a9e74)
+[![Latest Stable Version](https://poser.pugx.org/updivision/xmpp/v/stable.svg)](https://packagist.org/packages/updivision/xmpp) [![Total Downloads](https://poser.pugx.org/updivision/xmpp/downloads.svg)](https://packagist.org/packages/updivision/xmpp) [![Latest Unstable Version](https://poser.pugx.org/updivision/xmpp/v/unstable.svg)](https://packagist.org/packages/updivision/xmpp) [![License](https://poser.pugx.org/updivision/xmpp/license.svg)](https://packagist.org/packages/updivision/xmpp)
+[![Build Status](https://travis-ci.org/updivision/xmpp.png?branch=master)](https://travis-ci.org/updivision/xmpp) [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/updivision/xmpp/badges/quality-score.png?s=2605ad2bc987ff8501b8f749addff43ec1ac7098)](https://scrutinizer-ci.com/g/updivision/xmpp/) [![Coverage Status](https://img.shields.io/coveralls/updivision/xmpp.svg)](https://coveralls.io/r/updivision/xmpp?branch=master) [![Dependency Status](https://gemnasium.com/updivision/xmpp.png)](https://gemnasium.com/updivision/xmpp) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/a535cd82-788d-4506-803e-02ede44a9e74/mini.png)](https://insight.sensiolabs.com/projects/a535cd82-788d-4506-803e-02ede44a9e74)
 
 Library for XMPP protocol connections (Jabber) for PHP.
 
@@ -18,7 +18,7 @@ New to Composer? Read the [introduction](https://getcomposer.org/doc/00-intro.md
 ```json
 {
     "require": {
-        "fabiang/xmpp": "*"
+        "updivision/xmpp": "*"
     }
 }
 ```
@@ -28,13 +28,13 @@ New to Composer? Read the [introduction](https://getcomposer.org/doc/00-intro.md
 This library uses an object to hold options:
 
 ```php
-use Fabiang\Xmpp\Options;
+use Updivision\Xmpp\Options;
 $options = new Options($address);
 $options->setUsername($username)
     ->setPassword($password);
 ```
 
-The server address must be in the format `tcp://myjabber.com:5222`.  
+The server address must be in the format `tcp://myjabber.com:5222`.
 If the server supports TLS the connection will automatically be encrypted.
 
 You can also pass a PSR-2-compatible object to the options object:
@@ -46,18 +46,18 @@ $options->setLogger($logger)
 The client manages the connection to the Jabber server and requires the options object:
 
 ```php
-use Fabiang\Xmpp\Client;
+use Updivision\Xmpp\Client;
 $client = new Client($options);
 // optional connect manually
 $client->connect();
 ```
 
-For sending data you just need to pass a object that implements `Fabiang\Xmpp\Protocol\ProtocolImplementationInterface`:
+For sending data you just need to pass a object that implements `Updivision\Xmpp\Protocol\ProtocolImplementationInterface`:
 
 ```php
-use Fabiang\Xmpp\Protocol\Roster;
-use Fabiang\Xmpp\Protocol\Presence;
-use Fabiang\Xmpp\Protocol\Message;
+use Updivision\Xmpp\Protocol\Roster;
+use Updivision\Xmpp\Protocol\Presence;
+use Updivision\Xmpp\Protocol\Message;
 
 // fetch roster list; users and their groups
 $client->send(new Roster);
@@ -109,8 +109,7 @@ New features should allways tested with Behat.
 BSD-2-Clause. See the [LICENSE](LICENSE.md).
 
 ## TODO
-    
+
 - Better integration of channels
 - Factory method for server addresses
-- Add support von vCard
 - improve documentation

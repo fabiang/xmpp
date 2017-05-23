@@ -1,8 +1,8 @@
 <?php
 
-namespace Fabiang\Xmpp\Protocol;
+namespace Updivision\Xmpp\Protocol;
 
-use Fabiang\Xmpp\Util\XML;
+use Updivision\Xmpp\Util\XML;
 
 /**
  * Protocol setting for Xmpp.

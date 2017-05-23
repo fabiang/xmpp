@@ -1,20 +1,26 @@
 {
-    "name": "fabiang/xmpp",
+    "name": "updivision/xmpp",
     "description": "Library for XMPP protocol (Jabber) connections",
     "license": "BSD-2-Clause",
-    "homepage": "https://github.com/fabiang/xmpp",
-    "keywords": ["jabber", "xmpp"],
+    "homepage": "https://github.com/updivision/xmpp",
+    "keywords": ["jabber", "xmpp", "php"],
     "authors": [
         {
             "name": "Fabian Grutschus",
             "email": "f.grutschus@lubyte.de",
             "homepage": "http://www.lubyte.de/",
             "role": "developer"
+        },
+        {
+            "name": "Alin Ghitu",
+            "email": "alin@updivision.com",
+            "homepage": "http://updivision.com",
+            "role": "developer"
         }
     ],
     "autoload": {
         "psr-4": {
-            "Fabiang\\Xmpp\\": "src/"
+            "Updivision\\Xmpp\\": "src/"
         }
     },
     "autoload-dev": {
@@ -22,7 +28,7 @@
             "vendor/phpunit/phpunit/src/Framework/Assert/Functions.php"
         ],
         "psr-4": {
-            "Fabiang\\Xmpp\\": "tests/src/"
+            "Updivision\\Xmpp\\": "tests/src/"
         }
     },
     "require": {

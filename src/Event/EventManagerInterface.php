@@ -34,9 +34,9 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Event;
+namespace Updivision\Xmpp\Event;
 
-use Fabiang\Xmpp\Event\EventInterface;
+use Updivision\Xmpp\Event\EventInterface;
 
 /**
  * Event manager interface.
@@ -47,33 +47,33 @@ interface EventManagerInterface
 {
     /**
      * Trigger an event.
-     * 
+     *
      * @param string $event      Name of the event
      * @param object $caller     Triggering object (caller)
      * @param array  $parameters Event parameters
      * @return void
      */
     public function trigger($event, $caller, array $parameters);
-    
+
     /**
      * Attach event.
-     * 
+     *
      * @param string   $event    Name of the event
      * @param callback $callback Callback that handles the event
      * @return void
      */
     public function attach($event, /*callback*/ $callback);
-    
+
     /**
      * Return event object.
-     * 
+     *
      * @return EventInterface
      */
     public function getEventObject();
-    
+
     /**
      * Set event object.
-     * 
+     *
      * @param EventInterface $eventObject
      * @return $this
      */

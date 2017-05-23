@@ -34,10 +34,10 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Util;
+namespace Updivision\Xmpp\Util;
 
-use Fabiang\Xmpp\Exception\InvalidArgumentException;
-use Fabiang\Xmpp\Exception\ErrorException;
+use Updivision\Xmpp\Exception\InvalidArgumentException;
+use Updivision\Xmpp\Exception\ErrorException;
 
 /**
  * XML utility methods.

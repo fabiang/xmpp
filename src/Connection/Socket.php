@@ -34,13 +34,13 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Connection;
+namespace Updivision\Xmpp\Connection;
 
 use Psr\Log\LogLevel;
-use Fabiang\Xmpp\Stream\SocketClient;
-use Fabiang\Xmpp\Util\XML;
-use Fabiang\Xmpp\Options;
-use Fabiang\Xmpp\Exception\TimeoutException;
+use Updivision\Xmpp\Stream\SocketClient;
+use Updivision\Xmpp\Util\XML;
+use Updivision\Xmpp\Options;
+use Updivision\Xmpp\Exception\TimeoutException;
 
 /**
  * Connection to a socket stream.

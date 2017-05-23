@@ -34,7 +34,7 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\EventListener;
+namespace Updivision\Xmpp\EventListener;
 
 /**
  * Interface for event listeners.

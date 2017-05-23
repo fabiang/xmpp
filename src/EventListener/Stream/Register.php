@@ -34,12 +34,12 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\EventListener\Stream;
+namespace Updivision\Xmpp\EventListener\Stream;
 
-use Fabiang\Xmpp\Event\XMLEvent;
-use Fabiang\Xmpp\EventListener\AbstractEventListener;
-use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
-use Fabiang\Xmpp\Protocol\User\User;
+use Updivision\Xmpp\Event\XMLEvent;
+use Updivision\Xmpp\EventListener\AbstractEventListener;
+use Updivision\Xmpp\EventListener\BlockingEventListenerInterface;
+use Updivision\Xmpp\Protocol\User\User;
 
 /**
  * Listener
@@ -87,7 +87,7 @@ class Register extends AbstractEventListener implements BlockingEventListenerInt
     /**
      * Result received.
      *
-     * @param \Fabiang\Xmpp\Event\XMLEvent $event
+     * @param \Updivision\Xmpp\Event\XMLEvent $event
      * @return void
      */
     public function result(XMLEvent $event)

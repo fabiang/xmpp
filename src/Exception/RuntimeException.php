@@ -34,11 +34,11 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Exception;
+namespace Updivision\Xmpp\Exception;
 
 /**
  * Runtime exception.
- * 
+ *
  * "It should be throw in cases where the calling code does not necessarily have the capacity to handle it."
  *
  * @package Xmpp\Exception

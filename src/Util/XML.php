@@ -34,7 +34,7 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Util;
+namespace Updivision\Xmpp\Util;
 
 /**
  * XML utility methods.
