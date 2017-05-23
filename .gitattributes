@@ -5,3 +5,5 @@
 /tests export-ignore
 /docs export-ignore
 /example.php export-ignore
+/phpunit.xml.dist export-ignore
+/behat.yml export-ignore
