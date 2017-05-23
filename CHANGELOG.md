@@ -2,6 +2,8 @@
 
 ## x.x.x (2017-05-xx)
 
+- [MAJOR]: [PR #46](https://github.com/fabiang/xmpp/pull/46) Added support for password-protected chatrooms
+- [MAJOR]: [PR #44](https://github.com/fabiang/xmpp/pull/44) Added anonymous authentication method
 - [MAJOR]: [PR #34](https://github.com/fabiang/xmpp/pull/34) Added support for registereing user
 - [MAJOR]: [PR #34](https://github.com/fabiang/xmpp/pull/34) Added vCard support
 - [MAJOR]: [PR #34](https://github.com/fabiang/xmpp/pull/34) Added support for blocking and unblocking an user
