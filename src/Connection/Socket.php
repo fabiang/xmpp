@@ -89,7 +89,7 @@ XML;
      */
     public static function factory(Options $options)
     {
-        $socket = new SocketClient($options->getAddress());
+        $socket = new SocketClient($options->getAddress(), $options->getContextOptions());
         $object = new static($socket);
         $object->setOptions($options);
         return $object;
