@@ -96,12 +96,12 @@ $client->disconnect();
 If you like this library and you want to contribute, make sure the unit-tests and integration tests are running.
 Composer will help you to install the right version of PHPUnit and [Behat](http://behat.org/).
 
-    composer install --dev
+    composer install
 
 After that:
 
-    ./vendor/bin/phpunit -c tests
-    ./vendor/bin/behat --config=tests/behat.yml --strict
+    ./vendor/bin/phpunit
+    ./vendor/bin/behat
 
 New features should always tested with Behat.
 
@@ -113,5 +113,4 @@ BSD-2-Clause. See the [LICENSE](LICENSE.md).
     
 - Better integration of channels
 - Factory method for server addresses
-- Add support for vCard
 - improve documentation
