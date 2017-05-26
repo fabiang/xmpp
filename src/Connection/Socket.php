@@ -174,7 +174,7 @@ XML;
         if (false === $this->connected) {
             $address = $this->getAddress();
             $this->getSocket()->connect($this->getOptions()->getTimeout());
-            $this->getSocket()->setBlocking(true);
+            $this->getSocket()->setBlocking(false);
 
             $this->connected = true;
             $this->log("Connected to '{$address}'", LogLevel::DEBUG);
