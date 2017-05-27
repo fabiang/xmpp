@@ -43,6 +43,8 @@ use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 /**
  * Listener
  *
+ * @see https://xmpp.org/extensions/xep-0045.html#grantmember
+ *
  * @package Xmpp\EventListener
  */
 class Membership extends AbstractEventListener implements BlockingEventListenerInterface
@@ -70,15 +72,18 @@ class Membership extends AbstractEventListener implements BlockingEventListenerI
         $this->getOutputEventManager()
             ->attach('{http://jabber.org/protocol/muc#admin}query', array($this, 'query'));
         $this->getInputEventManager()
-            ->attach('{http://jabber.org/protocol/muc#admin}query', array($this, 'result'));
+            ->attach('{jabber:client}iq', array($this, 'result'));
     }
 
     /**
-     * Blocking event
+     * @param XMLEvent $event
      */
-    public function query()
+    public function query(XMLEvent $event)
     {
         $this->blocking = true;
+        /* @var $element \DOMElement */
+        $element = $event->getParameter(0);
+        $this->setId($element->parentNode->getAttribute('id'));
     }
 
     /**
@@ -90,8 +95,33 @@ class Membership extends AbstractEventListener implements BlockingEventListenerI
     public function result(XMLEvent $event)
     {
         if ($event->isEndTag()) {
-            $this->blocking = false;
+            /* @var $element \DOMElement */
+            $element = $event->getParameter(0);
+            if ($this->getId() === $element->getAttribute('id')) {
+                $this->blocking = false;
+            }
         }
+    }
+
+    /**
+     * Get generated id.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set generated id.
+     *
+     * @param string $id
+     * @return void
+     */
+    public function setId($id)
+    {
+        $this->id = (string)$id;
     }
 
     /**
