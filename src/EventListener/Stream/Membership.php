@@ -39,6 +39,7 @@ namespace Fabiang\Xmpp\EventListener\Stream;
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
+use Fabiang\Xmpp\EventListener\UnBlockingEventListenerInterface;
 
 /**
  * Listener
@@ -47,7 +48,7 @@ use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
  *
  * @package Xmpp\EventListener
  */
-class Membership extends AbstractEventListener implements BlockingEventListenerInterface
+class Membership extends AbstractEventListener implements BlockingEventListenerInterface, UnBlockingEventListenerInterface
 {
     /**
      * Generated id.
@@ -130,5 +131,13 @@ class Membership extends AbstractEventListener implements BlockingEventListenerI
     public function isBlocking()
     {
         return $this->blocking;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function unBlock()
+    {
+        $this->blocking = false;
     }
 }

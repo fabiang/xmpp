@@ -39,6 +39,7 @@ namespace Fabiang\Xmpp\EventListener\Stream;
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
+use Fabiang\Xmpp\EventListener\UnBlockingEventListenerInterface;
 use Fabiang\Xmpp\Exception\Stream\PubsubErrorException;
 use Fabiang\Xmpp\Protocol\Pubsub\BookmarkItem;
 use Fabiang\Xmpp\Protocol\Pubsub\PubsubGet;
@@ -48,6 +49,7 @@ use Fabiang\Xmpp\Protocol\User\User;
  * pubsub is using in many cases
  *
  * avatars
+ *
  * @see https://xmpp.org/extensions/xep-0084.html#process-pubmeta
  *
  * bookmarks
@@ -57,7 +59,7 @@ use Fabiang\Xmpp\Protocol\User\User;
  *
  * @package Xmpp\EventListener
  */
-class Pubsub extends AbstractEventListener implements BlockingEventListenerInterface
+class Pubsub extends AbstractEventListener implements BlockingEventListenerInterface, UnBlockingEventListenerInterface
 {
     /**
      * Generated id.
@@ -122,6 +124,7 @@ class Pubsub extends AbstractEventListener implements BlockingEventListenerInter
      * Result received.
      *
      * @param \Fabiang\Xmpp\Event\XMLEvent $event
+     *
      * @return void
      */
     public function result(XMLEvent $event)
@@ -176,6 +179,7 @@ class Pubsub extends AbstractEventListener implements BlockingEventListenerInter
      * we have some errors.
      *
      * @param \Fabiang\Xmpp\Event\XMLEvent $event
+     *
      * @return void
      */
     public function error(XMLEvent $event)
@@ -200,6 +204,7 @@ class Pubsub extends AbstractEventListener implements BlockingEventListenerInter
      * Set generated id.
      *
      * @param string $id
+     *
      * @return void
      */
     public function setId($id)
@@ -213,5 +218,13 @@ class Pubsub extends AbstractEventListener implements BlockingEventListenerInter
     public function isBlocking()
     {
         return $this->blocking;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function unBlock()
+    {
+        $this->blocking = false;
     }
 }
