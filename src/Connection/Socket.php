@@ -162,7 +162,6 @@ XML;
         $this->getOutputStream()->parse($buffer);
 
         while ($this->checkBlockingListeners()) {
-            usleep(100);
             $this->receive();
         }
     }

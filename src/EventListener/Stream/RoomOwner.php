@@ -50,6 +50,11 @@ use Fabiang\Xmpp\Protocol\User\User;
  */
 class RoomOwner extends AbstractEventListener implements BlockingEventListenerInterface, UnBlockingEventListenerInterface
 {
+    /** Generated id.
+     *
+     * @var string
+     */
+    protected $id;
 
     /**
      * Blocking.
@@ -74,16 +79,19 @@ class RoomOwner extends AbstractEventListener implements BlockingEventListenerIn
             ->attach('{http://jabber.org/protocol/muc#owner}query', array($this, 'query'));
         $this->getInputEventManager()
             ->attach('{http://jabber.org/protocol/muc#owner}query', array($this, 'result'));
+        $this->getInputEventManager()
+            ->attach('{jabber:client}iq', array($this, 'success'));
     }
 
     /**
-     * Sending a query request for roster sets listener to blocking mode.
-     *
-     * @return void
+     * @param XMLEvent $event
      */
-    public function query()
+    public function query(XMLEvent $event)
     {
         $this->blocking = true;
+        /* @var $element \DOMElement */
+        $element = $event->getParameter(0);
+        $this->setId($element->parentNode->getAttribute('id'));
     }
 
     /**
@@ -101,6 +109,44 @@ class RoomOwner extends AbstractEventListener implements BlockingEventListenerIn
             }
             $this->blocking = false;
         }
+    }
+
+    /**
+     * room success configured
+     *
+     * @param XMLEvent $event
+     */
+    public function success(XMLEvent $event)
+    {
+        if ($event->isEndTag()) {
+            /* @var $element \DOMElement */
+            $element = $event->getParameter(0);
+            if ($this->getId() === $element->getAttribute('id')) {
+                $this->blocking = false;
+            }
+        }
+    }
+
+    /**
+     * Get generated id.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set generated id.
+     *
+     * @param string $id
+     *
+     * @return void
+     */
+    public function setId($id)
+    {
+        $this->id = (string)$id;
     }
 
     /**

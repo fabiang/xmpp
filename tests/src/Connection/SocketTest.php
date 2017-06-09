@@ -36,12 +36,12 @@
 
 namespace Fabiang\Xmpp\Connection;
 
-use Fabiang\Xmpp\Stream\XMLStream;
-use Fabiang\Xmpp\Stream\SocketClient;
-use Fabiang\Xmpp\EventListener\Stream\Stream;
-use Fabiang\Xmpp\Event\EventManager;
 use Fabiang\Xmpp\Event\Event;
+use Fabiang\Xmpp\Event\EventManager;
+use Fabiang\Xmpp\EventListener\Stream\Stream;
 use Fabiang\Xmpp\Options;
+use Fabiang\Xmpp\Stream\SocketClient;
+use Fabiang\Xmpp\Stream\XMLStream;
 use Psr\Log\LogLevel;
 
 /**
@@ -117,7 +117,7 @@ class SocketTest extends \PHPUnit_Framework_TestCase
         $mock   = $this->object->getSocket();
         $mock->expects($this->once())
             ->method('read')
-            ->with($this->equalTo(4096))
+            ->with($this->equalTo(65536))
             ->will($this->returnValue($return));
         $this->assertSame($return, $this->object->receive());
     }

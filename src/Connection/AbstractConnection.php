@@ -279,6 +279,9 @@ abstract class AbstractConnection implements ConnectionInterface
                     $this->lastBlockingListener = $listener;
                 }
                 $blocking = true;
+                // if listener in blocking mode and can't receive data long time
+                // this situation may occurs when we construct EventListener badly - we must check all events
+                $this->checkTimeout('');
             }
         }
 
