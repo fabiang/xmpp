@@ -1,10 +1,10 @@
 <?php
 return [
-    'host' => 'xmpp.nko.home',
-    'conference' => 'conference.xmpp.nko.home',
+    'host' => 'xmpp.example.com',
+    'conference' => 'conference.example.com',
     'port' => 5222,
     'connectionType' => 'tcp',
-    'verifyPeer' => false,
+    'verifyPeer' => true,
     'login' => 'admin',
-    'password' => 'pass1view',
+    'password' => '123456',
 ];
