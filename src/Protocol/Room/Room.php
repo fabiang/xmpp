@@ -34,19 +34,54 @@
  * @link      http://github.com/fabiang/xmpp
  */
 
-namespace Fabiang\Xmpp\Protocol\User;
-
-use Fabiang\Xmpp\Protocol\Pubsub\BookmarkItem;
-use Fabiang\Xmpp\Protocol\Pubsub\PubsubItemInterface;
-use Fabiang\Xmpp\Protocol\Pubsub\PubsubSet;
+namespace Fabiang\Xmpp\Protocol\Room;
 
 /**
- * User object.
+ * Room object.
  *
  * @package Xmpp\Protocol
  */
-class User
+class Room
 {
+    /**
+     * role of user in MUC
+     * @see https://xmpp.org/extensions/xep-0045.html#affil
+     */
+    const AFFILIATION_OWNER = 'owner';
+    const AFFILIATION_ADMIN = 'admin';
+    const AFFILIATION_MEMBER = 'member';
+    const AFFILIATION_OUTCAST = 'outcast';
+    const AFFILIATION_NONE = 'none';
+
+
+    /**
+     * @see https://xmpp.org/extensions/xep-0045.html#registrar-statuscodes
+     */
+    // user role has been changed
+    const STATUS_AFFILIATION_CHANGED = 101;
+    // user is presence in room
+    const STATUS_PRESENCE = 110;
+    // new room has been created
+    const STATUS_CREATED = 201;
+
+    const STATUS_BANNED = 301;
+    const STATUS_KICKED = 307;
+
+
+    const CONFIG_YES = 1;
+    const CONFIG_NO = 0;
+
+
+    /**
+     * @var array
+     */
+    protected $statuses = array();
+
+    /**
+     *
+     * @var string
+     */
+    protected $affiliation;
 
     /**
      *
@@ -61,23 +96,6 @@ class User
     protected $jid;
 
     /**
-     *
-     * @var string
-     */
-    protected $subscription;
-
-    /**
-     *
-     * @var array
-     */
-    protected $groups = [];
-
-    /**
-     * @var array
-     */
-    protected $pubsubs = [];
-
-    /**
      * @return string
      */
     public function getName()
@@ -86,7 +104,7 @@ class User
     }
 
     /**
-     * @param string $name
+     * @param string|null $name
      * @return $this
      */
     public function setName($name = null)
@@ -120,80 +138,68 @@ class User
     /**
      * @return string
      */
-    public function getSubscription()
+    public function getAffiliation()
     {
-        return $this->subscription;
+        return $this->affiliation;
     }
 
     /**
-     * @param string $subscription
+     * @param $affiliation
      * @return $this
      */
-    public function setSubscription($subscription)
+    public function setAffiliation($affiliation)
     {
-        $this->subscription = (string)$subscription;
+        $this->affiliation = $affiliation;
         return $this;
     }
 
     /**
-     * @return array
+     * current user is owner of room
+     *
+     * @return bool
      */
-    public function getGroups()
+    public function isOwner()
     {
-        return $this->groups;
+        return $this->affiliation == self::AFFILIATION_OWNER;
     }
 
     /**
-     * @param array $groups
+     * current user is admin of room
+     *
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        return $this->affiliation == self::AFFILIATION_ADMIN;
+    }
+
+    /**
+     * current user is member of room
+     *
+     * @return bool
+     */
+    public function isMember()
+    {
+        return $this->affiliation != self::AFFILIATION_OUTCAST;
+    }
+
+    /**
+     * add room status
+     *
+     * @param $code string
      * @return $this
      */
-    public function setGroups(array $groups)
+    public function addStatus($code)
     {
-        $this->groups = $groups;
+        array_push($this->statuses, (int)$code);
         return $this;
     }
 
     /**
-     * @param $group
-     * @return $this
+     * @return bool
      */
-    public function addGroup($group)
+    public function isJustCreated()
     {
-        $this->groups[] = (string)$group;
-        return $this;
-    }
-
-    /**
-     * @param BookmarkItem $item
-     */
-    public function addBookmark(BookmarkItem $item)
-    {
-        $this->addPubsub(PubsubSet::NODE_BOOKMARKS, $item);
-    }
-
-    /**
-     * @param $node
-     * @param PubsubItemInterface $item
-     * @return $this
-     */
-    public function addPubsub($node, PubsubItemInterface $item)
-    {
-        if (!array_key_exists($node, $this->pubsubs)) {
-            $this->pubsubs[$node] = array();
-        }
-        array_push($this->pubsubs[$node], $item);
-        return $this;
-    }
-
-    /**
-     * @param $node
-     * @return array
-     */
-    public function getPubsubs($node)
-    {
-        if (array_key_exists($node, $this->pubsubs)) {
-            return $this->pubsubs[$node];
-        }
-        return [];
+        return in_array(self::STATUS_CREATED, $this->statuses);
     }
 }

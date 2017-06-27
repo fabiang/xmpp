@@ -43,6 +43,10 @@ use Fabiang\Xmpp\EventListener\Stream\Authentication;
 use Fabiang\Xmpp\EventListener\Stream\Bind;
 use Fabiang\Xmpp\EventListener\Stream\BlockedUsers as BlockedUsersListener;
 use Fabiang\Xmpp\EventListener\Stream\Command;
+use Fabiang\Xmpp\EventListener\Stream\Membership;
+use Fabiang\Xmpp\EventListener\Stream\Pubsub;
+use Fabiang\Xmpp\EventListener\Stream\RoomOwner;
+use Fabiang\Xmpp\EventListener\Stream\RoomPresence;
 use Fabiang\Xmpp\EventListener\Stream\Roster as RosterListener;
 use Fabiang\Xmpp\EventListener\Stream\Session;
 use Fabiang\Xmpp\EventListener\Stream\Stanzas;
@@ -88,6 +92,10 @@ class DefaultImplementation implements ImplementationInterface
         $this->registerListener(new BlockedUsersListener);
         $this->registerListener(new Stanzas);
         $this->registerListener(new Command);
+        $this->registerListener(new RoomPresence);
+        $this->registerListener(new RoomOwner);
+        $this->registerListener(new Membership);
+        $this->registerListener(new Pubsub);
     }
 
     /**

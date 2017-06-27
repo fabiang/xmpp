@@ -43,6 +43,7 @@ use Fabiang\Xmpp\EventListener\Stream\Authentication\Plain;
 use Fabiang\Xmpp\Form\FormInterface;
 use Fabiang\Xmpp\Protocol\DefaultImplementation;
 use Fabiang\Xmpp\Protocol\ImplementationInterface;
+use Fabiang\Xmpp\Protocol\Room\Room;
 use Fabiang\Xmpp\Protocol\User\User;
 use Psr\Log\LoggerInterface;
 
@@ -121,6 +122,12 @@ class Options
      * @var array
      */
     protected $users = [];
+
+    /**
+     *
+     * @var null|Protocol\Room\Room
+     */
+    protected $room;
 
     /**
      *
@@ -460,7 +467,28 @@ class Options
     public function setUser(User $user)
     {
         $this->user = $user;
+        return $this;
+    }
 
+    /**
+     * Get room.
+     *
+     * @return Protocol\Room\Room
+     */
+    public function getRoom()
+    {
+        return $this->room;
+    }
+
+    /**
+     * Set room.
+     *
+     * @param Room $room
+     * @return $this
+     */
+    public function setRoom(Room $room)
+    {
+        $this->room = $room;
         return $this;
     }
 
