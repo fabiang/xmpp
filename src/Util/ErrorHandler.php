@@ -36,8 +36,8 @@
 
 namespace Fabiang\Xmpp\Util;
 
-use Fabiang\Xmpp\Exception\InvalidArgumentException;
 use Fabiang\Xmpp\Exception\ErrorException;
+use Fabiang\Xmpp\Exception\InvalidArgumentException;
 
 /**
  * XML utility methods.
@@ -59,7 +59,7 @@ class ErrorHandler
      *
      * @var array
      */
-    protected $arguments = array();
+    protected $arguments = [];
 
     public function __construct($method)
     {

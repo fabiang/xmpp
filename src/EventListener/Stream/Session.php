@@ -36,8 +36,8 @@
 
 namespace Fabiang\Xmpp\EventListener\Stream;
 
-use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 use Fabiang\Xmpp\Event\XMLEvent;
+use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 
 /**
  * Listener
@@ -53,8 +53,8 @@ class Session extends AbstractSessionEvent implements BlockingEventListenerInter
     public function attachEvents()
     {
         $input = $this->getInputEventManager();
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-session}session', array($this, 'sessionStart'));
-        $input->attach('{jabber:client}iq', array($this, 'iq'));
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-session}session', [$this, 'sessionStart']);
+        $input->attach('{jabber:client}iq', [$this, 'iq']);
     }
 
     /**

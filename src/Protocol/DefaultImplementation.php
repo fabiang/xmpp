@@ -36,17 +36,20 @@
 
 namespace Fabiang\Xmpp\Protocol;
 
-use Fabiang\Xmpp\Options;
-use Fabiang\Xmpp\EventListener\EventListenerInterface;
-use Fabiang\Xmpp\Event\EventManagerInterface;
 use Fabiang\Xmpp\Event\EventManager;
-use Fabiang\Xmpp\EventListener\Stream\Stream;
-use Fabiang\Xmpp\EventListener\Stream\StreamError;
-use Fabiang\Xmpp\EventListener\Stream\StartTls;
+use Fabiang\Xmpp\Event\EventManagerInterface;
+use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Fabiang\Xmpp\EventListener\Stream\Authentication;
 use Fabiang\Xmpp\EventListener\Stream\Bind;
-use Fabiang\Xmpp\EventListener\Stream\Session;
+use Fabiang\Xmpp\EventListener\Stream\BlockedUsers as BlockedUsersListener;
+use Fabiang\Xmpp\EventListener\Stream\Command;
 use Fabiang\Xmpp\EventListener\Stream\Roster as RosterListener;
+use Fabiang\Xmpp\EventListener\Stream\Session;
+use Fabiang\Xmpp\EventListener\Stream\Stanzas;
+use Fabiang\Xmpp\EventListener\Stream\StartTls;
+use Fabiang\Xmpp\EventListener\Stream\Stream;
+use Fabiang\Xmpp\EventListener\Stream\StreamError;
+use Fabiang\Xmpp\Options;
 
 /**
  * Default Protocol implementation.
@@ -82,6 +85,9 @@ class DefaultImplementation implements ImplementationInterface
         $this->registerListener(new Bind);
         $this->registerListener(new Session);
         $this->registerListener(new RosterListener);
+        $this->registerListener(new BlockedUsersListener);
+        $this->registerListener(new Stanzas);
+        $this->registerListener(new Command);
     }
 
     /**

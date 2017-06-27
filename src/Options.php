@@ -37,8 +37,12 @@
 namespace Fabiang\Xmpp;
 
 use Fabiang\Xmpp\Connection\ConnectionInterface;
-use Fabiang\Xmpp\Protocol\ImplementationInterface;
+use Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5;
+use Fabiang\Xmpp\EventListener\Stream\Authentication\Plain;
+use Fabiang\Xmpp\Form\FormInterface;
 use Fabiang\Xmpp\Protocol\DefaultImplementation;
+use Fabiang\Xmpp\Protocol\ImplementationInterface;
+use Fabiang\Xmpp\Protocol\User\User;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -101,6 +105,12 @@ class Options
 
     /**
      *
+     * @var FormInterface|null
+     */
+    protected $form;
+
+    /**
+     *
      * @var boolean
      */
     protected $authenticated = false;
@@ -109,7 +119,13 @@ class Options
      *
      * @var array
      */
-    protected $users = array();
+    protected $users = [];
+
+    /**
+     *
+     * @var null|User
+     */
+    protected $user;
 
     /**
      * Timeout for connection.
@@ -123,10 +139,15 @@ class Options
      *
      * @var array
      */
-    protected $authenticationClasses = array(
-        'digest-md5' => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\DigestMd5',
-        'plain'      => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Plain'
-    );
+    protected $authenticationClasses;
+
+    /**
+     * Options used to create a stream context
+     *
+     * @var array
+     */
+    protected $contextOptions = [];
+
 
     /**
      * Constructor.
@@ -135,6 +156,11 @@ class Options
      */
     public function __construct($address = null)
     {
+        $this->authenticationClasses = [
+            'digest-md5' => DigestMd5::class,
+            'plain' => Plain::class,
+        ];
+
         if (null !== $address) {
             $this->setAddress($address);
         }
@@ -163,6 +189,7 @@ class Options
     public function setImplementation(ImplementationInterface $implementation)
     {
         $this->implementation = $implementation;
+
         return $this;
     }
 
@@ -186,10 +213,11 @@ class Options
      */
     public function setAddress($address)
     {
-        $this->address = (string) $address;
+        $this->address = (string)$address;
         if (false !== ($host = parse_url($address, PHP_URL_HOST))) {
             $this->setTo($host);
         }
+
         return $this;
     }
 
@@ -212,6 +240,7 @@ class Options
     public function setConnection(ConnectionInterface $connection)
     {
         $this->connection = $connection;
+
         return $this;
     }
 
@@ -234,6 +263,7 @@ class Options
     public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
+
         return $this;
     }
 
@@ -257,7 +287,8 @@ class Options
      */
     public function setTo($to)
     {
-        $this->to = (string) $to;
+        $this->to = (string)$to;
+
         return $this;
     }
 
@@ -279,7 +310,8 @@ class Options
      */
     public function setUsername($username)
     {
-        $this->username = (string) $username;
+        $this->username = (string)$username;
+
         return $this;
     }
 
@@ -292,6 +324,7 @@ class Options
     {
         $username = $this->getUsername();
         $username = explode('/', $username);
+
         return isset($username[1]) ? $username[1] : '';
     }
 
@@ -313,7 +346,8 @@ class Options
      */
     public function setPassword($password)
     {
-        $this->password = (string) $password;
+        $this->password = (string)$password;
+
         return $this;
     }
 
@@ -335,7 +369,29 @@ class Options
      */
     public function setJid($jid)
     {
-        $this->jid = (string) $jid;
+        $this->jid = (string)$jid;
+
+        return $this;
+    }
+
+    /**
+     * @return FormInterface
+     */
+    public function getForm()
+    {
+        return $this->form;
+    }
+
+    /**
+     * set form
+     *
+     * @param FormInterface $form
+     * @return $this
+     */
+    public function setForm(FormInterface $form)
+    {
+        $this->form = $form;
+
         return $this;
     }
 
@@ -357,7 +413,8 @@ class Options
      */
     public function setAuthenticated($authenticated)
     {
-        $this->authenticated = (bool) $authenticated;
+        $this->authenticated = (bool)$authenticated;
+
         return $this;
     }
 
@@ -380,6 +437,28 @@ class Options
     public function setUsers(array $users)
     {
         $this->users = $users;
+
+        return $this;
+    }
+
+    /**
+     * Get users.
+     *
+     * @return Protocol\User\User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param User $user
+     * @return $this
+     */
+    public function setUser(User $user)
+    {
+        $this->user = $user;
+
         return $this;
     }
 
@@ -401,6 +480,7 @@ class Options
     public function setAuthenticationClasses(array $authenticationClasses)
     {
         $this->authenticationClasses = $authenticationClasses;
+
         return $this;
     }
 
@@ -422,7 +502,31 @@ class Options
      */
     public function setTimeout($timeout)
     {
-        $this->timeout = (int) $timeout;
+        $this->timeout = (int)$timeout;
+
+        return $this;
+    }
+
+    /**
+     * Get context options for connection
+     *
+     * @return array
+     */
+    public function getContextOptions()
+    {
+        return $this->contextOptions;
+    }
+
+    /**
+     *  Set context options for connection
+     *
+     * @param array $contextOptions
+     * @return \Fabiang\Xmpp\Options
+     */
+    public function setContextOptions($contextOptions)
+    {
+        $this->contextOptions = (array)$contextOptions;
+
         return $this;
     }
 }

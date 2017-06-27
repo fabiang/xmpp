@@ -36,10 +36,10 @@
 
 namespace Fabiang\Xmpp\EventListener\Stream\Authentication;
 
-use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\Event\XMLEvent;
-use Fabiang\Xmpp\Util\XML;
+use Fabiang\Xmpp\EventListener\AbstractEventListener;
 use Fabiang\Xmpp\Exception\Stream\AuthenticationErrorException;
+use Fabiang\Xmpp\Util\XML;
 
 /**
  * Handler for "digest md5" authentication mechanism.
@@ -74,11 +74,11 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
     public function attachEvents()
     {
         $input = $this->getInputEventManager();
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}challenge', array($this, 'challenge'));
-        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}success', array($this, 'success'));
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}challenge', [$this, 'challenge']);
+        $input->attach('{urn:ietf:params:xml:ns:xmpp-sasl}success', [$this, 'success']);
 
         $output = $this->getOutputEventManager();
-        $output->attach('{urn:ietf:params:xml:ns:xmpp-sasl}auth', array($this, 'auth'));
+        $output->attach('{urn:ietf:params:xml:ns:xmpp-sasl}auth', [$this, 'auth']);
     }
 
     /**
@@ -183,10 +183,10 @@ class DigestMd5 extends AbstractEventListener implements AuthenticationInterface
     protected function parseCallenge($challenge)
     {
         if (!$challenge) {
-            return array();
+            return [];
         }
 
-        $matches = array();
+        $matches = [];
         preg_match_all('#(\w+)\=(?:"([^"]+)"|([^,]+))#', $challenge, $matches);
         list(, $variables, $quoted, $unquoted) = $matches;
         // filter empty strings; preserve keys

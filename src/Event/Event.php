@@ -36,8 +36,8 @@
 
 namespace Fabiang\Xmpp\Event;
 
-use Fabiang\Xmpp\Exception\OutOfRangeException;
 use Fabiang\Xmpp\Exception\InvalidArgumentException;
+use Fabiang\Xmpp\Exception\OutOfRangeException;
 
 /**
  * Generic event.
@@ -66,14 +66,14 @@ class Event implements EventInterface
      *
      * @var array
      */
-    protected $parameters = array();
+    protected $parameters = [];
 
     /**
      * Event stack.
      *
      * @var array
      */
-    protected $eventStack = array();
+    protected $eventStack = [];
 
     /**
      * {@inheritDoc}

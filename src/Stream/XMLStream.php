@@ -36,9 +36,9 @@
 
 namespace Fabiang\Xmpp\Stream;
 
+use Fabiang\Xmpp\Event\EventManager;
 use Fabiang\Xmpp\Event\EventManagerAwareInterface;
 use Fabiang\Xmpp\Event\EventManagerInterface;
-use Fabiang\Xmpp\Event\EventManager;
 use Fabiang\Xmpp\Event\XMLEvent;
 use Fabiang\Xmpp\Event\XMLEventInterface;
 use Fabiang\Xmpp\Exception\XMLParserException;
@@ -85,21 +85,21 @@ class XMLStream implements EventManagerAwareInterface
      *
      * @var array
      */
-    protected $namespaces = array();
+    protected $namespaces = [];
 
     /**
      * Cache of namespace prefixes.
      *
      * @var array
      */
-    protected $namespacePrefixes = array();
+    protected $namespacePrefixes = [];
 
     /**
      * Element cache.
      *
      * @var array
      */
-    protected $elements = array();
+    protected $elements = [];
 
     /**
      * XML parser.
@@ -120,7 +120,7 @@ class XMLStream implements EventManagerAwareInterface
      *
      * @var array
      */
-    protected $eventCache = array();
+    protected $eventCache = [];
 
     /**
      * Constructor.
@@ -155,13 +155,13 @@ class XMLStream implements EventManagerAwareInterface
     {
         $this->clearDocument($source);
 
-        $this->eventCache = array();
+        $this->eventCache = [];
         if (0 === xml_parse($this->parser, $source, false)) {
             throw XMLParserException::create($this->parser);
         }
         // trigger collected events.
         $this->trigger();
-        $this->eventCache = array();
+        $this->eventCache = [];
 
         // </stream> was not there, so lets close the document
         if ($this->depth > 0) {
@@ -186,7 +186,7 @@ class XMLStream implements EventManagerAwareInterface
         if ('<?xml' === substr($source, 0, 5)) {
             $this->reset();
 
-            $matches = array();
+            $matches = [];
             if (preg_match('/^<\?xml.*encoding=(\'|")([\w-]+)\1.*?>/i', $source, $matches)) {
                 $this->encoding = $matches[2];
                 xml_parser_set_option($this->parser, XML_OPTION_TARGET_ENCODING, $this->encoding);
@@ -260,7 +260,7 @@ class XMLStream implements EventManagerAwareInterface
         $this->depth++;
 
         $event = '{' . $namespaceElement . '}' . $elementName;
-        $this->cacheEvent($event, true, array($element));
+        $this->cacheEvent($event, true, [$element]);
     }
 
     /**
@@ -271,7 +271,7 @@ class XMLStream implements EventManagerAwareInterface
      */
     protected function createAttributeNodes(array $attribs)
     {
-        $attributesNodes = array();
+        $attributesNodes = [];
         foreach ($attribs as $name => $value) {
             // collect namespace prefixes
             if ('xmlns:' === substr($name, 0, 6)) {
@@ -316,7 +316,7 @@ class XMLStream implements EventManagerAwareInterface
         }
 
         $event = '{' . $namespaceURI . '}' . $localName;
-        $this->cacheEvent($event, false, array($element));
+        $this->cacheEvent($event, false, [$element]);
     }
 
     /**
@@ -345,7 +345,7 @@ class XMLStream implements EventManagerAwareInterface
      */
     protected function cacheEvent($event, $startTag, $params)
     {
-        $this->eventCache[] = array($event, $startTag, $params);
+        $this->eventCache[] = [$event, $startTag, $params];
     }
 
     /**
@@ -382,9 +382,9 @@ class XMLStream implements EventManagerAwareInterface
         $this->parser            = $parser;
         $this->depth             = 0;
         $this->document          = new \DOMDocument('1.0', $this->encoding);
-        $this->namespaces        = array();
-        $this->namespacePrefixes = array();
-        $this->elements          = array();
+        $this->namespaces        = [];
+        $this->namespacePrefixes = [];
+        $this->elements          = [];
     }
 
     /**

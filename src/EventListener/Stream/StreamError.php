@@ -37,8 +37,8 @@
 namespace Fabiang\Xmpp\EventListener\Stream;
 
 use Fabiang\Xmpp\Event\XMLEvent;
-use Fabiang\Xmpp\Exception\Stream\StreamErrorException;
 use Fabiang\Xmpp\EventListener\AbstractEventListener;
+use Fabiang\Xmpp\Exception\Stream\StreamErrorException;
 
 /**
  * Listener for stream errors.
@@ -55,7 +55,7 @@ class StreamError extends AbstractEventListener
     {
         $this->getInputEventManager()->attach(
             '{http://etherx.jabber.org/streams}error',
-            array($this, 'error')
+            [$this, 'error']
         );
     }
 

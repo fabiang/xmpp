@@ -69,9 +69,9 @@ class Roster extends AbstractEventListener implements BlockingEventListenerInter
     public function attachEvents()
     {
         $this->getOutputEventManager()
-            ->attach('{jabber:iq:roster}query', array($this, 'query'));
+            ->attach('{jabber:iq:roster}query', [$this, 'query']);
         $this->getInputEventManager()
-            ->attach('{jabber:iq:roster}query', array($this, 'result'));
+            ->attach('{jabber:iq:roster}query', [$this, 'result']);
     }
 
     /**
@@ -93,7 +93,7 @@ class Roster extends AbstractEventListener implements BlockingEventListenerInter
     public function result(XMLEvent $event)
     {
         if ($event->isEndTag()) {
-            $users = array();
+            $users = [];
 
             /* @var $element \DOMElement */
             $element = $event->getParameter(0);

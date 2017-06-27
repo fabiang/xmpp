@@ -36,13 +36,13 @@
 
 namespace Fabiang\Xmpp\Connection;
 
-use Fabiang\Xmpp\Stream\XMLStream;
-use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Fabiang\Xmpp\Event\EventManager;
 use Fabiang\Xmpp\Event\EventManagerInterface;
 use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
-use Fabiang\Xmpp\Options;
+use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Fabiang\Xmpp\Exception\TimeoutException;
+use Fabiang\Xmpp\Options;
+use Fabiang\Xmpp\Stream\XMLStream;
 use Psr\Log\LogLevel;
 
 /**
@@ -82,9 +82,9 @@ abstract class AbstractConnection implements ConnectionInterface
     /**
      * Event listeners.
      *
-     * @var EventListenerInterface[]
+     * @var BlockingEventListenerInterface[]
      */
-    protected $listeners = array();
+    protected $listeners = [];
 
     /**
      * Connected.
@@ -226,7 +226,7 @@ abstract class AbstractConnection implements ConnectionInterface
     /**
      * Get listeners.
      *
-     * @return EventListenerInterface
+     * @return BlockingEventListenerInterface[]
      */
     public function getListeners()
     {
@@ -259,7 +259,7 @@ abstract class AbstractConnection implements ConnectionInterface
      */
     protected function log($message, $level = LogLevel::DEBUG)
     {
-        $this->getEventManager()->trigger('logger', $this, array($message, $level));
+        $this->getEventManager()->trigger('logger', $this, [$message, $level]);
     }
 
     /**
@@ -283,6 +283,14 @@ abstract class AbstractConnection implements ConnectionInterface
         }
 
         return $blocking;
+    }
+
+    /**
+     * @return BlockingEventListenerInterface
+     */
+    public function getLastBlockingListener()
+    {
+        return $this->lastBlockingListener;
     }
 
     /**

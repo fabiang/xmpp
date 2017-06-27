@@ -1,0 +1,6 @@
+default:
+    paths:
+        features: %behat.paths.base%/tests/features
+        bootstrap: %behat.paths.features%/bootstrap
+    context:
+        class: Fabiang\Xmpp\Integration\FeatureContext

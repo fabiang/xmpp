@@ -37,7 +37,6 @@
 namespace Fabiang\Xmpp\Integration;
 
 use Behat\Behat\Context\BehatContext;
-use Behat\Behat\Exception\PendingException;
 
 class BindContext extends BehatContext
 {
@@ -63,7 +62,9 @@ class BindContext extends BehatContext
     {
         $buffer = $this->getConnection()->getBuffer();
         assertRegExp(
-            '#^<iq type="set" id="fabiang_xmpp_[^"]+"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"/></iq>$#',
+            '#^<iq type="set" id="fabiang_xmpp_[^"]+">'
+            . '<bind xmlns="urn:ietf:params:xml:ns:xmpp-bind">'
+            . '<resource></resource></bind></iq>$#',
             $buffer[1]
         );
     }

@@ -36,10 +36,11 @@
 
 namespace Fabiang\Xmpp\Connection;
 
-use Fabiang\Xmpp\Stream\XMLStream;
 use Fabiang\Xmpp\Event\EventManagerAwareInterface;
+use Fabiang\Xmpp\EventListener\BlockingEventListenerInterface;
 use Fabiang\Xmpp\EventListener\EventListenerInterface;
 use Fabiang\Xmpp\OptionsAwareInterface;
+use Fabiang\Xmpp\Stream\XMLStream;
 
 /**
  * Connections must implement this interface.
@@ -143,4 +144,11 @@ interface ConnectionInterface extends EventManagerAwareInterface, OptionsAwareIn
      * @return $this
      */
     public function addListener(EventListenerInterface $eventListener);
+
+    /**
+     * get last blocking listener
+     *
+     * @return BlockingEventListenerInterface
+     */
+    public function getLastBlockingListener();
 }

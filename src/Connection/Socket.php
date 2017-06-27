@@ -36,11 +36,11 @@
 
 namespace Fabiang\Xmpp\Connection;
 
-use Psr\Log\LogLevel;
+use Fabiang\Xmpp\Exception\TimeoutException;
+use Fabiang\Xmpp\Options;
 use Fabiang\Xmpp\Stream\SocketClient;
 use Fabiang\Xmpp\Util\XML;
-use Fabiang\Xmpp\Options;
-use Fabiang\Xmpp\Exception\TimeoutException;
+use Psr\Log\LogLevel;
 
 /**
  * Connection to a socket stream.
@@ -50,7 +50,7 @@ use Fabiang\Xmpp\Exception\TimeoutException;
 class Socket extends AbstractConnection implements SocketConnectionInterface
 {
 
-    const DEFAULT_LENGTH = 4096;
+    const DEFAULT_LENGTH = 65536;
     const STREAM_START   = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <stream:stream to="%s" xmlns:stream="http://etherx.jabber.org/streams" xmlns="jabber:client" version="1.0">
@@ -89,7 +89,7 @@ XML;
      */
     public static function factory(Options $options)
     {
-        $socket = new SocketClient($options->getAddress());
+        $socket = new SocketClient($options->getAddress(), $options->getContextOptions());
         $object = new static($socket);
         $object->setOptions($options);
         return $object;
@@ -129,7 +129,7 @@ XML;
         // check if we didn't receive any data
         // if not we re-try to connect via TLS
         if (false === $this->receivedAnyData) {
-            $matches = array();
+            $matches = [];
             $previousAddress = $this->getOptions()->getAddress();
             // only reconnect via tls if we've used tcp before.
             if (preg_match('#tcp://(?<address>.+)#', $previousAddress, $matches)) {
