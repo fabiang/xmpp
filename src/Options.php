@@ -37,6 +37,7 @@
 namespace Fabiang\Xmpp;
 
 use Fabiang\Xmpp\Connection\ConnectionInterface;
+use Fabiang\Xmpp\EventListener\Stream\Authentication\Anonymous;
 use Fabiang\Xmpp\EventListener\Stream\Authentication\DigestMd5;
 use Fabiang\Xmpp\EventListener\Stream\Authentication\Plain;
 use Fabiang\Xmpp\Form\FormInterface;
@@ -159,6 +160,7 @@ class Options
         $this->authenticationClasses = [
             'digest-md5' => DigestMd5::class,
             'plain' => Plain::class,
+            'anonymous' => Anonymous::class,
         ];
 
         if (null !== $address) {
