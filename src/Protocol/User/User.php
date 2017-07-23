@@ -48,6 +48,9 @@ use Fabiang\Xmpp\Protocol\Pubsub\PubsubSet;
 class User
 {
 
+    const SUBSCRIBE_NONE = 'none';
+
+    const SUBSCRIBE_BOTH = 'both';
     /**
      *
      * @var string
@@ -70,12 +73,12 @@ class User
      *
      * @var array
      */
-    protected $groups = array();
+    protected $groups = [];
 
     /**
      * @var array
      */
-    protected $pubsubs = array();
+    protected $pubsubs = [];
 
     /**
      * @return string
@@ -96,6 +99,7 @@ class User
         } else {
             $this->name = $name;
         }
+
         return $this;
     }
 
@@ -114,6 +118,7 @@ class User
     public function setJid($jid)
     {
         $this->jid = (string)$jid;
+
         return $this;
     }
 
@@ -126,12 +131,21 @@ class User
     }
 
     /**
+     * @return string
+     */
+    public function isSubscribed()
+    {
+        return $this->subscription == self::SUBSCRIBE_BOTH;
+    }
+
+    /**
      * @param string $subscription
      * @return $this
      */
     public function setSubscription($subscription)
     {
         $this->subscription = (string)$subscription;
+
         return $this;
     }
 
@@ -150,6 +164,7 @@ class User
     public function setGroups(array $groups)
     {
         $this->groups = $groups;
+
         return $this;
     }
 
@@ -160,6 +175,7 @@ class User
     public function addGroup($group)
     {
         $this->groups[] = (string)$group;
+
         return $this;
     }
 
@@ -179,9 +195,10 @@ class User
     public function addPubsub($node, PubsubItemInterface $item)
     {
         if (!array_key_exists($node, $this->pubsubs)) {
-            $this->pubsubs[$node] = array();
+            $this->pubsubs[$node] = [];
         }
         array_push($this->pubsubs[$node], $item);
+
         return $this;
     }
 
@@ -194,6 +211,7 @@ class User
         if (array_key_exists($node, $this->pubsubs)) {
             return $this->pubsubs[$node];
         }
-        return array();
+
+        return [];
     }
 }

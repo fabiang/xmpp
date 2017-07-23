@@ -42,6 +42,8 @@ use Fabiang\Xmpp\Util\XML;
  * Protocol setting for Xmpp.
  *
  * @package Xmpp\Protocol
+ *
+ * @see https://xmpp.org/rfcs/rfc3921.html
  */
 class Presence implements ProtocolImplementationInterface
 {
@@ -138,15 +140,23 @@ class Presence implements ProtocolImplementationInterface
     protected $nickname;
 
     /**
+     * Presence status
+     *
+     * @var string
+     */
+    protected $type;
+
+    /**
      * Presence constructor.
      * @param int $priority
      * @param null $to
+     * @param null $type
      * @param null $nickname
      * @param string $show
      */
-    public function __construct($priority = 1, $to = null, $nickname = null, $show = null)
+    public function __construct($priority = 1, $to = null, $type = null, $nickname = null, $show = null)
     {
-        $this->setPriority($priority)->setTo($to)->setShow($show)->setNickname($nickname);
+        $this->setPriority($priority)->setTo($to)->setShow($show)->setNickname($nickname)->setType($type);
     }
 
     /**
@@ -157,7 +167,11 @@ class Presence implements ProtocolImplementationInterface
         $presence = '<presence';
 
         if (null !== $this->getTo()) {
-            $presence .= ' to="' . XML::quote($this->getTo()) . '/' . XML::quote($this->getNickname()) . '"';
+            if ($type = $this->getType()) {
+                $presence .= ' type="' . $type . '" ';
+            }
+            $presence .= ' to="' . XML::quote($this->getTo()) .
+                ($this->getNickname() ? '/' . XML::quote($this->getNickname()) : '') . '"';
         }
         $presence .= '>';
 
@@ -253,5 +267,21 @@ class Presence implements ProtocolImplementationInterface
     {
         $this->priority = (int)$priority;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
     }
 }
