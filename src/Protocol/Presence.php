@@ -42,6 +42,8 @@ use Fabiang\Xmpp\Util\XML;
  * Protocol setting for Xmpp.
  *
  * @package Xmpp\Protocol
+ *
+ * @see https://xmpp.org/rfcs/rfc3921.html
  */
 class Presence implements ProtocolImplementationInterface
 {
@@ -133,6 +135,13 @@ class Presence implements ProtocolImplementationInterface
     protected $nickname;
 
     /**
+     * Presence status
+     *
+     * @var string
+     */
+    protected $type;
+
+    /**
      * Channel password.
      *
      * @var string
@@ -140,15 +149,15 @@ class Presence implements ProtocolImplementationInterface
     protected $password;
 
     /**
-     * Constructor.
-     *
-     * @param integer $priority
-     * @param string $to
-     * @param string $nickname
+     * Presence constructor.
+     * @param int $priority
+     * @param null $to
+     * @param null $type
+     * @param null $nickname
      */
-    public function __construct($priority = 1, $to = null, $nickname = null)
+    public function __construct($priority = 1, $to = null, $type = null, $nickname = null)
     {
-        $this->setPriority($priority)->setTo($to)->setNickname($nickname);
+        $this->setPriority($priority)->setTo($to)->setNickname($nickname)->setType($type);
     }
 
     /**
@@ -159,7 +168,11 @@ class Presence implements ProtocolImplementationInterface
         $presence = '<presence';
 
         if (null !== $this->getTo()) {
-            $presence .= ' to="' . XML::quote($this->getTo()) . '/' . XML::quote($this->getNickname()) . '"';
+            if ($type = $this->getType()) {
+                $presence .= ' type="' . $type . '" ';
+            }
+            $presence .= ' to="' . XML::quote($this->getTo()) .
+                ($this->getNickname() ? '/' . XML::quote($this->getNickname()) : '') . '"';
         }
 
         $presence .= '><priority>' . $this->getPriority() . '</priority>';
@@ -169,6 +182,7 @@ class Presence implements ProtocolImplementationInterface
         }
 
         $presence .= '</presence>';
+
         return $presence;
     }
 
@@ -190,14 +204,15 @@ class Presence implements ProtocolImplementationInterface
      */
     public function setNickname($nickname)
     {
-        $this->nickname = (string) $nickname;
+        $this->nickname = (string)$nickname;
+
         return $this;
     }
 
     /**
      * Get to.
      *
-     * @return string¦null
+     * @return string|null
      */
     public function getTo()
     {
@@ -213,6 +228,7 @@ class Presence implements ProtocolImplementationInterface
     public function setTo($to = null)
     {
         $this->to = $to;
+
         return $this;
     }
 
@@ -234,14 +250,15 @@ class Presence implements ProtocolImplementationInterface
      */
     public function setPriority($priority)
     {
-        $this->priority = (int) $priority;
+        $this->priority = (int)$priority;
+
         return $this;
     }
 
     /**
      * Get channel password.
      *
-     * @return string¦null
+     * @return string|null
      */
     public function getPassword()
     {
@@ -251,12 +268,30 @@ class Presence implements ProtocolImplementationInterface
     /**
      * Set channel password.
      *
-     * @param string|null $to
+     * @param string|null $password
      * @return $this
      */
     public function setPassword($password = null)
     {
         $this->password = $password;
+
         return $this;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
     }
 }

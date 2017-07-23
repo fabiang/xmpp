@@ -44,6 +44,9 @@ namespace Fabiang\Xmpp\Protocol\User;
 class User
 {
 
+    const SUBSCRIBE_NONE = 'none';
+
+    const SUBSCRIBE_BOTH = 'both';
     /**
      *
      * @var string
@@ -61,6 +64,14 @@ class User
      * @var string
      */
     protected $subscription;
+
+    /**
+     * @return string
+     */
+    public function isSubscribed()
+    {
+        return $this->subscription == self::SUBSCRIBE_BOTH;
+    }
 
     /**
      *
