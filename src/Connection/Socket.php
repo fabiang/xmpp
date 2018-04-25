@@ -38,6 +38,7 @@ namespace Fabiang\Xmpp\Connection;
 
 use Psr\Log\LogLevel;
 use Fabiang\Xmpp\Stream\SocketClient;
+use Fabiang\Xmpp\Stream\SocksProxy;
 use Fabiang\Xmpp\Util\XML;
 use Fabiang\Xmpp\Options;
 use Fabiang\Xmpp\Exception\TimeoutException;
@@ -89,7 +90,11 @@ XML;
      */
     public static function factory(Options $options)
     {
-        $socket = new SocketClient($options->getAddress(), $options->getContextOptions());
+        if ($options->getSocksProxyAddress()) {
+            $socket = new SocksProxy($options);
+        } else {
+            $socket = new SocketClient($options->getAddress(), $options->getContextOptions());
+        }
         $object = new static($socket);
         $object->setOptions($options);
         return $object;
