@@ -125,6 +125,13 @@ class Options
     protected $timeout = 30;
 
     /**
+     * SOCKS proxy address
+     *
+     * @var string
+     */
+    protected $socksProxyAddress;
+
+    /**
      * Authentication methods.
      *
      * @var array
@@ -483,6 +490,28 @@ class Options
     public function setContextOptions($contextOptions)
     {
         $this->contextOptions = (array) $contextOptions;
+        return $this;
+    }
+
+    /**
+     * Get SOCKS proxy address
+     *
+     * @return string
+     */
+    public function getSocksProxyAddress()
+    {
+        return $this->socksProxyAddress;
+    }
+
+    /**
+     * Set SOCKS proxy address
+     *
+     * @param string $socksProxyAddress
+     * @return \Fabiang\Xmpp\Options
+     */
+    public function setSocksProxyAddress($socksProxyAddress)
+    {
+        $this->socksProxyAddress = $socksProxyAddress;
         return $this;
     }
 }
