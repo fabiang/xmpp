@@ -44,6 +44,7 @@ use Fabiang\Xmpp\Event\EventManagerAwareInterface;
 use Fabiang\Xmpp\Event\EventManagerInterface;
 use Fabiang\Xmpp\Event\EventManager;
 use Fabiang\Xmpp\EventListener\Logger;
+use Fabiang\Xmpp\Exception\TimeoutException;
 
 /**
  * Xmpp connection client.
