@@ -10,11 +10,8 @@ class SocksProxy extends SocketClient
 
     public function __construct(Options $options)
     {
-        $contextOptions = array_merge($options->getContextOptions(), [
-            'ssl' => [
-                'verify_peer_name' => false
-            ]
-        ]);
+        $contextOptions = $options->getContextOptions();
+        $contextOptions['ssl']['verify_peer_name'] = false;
         parent::__construct($options->getSocksProxyAddress(), $contextOptions);
         $this->realAddress = ltrim('tcp://', $options->getAddress());
     }
