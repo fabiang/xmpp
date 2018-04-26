@@ -1,6 +1,6 @@
 <?php
 
-namespace TraderBot\Service;
+namespace Fabiang\Xmpp\Stream;
 
 use Fabiang\Xmpp\Options;
 
