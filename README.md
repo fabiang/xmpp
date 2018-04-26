@@ -36,13 +36,19 @@ $options->setUsername($username)
     ->setPassword($password);
 ```
 
-The server address must be in the format `tcp://myjabber.com:5222`.
+The server address must be in the format `myjabber.com:5222`.
 If the server supports TLS the connection will automatically be encrypted.
 
 If you want to use SOCKS proxy you can set it by
 
 ```php
 $options->setSocksProxyAddress('localhost:9050');
+```
+
+or
+
+```php
+$options->setSocksProxyAddress('username:password@localhost:9050');
 ```
 
 You can also pass a PSR-2-compatible object to the options object:
