@@ -130,6 +130,7 @@ class Options
      * @var array
      */
     protected $authenticationClasses = [
+        'external'   => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\External',
         'digest-md5' => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\DigestMd5',
         'plain'      => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Plain',
         'anonymous'  => '\\Fabiang\\Xmpp\\EventListener\\Stream\\Authentication\\Anonymous'
