@@ -95,7 +95,7 @@ class StartTls extends AbstractEventListener implements BlockingEventListenerInt
 
             $connection = $this->getConnection();
             if ($connection instanceof SocketConnectionInterface) {
-                $connection->getSocket()->crypto(true, STREAM_CRYPTO_METHOD_SSLv23_CLIENT);
+                $connection->getSocket()->crypto(true, STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT);
             }
             $connection->resetStreams();
             $connection->connect();
