@@ -69,7 +69,7 @@ $client->send(new Presence);
 // send a message to another user
 $message = new Message;
 $message->setMessage('test')
-    ->setTo('nickname@myjabber.com')
+    ->setTo('nickname@myjabber.com');
 $client->send($message);
 
 // join a channel
